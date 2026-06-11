@@ -14,93 +14,121 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#14241e;--card:#1d362d;--card2:#24423a;--line:#33524a;--txt:#f2f5f3;--mut:#9eb5ac;--amber:#ff9b00;--coral:#ff5f5a;--mint:#4fbf8b;--violet:#a98fc9}
+:root{--bg:#14241e;--card:#1d362d;--card2:#24423a;--line:#33524a;--txt:#f2f5f3;--mut:#9eb5ac;--amber:#ff9b00;--coral:#ff5f5a;--mint:#4fbf8b;--violet:#a98fc9;--grad:linear-gradient(120deg,#ffb52e,#ff9b00 45%,#ff5f5a)}
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--txt);font-family:Urbanist,system-ui,sans-serif;font-size:15px;padding-bottom:76px}
-header{position:sticky;top:0;z-index:10;background:rgba(20,36,30,.96);backdrop-filter:blur(6px);padding:12px 16px 8px;border-bottom:1px solid var(--line)}
-.brand{display:flex;align-items:baseline;gap:8px}
-.brand b{font-weight:800;font-size:20px;letter-spacing:-.3px}
-.brand b i{color:var(--amber);font-style:normal}
-.brand span{color:var(--mut);font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.8px}
-.status{display:flex;justify-content:space-between;align-items:center;margin-top:6px;font-size:12px;color:var(--mut)}
-.status button{background:var(--card2);color:var(--txt);border:1px solid var(--line);border-radius:8px;padding:4px 10px;font-family:inherit;font-size:12px;font-weight:600}
-main{padding:14px 14px 8px;max-width:760px;margin:0 auto}
-.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px}
-.card h2{font-size:13px;font-weight:600;color:var(--mut);text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px}
-.big{font-size:30px;font-weight:800;letter-spacing:-.5px}
-.sub{font-size:12px;color:var(--mut);margin-top:2px}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--txt);font-family:Urbanist,system-ui,sans-serif;font-size:15px;padding-bottom:76px;-webkit-font-smoothing:antialiased}
+header{position:sticky;top:0;z-index:10;background:rgba(20,36,30,.94);backdrop-filter:blur(10px);padding:12px 16px 8px;border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:10px}
+.brand img{height:19px;display:block}
+.brand span{color:var(--mut);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1.6px;padding-top:2px}
+.status{display:flex;justify-content:space-between;align-items:center;margin-top:7px;font-size:12px;color:var(--mut)}
+.status button{background:var(--card2);color:var(--txt);border:1px solid var(--line);border-radius:8px;padding:4px 12px;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;transition:background .15s}
+.status button:active{transform:scale(.97)}
+main{padding:14px 14px 8px;max-width:780px;margin:0 auto}
+.card,.kpi{background:var(--card);border:1px solid var(--line);border-radius:16px;animation:in .4s ease both}
+.card{padding:15px;margin-bottom:12px}
+.card:nth-child(2){animation-delay:.04s}.card:nth-child(3){animation-delay:.08s}.card:nth-child(4){animation-delay:.12s}.card:nth-child(5){animation-delay:.16s}
+@keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.card h2{font-size:12.5px;font-weight:800;color:var(--mut);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px}
+.big{font-size:34px;font-weight:800;letter-spacing:-.8px;background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;font-variant-numeric:tabular-nums}
+.big small{font-size:15px;-webkit-text-fill-color:var(--mut);font-weight:600}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
-.kpi{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px}
-.kpi .l{font-size:11px;color:var(--mut);text-transform:uppercase;letter-spacing:.5px}
-.kpi .v{font-size:21px;font-weight:800;margin-top:3px}
-.kpi .d{font-size:11.5px;margin-top:3px;color:var(--mut)}
+.kpi{padding:12px;position:relative;overflow:hidden}
+.grid .kpi:nth-child(2){animation-delay:.05s}.grid .kpi:nth-child(3){animation-delay:.1s}.grid .kpi:nth-child(4){animation-delay:.15s}.grid .kpi:nth-child(5){animation-delay:.2s}.grid .kpi:nth-child(6){animation-delay:.25s}
+.kpi .l{font-size:10.5px;color:var(--mut);text-transform:uppercase;letter-spacing:.6px;font-weight:600}
+.kpi .v{font-size:22px;font-weight:800;margin-top:4px;font-variant-numeric:tabular-nums}
+.kpi .d{font-size:11.5px;margin-top:3px;color:var(--mut);line-height:1.45}
+.kpi canvas.spark{position:absolute;right:10px;top:12px;opacity:.9}
 .pos{color:var(--mint)}.neg{color:var(--coral)}.amb{color:var(--amber)}
-.bar{height:7px;background:#0e1b16;border-radius:5px;overflow:hidden;margin-top:8px;position:relative}
-.bar>i{display:block;height:100%;background:var(--amber);border-radius:5px}
-.bar>s{position:absolute;top:-2px;bottom:-2px;width:2px;background:#fff8}
+.bar{height:8px;background:#0e1b16;border-radius:6px;overflow:hidden;margin-top:10px;position:relative}
+.bar>i{display:block;height:100%;background:var(--grad);border-radius:6px;transition:width .8s cubic-bezier(.2,.8,.2,1)}
+.bar>s{position:absolute;top:-2px;bottom:-2px;width:2px;background:#fffa;border-radius:2px}
 .proj{display:flex;gap:14px;margin-top:10px;font-size:12.5px;color:var(--mut);flex-wrap:wrap}
-.proj b{color:var(--txt);font-weight:700}
-.flag{display:flex;gap:8px;align-items:flex-start;padding:8px 10px;border-radius:10px;margin-bottom:6px;font-size:13px;background:var(--card2)}
+.proj b{color:var(--txt);font-weight:700;font-variant-numeric:tabular-nums}
+.flag{display:flex;gap:9px;align-items:flex-start;padding:9px 11px;border-radius:11px;margin-bottom:6px;font-size:13px;background:var(--card2);line-height:1.45}
 .flag::before{content:"";width:8px;height:8px;border-radius:50%;margin-top:5px;flex-shrink:0}
-.flag.warn::before{background:var(--coral)}.flag.info::before{background:var(--amber)}.flag.ok::before{background:var(--mint)}
-.thread{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);font-size:13.5px;align-items:baseline}
+.flag.warn::before{background:var(--coral);box-shadow:0 0 8px #ff5f5a88}
+.flag.info::before{background:var(--amber)}.flag.ok::before{background:var(--mint)}
+.thread{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid #2a473e;font-size:13.5px;align-items:baseline;line-height:1.4}
 .thread:last-child{border:none}
 .thread .dl{white-space:nowrap;font-weight:700;font-size:12.5px}
 canvas{max-width:100%}
-.ch{position:relative;height:210px}
-.ch.tall{height:260px}
-nav{position:fixed;bottom:0;left:0;right:0;display:flex;background:#10201a;border-top:1px solid var(--line);padding:6px 4px calc(6px + env(safe-area-inset-bottom));z-index:20}
-nav button{flex:1;background:none;border:none;color:var(--mut);font-family:inherit;font-size:12px;font-weight:600;padding:8px 2px;border-radius:10px}
-nav button.on{color:var(--amber);background:#ff9b0014}
-table{width:100%;border-collapse:collapse;font-size:12.5px}
-th{color:var(--mut);font-weight:600;text-align:right;padding:5px 6px;border-bottom:1px solid var(--line);white-space:nowrap}
-td{text-align:right;padding:6px;border-bottom:1px solid #2a473e;white-space:nowrap}
+.ch{position:relative;height:215px}
+nav{position:fixed;bottom:0;left:0;right:0;background:rgba(16,32,26,.97);backdrop-filter:blur(10px);border-top:1px solid var(--line);z-index:20;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+nav::-webkit-scrollbar{display:none}
+nav .wrap{display:flex;padding:6px 8px calc(7px + env(safe-area-inset-bottom));min-width:max-content;margin:0 auto;gap:2px}
+nav button{background:none;border:none;color:var(--mut);font-family:inherit;font-size:12.5px;font-weight:700;padding:9px 13px;border-radius:11px;white-space:nowrap;cursor:pointer;transition:all .2s}
+nav button.on{color:#14241e;background:var(--amber)}
+table{width:100%;border-collapse:collapse;font-size:12.5px;font-variant-numeric:tabular-nums}
+th{color:var(--mut);font-weight:600;text-align:right;padding:5px 6px;border-bottom:1px solid var(--line);white-space:nowrap;font-size:11.5px;text-transform:uppercase;letter-spacing:.4px}
+td{text-align:right;padding:6.5px 6px;border-bottom:1px solid #2a473e;white-space:nowrap}
+tr:last-child td{border-bottom:none}
 th:first-child,td:first-child{text-align:left}
 .tbl{overflow-x:auto;margin:0 -4px}
 .seg{display:flex;gap:6px;margin-bottom:10px}
-.seg button{flex:1;background:var(--card2);border:1px solid var(--line);color:var(--mut);border-radius:9px;padding:7px 4px;font-family:inherit;font-size:12.5px;font-weight:600}
-.seg button.on{color:var(--bg);background:var(--amber);border-color:var(--amber)}
+.seg button{flex:1;background:var(--card2);border:1px solid var(--line);color:var(--mut);border-radius:10px;padding:8px 4px;font-family:inherit;font-size:12.5px;font-weight:700;cursor:pointer;transition:all .15s}
+.seg button.on{color:#14241e;background:var(--amber);border-color:var(--amber)}
 .heat td{padding:5px 4px;text-align:center;font-size:11.5px;border:1px solid #16291f;border-radius:4px}
-.brandrow{display:flex;align-items:center;gap:8px;padding:5px 0;font-size:13px}
-.brandrow .n{flex:0 0 128px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.brandrow .b{flex:1;height:14px;background:#0e1b16;border-radius:4px;overflow:hidden}
-.brandrow .b i{display:block;height:100%;background:var(--violet)}
-.brandrow .v{flex:0 0 104px;text-align:right;font-weight:700;font-size:12.5px}
-.brandrow .d{flex:0 0 52px;text-align:right;font-size:11.5px}
+.brandrow{display:flex;align-items:center;gap:8px;padding:5.5px 0;font-size:13px}
+.brandrow .n{flex:0 0 126px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.brandrow .b{flex:1;height:15px;background:#0e1b16;border-radius:5px;overflow:hidden}
+.brandrow .b i{display:block;height:100%;background:var(--violet);border-radius:5px;transition:width .7s ease}
+.brandrow .v{flex:0 0 106px;text-align:right;font-weight:700;font-size:12.5px;font-variant-numeric:tabular-nums}
+.brandrow .d{flex:0 0 52px;text-align:right;font-size:11.5px;font-variant-numeric:tabular-nums}
+.fun{display:flex;flex-direction:column;gap:7px;margin:6px 0 2px}
+.fun .step{display:flex;align-items:center;gap:10px;font-size:12.5px}
+.fun .nm{flex:0 0 92px;color:var(--mut)}
+.fun .trk{flex:1;height:26px;background:#0e1b16;border-radius:7px;overflow:hidden;position:relative}
+.fun .trk i{display:block;height:100%;background:linear-gradient(90deg,#1D9E75,#4fbf8b);border-radius:7px;transition:width .8s ease}
+.fun .trk span{position:absolute;left:10px;top:0;bottom:0;display:flex;align-items:center;font-weight:700;font-size:12px;color:#eafff4}
+.fun .pct{flex:0 0 96px;text-align:right;font-size:11.5px;color:var(--mut);font-variant-numeric:tabular-nums}
 #gate{position:fixed;inset:0;background:var(--bg);z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:30px;text-align:center}
 #gate input{width:100%;max-width:380px;background:var(--card);border:1px solid var(--line);color:var(--txt);padding:12px;border-radius:10px;font-family:inherit}
-#gate button{background:var(--amber);color:#14241e;border:none;padding:12px 28px;border-radius:10px;font-weight:800;font-family:inherit;font-size:15px}
+#gate button{background:var(--amber);color:#14241e;border:none;padding:12px 30px;border-radius:10px;font-weight:800;font-family:inherit;font-size:15px;cursor:pointer}
 .hide{display:none!important}
-.note{font-size:11.5px;color:var(--mut);margin-top:8px;line-height:1.5}
-h3.sec{font-size:15px;font-weight:800;margin:18px 2px 10px}
+.note{font-size:11.5px;color:var(--mut);margin-top:9px;line-height:1.55}
+.pill{display:inline-block;font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;background:var(--card2);color:var(--mut);margin-left:6px;vertical-align:2px}
+.pill.red{background:#ff5f5a22;color:var(--coral)}
+.pill.green{background:#4fbf8b22;color:var(--mint)}
+.skel{height:120px;border-radius:16px;background:linear-gradient(100deg,var(--card) 40%,var(--card2) 50%,var(--card) 60%);background-size:200% 100%;animation:sk 1.2s infinite linear;margin-bottom:12px}
+@keyframes sk{to{background-position:-200% 0}}
+h3.gsec{font-size:11.5px;font-weight:800;color:var(--amber);text-transform:uppercase;letter-spacing:1px;margin:4px 2px 8px}
 </style>
 </head>
 <body>
 <div id="gate" class="hide">
-  <div class="brand"><b>f<i>oo</i>dango</b><span>command centre</span></div>
-  <p style="color:var(--mut);max-width:340px">Podaj token dostępu, żeby połączyć się z danymi.</p>
+  <img src="logo.svg" alt="Foodango" style="height:30px;margin-bottom:4px">
+  <p style="color:var(--mut);max-width:340px">Podaj token dostępu, żeby połączyć się z danymi Command Centre.</p>
   <input id="tok" placeholder="token dostępu" autocomplete="off">
   <button onclick="saveTok()">Połącz</button>
 </div>
 
 <header>
-  <div class="brand"><b>f<i>oo</i>dango</b><span>command centre</span></div>
+  <div class="brand"><img src="logo.svg" alt="Foodango"><span>command centre</span></div>
   <div class="status"><span id="st">Łączenie…</span><button onclick="refresh(true)">Odśwież</button></div>
 </header>
 
-<main>
-<section id="tab-cockpit"></section>
+<main id="main">
+<div id="skel"><div class="skel"></div><div class="skel" style="height:180px"></div><div class="skel" style="height:90px"></div></div>
+<section id="tab-cockpit" class="hide"></section>
 <section id="tab-sales" class="hide"></section>
 <section id="tab-clients" class="hide"></section>
 <section id="tab-brands" class="hide"></section>
+<section id="tab-mkt" class="hide"></section>
+<section id="tab-funnel" class="hide"></section>
+<section id="tab-b2b" class="hide"></section>
 </main>
 
-<nav>
+<nav><div class="wrap">
   <button data-t="cockpit" class="on" onclick="tab('cockpit')">Cockpit</button>
   <button data-t="sales" onclick="tab('sales')">Sprzedaż</button>
   <button data-t="clients" onclick="tab('clients')">Klienci</button>
   <button data-t="brands" onclick="tab('brands')">Brandy</button>
-</nav>
+  <button data-t="mkt" onclick="tab('mkt')">Marketing</button>
+  <button data-t="funnel" onclick="tab('funnel')">Lejek</button>
+  <button data-t="b2b" onclick="tab('b2b')">B2B</button>
+</div></nav>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script>
@@ -109,23 +137,30 @@ const ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI
 const DOM_F=[0,.853,1.209,.937,.901,.759,1.101,.944,1.451,1.652,1.316,1.041,1.054,.906,.830,.799,.747,.783,.728,.874,.736,.621,.750,.651,.830,1.158,1.121,1.056,1.148,1.252,1.465,.923];
 const DOW_F={1:1.169,2:.871,3:.849,4:.841,5:1.056,6:.694,0:1.029};
 const MIES=['sty','lut','mar','kwi','maj','cze','lip','sie','wrz','paź','lis','gru'];
-let D=null, charts=[];
+const PERF_LIMIT={'2026-06':250000};
+let D=null, charts={}, chartsInit={}, curTab='cockpit';
 
 function getTok(){const h=new URLSearchParams(location.hash.slice(1)).get('t');const t=h||localStorage.getItem('cc_t');if(h)localStorage.setItem('cc_t',h);if(t){try{const man={name:'Foodango Command Centre',short_name:'Foodango CC',start_url:location.pathname+'#t='+t,scope:location.pathname.replace(/[^/]*$/,''),display:'standalone',background_color:'#14241e',theme_color:'#14241e',icons:[{src:new URL('icon192.png',location.href).href,sizes:'192x192',type:'image/png',purpose:'any maskable'},{src:new URL('icon512.png',location.href).href,sizes:'512x512',type:'image/png'}]};document.querySelector('link[rel=manifest]').href=URL.createObjectURL(new Blob([JSON.stringify(man)],{type:'application/manifest+json'}))}catch(e){}}return t}
 function saveTok(){const v=document.getElementById('tok').value.trim();if(v){localStorage.setItem('cc_t',v);location.hash='t='+v;location.reload()}}
-function tab(t){document.querySelectorAll('main section').forEach(s=>s.classList.add('hide'));document.getElementById('tab-'+t).classList.remove('hide');document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));window.scrollTo(0,0)}
+function tab(t){curTab=t;document.querySelectorAll('main section').forEach(s=>s.classList.add('hide'));document.getElementById('tab-'+t).classList.remove('hide');document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));window.scrollTo(0,0);if(D&&!chartsInit[t]){chartsInit[t]=true;INIT[t]&&INIT[t]()}}
 
 const pd=s=>{const[a,b,c]=s.slice(0,10).split('-').map(Number);return new Date(a,b-1,c)};
 const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 const nf=new Intl.NumberFormat('pl-PL',{maximumFractionDigits:0});
-const k=v=>v==null?'—':(Math.abs(v)>=1e6?(v/1e6).toLocaleString('pl-PL',{maximumFractionDigits:2})+' mln':nf.format(Math.round(v/1000))+' tys.');
-const zl=v=>v==null?'—':nf.format(Math.round(v))+' zł';
-const pc=(v,d=1)=>v==null?'—':v.toLocaleString('pl-PL',{maximumFractionDigits:d})+'%';
+const k=v=>v==null||isNaN(v)?'—':(Math.abs(v)>=1e6?(v/1e6).toLocaleString('pl-PL',{maximumFractionDigits:2})+' mln':nf.format(Math.round(v/1000))+' tys.');
+const kk=v=>v==null||isNaN(v)?'—':nf.format(Math.round(v/1000))+'k';
+const zl=v=>v==null||isNaN(v)?'—':nf.format(Math.round(v))+' zł';
+const pc=(v,d=1)=>v==null||isNaN(v)?'—':v.toLocaleString('pl-PL',{maximumFractionDigits:d})+'%';
 const sgn=v=>v>0?'+'+pc(v):pc(v);
 const dlab=s=>{const d=pd(s);return d.getDate()+'.'+String(d.getMonth()+1).padStart(2,'0')};
 const wlab=s=>{const a=pd(s),b=new Date(a);b.setDate(a.getDate()+6);return a.getDate()+'.'+String(a.getMonth()+1).padStart(2,'0')+'–'+b.getDate()+'.'+String(b.getMonth()+1).padStart(2,'0')};
 const mlab=s=>{const d=pd(s);return MIES[d.getMonth()]+' '+String(d.getFullYear()).slice(2)};
 function monday(d){const x=new Date(d);const g=(x.getDay()+6)%7;x.setDate(x.getDate()-g);return x}
+function wkAgg(rows,fields){const m=new Map();for(const r of rows){const w=iso(monday(pd(r.date)));if(!m.has(w)){const o={week:w,days:0};fields.forEach(f=>o[f]=0);m.set(w,o)}const o=m.get(w);o.days++;fields.forEach(f=>o[f]+= +(r[f]||0))}return[...m.values()].sort((a,b)=>a.week<b.week?-1:1)}
+function fullWeeks(w){const cur=iso(monday(new Date()));return w.filter(x=>x.week<cur&&x.days===7)}
+function mtdOf(rows){if(!rows.length)return[];const last=pd(rows[rows.length-1].date);return rows.filter(r=>{const d=pd(r.date);return d.getFullYear()===last.getFullYear()&&d.getMonth()===last.getMonth()})}
+function spark(id,data,color){const el=document.getElementById(id);if(!el||data.length<2)return;const ctx=el.getContext('2d');const W=el.width=120,H=el.height=34;const mn=Math.min(...data),mx=Math.max(...data),rg=mx-mn||1;ctx.strokeStyle=color;ctx.lineWidth=2;ctx.lineJoin='round';ctx.beginPath();data.forEach((v,i)=>{const x=i/(data.length-1)*(W-4)+2,y=H-3-((v-mn)/rg)*(H-8);i?ctx.lineTo(x,y):ctx.moveTo(x,y)});ctx.stroke()}
+function countUp(el,target,fmt){const t0=performance.now();const step=t=>{const p=Math.min(1,(t-t0)/700);el.textContent=fmt(target*(0.3+0.7*p)*(p===1?1:1));el.innerHTML=fmt(target*p<target?target*Math.pow(p,0.6):target);if(p<1)requestAnimationFrame(step);else el.innerHTML=fmt(target)};requestAnimationFrame(step)}
 
 function weekly(daily){
   const m=new Map();
@@ -137,7 +172,7 @@ function projections(){
   const last=pd(D.daily[D.daily.length-1].date);
   const y=last.getFullYear(),mo=last.getMonth();
   const dim=new Date(y,mo+1,0).getDate();
-  const mtdRows=D.daily.filter(r=>{const d=pd(r.date);return d.getFullYear()===y&&d.getMonth()===mo});
+  const mtdRows=mtdOf(D.daily);
   const mtd=mtdRows.reduce((s,r)=>s+ +r.gmv,0);
   const nd=mtdRows.length;
   const naive=mtd/nd*dim;
@@ -148,11 +183,10 @@ function projections(){
   const bud=D.budgets.find(b=>pd(b.month).getMonth()===mo&&pd(b.month).getFullYear()===y);
   return{y,mo,dim,nd,mtd,naive,factored,bud,last,mtdRows};
 }
-function lastFullWeeks(w,n=10){const today=new Date();const cur=iso(monday(today));return w.filter(x=>x.week<cur&&x.days===7).slice(-n)}
 
 async function refresh(force){
   const tok=getTok();
-  if(!tok){document.getElementById('gate').classList.remove('hide');return}
+  if(!tok){document.getElementById('gate').classList.remove('hide');document.getElementById('skel').classList.add('hide');return}
   const cache=localStorage.getItem('cc_d');
   if(cache&&!D){try{D=JSON.parse(cache);render()}catch(e){}}
   document.getElementById('st').textContent='Pobieranie danych…';
@@ -160,109 +194,138 @@ async function refresh(force){
     const r=await fetch(SB+'/rest/v1/rpc/fdg_cc_api',{method:'POST',headers:{'Content-Type':'application/json',apikey:ANON,Authorization:'Bearer '+ANON},body:JSON.stringify({p_token:tok})});
     if(!r.ok){if(r.status===400||r.status===401){localStorage.removeItem('cc_t');document.getElementById('gate').classList.remove('hide')}throw new Error(r.status)}
     D=await r.json();
-    localStorage.setItem('cc_d',JSON.stringify(D));
+    try{localStorage.setItem('cc_d',JSON.stringify(D))}catch(e){}
     render();
   }catch(e){document.getElementById('st').textContent=D?'Offline — dane z pamięci urządzenia':'Błąd połączenia ('+e.message+')'}
 }
 
-function destroyCharts(){charts.forEach(c=>c.destroy());charts=[]}
-function mkChart(id,cfg){const el=document.getElementById(id);if(!el)return;Chart.defaults.color='#9eb5ac';Chart.defaults.borderColor='#33524a55';Chart.defaults.font.family='Urbanist';const c=new Chart(el,cfg);charts.push(c)}
+function mkChart(id,cfg){if(charts[id]){charts[id].destroy()}const el=document.getElementById(id);if(!el)return;Chart.defaults.color='#9eb5ac';Chart.defaults.borderColor='#33524a55';Chart.defaults.font.family='Urbanist';Chart.defaults.plugins.tooltip.backgroundColor='#0e1b16';Chart.defaults.plugins.tooltip.borderColor='#33524a';Chart.defaults.plugins.tooltip.borderWidth=1;Chart.defaults.plugins.tooltip.padding=10;charts[id]=new Chart(el,cfg)}
+const leg={labels:{boxWidth:10,boxHeight:10,font:{size:11}}};
+
+// ====== GLOBAL DERIVED ======
+let P,W,LF,LW,PW;
 
 function render(){
-  destroyCharts();
-  const P=projections();
-  const W=weekly(D.daily);
-  const lf=lastFullWeeks(W,99);
-  const lw=lf[lf.length-1], pw=lf[lf.length-2];
-  const wow=pw?100*(lw.gmv-pw.gmv)/pw.gmv:null;
-  const avg4=lf.slice(-6,-2).reduce((s,x)=>s+x.gmv,0)/Math.max(1,lf.slice(-6,-2).length);
-  const peakPrev=pw&&pw.gmv>1.25*avg4;
-  const mr=D.monthly_results, lastMr=mr[mr.length-1];
-  const cumE=mr.reduce((s,m)=>s+ +m.ebitda,0);
-  const cumEB=mr.reduce((s,m)=>s+ +(m.ebitda_budget||0),0);
-  const paceF=P.bud?100*P.factored/P.bud.gmv:null, paceN=P.bud?100*P.naive/P.bud.gmv:null;
-  const mtdNew=P.mtdRows.reduce((s,r)=>s+r.new_customers,0), mtdRet=P.mtdRows.reduce((s,r)=>s+r.returning_orders,0);
+  document.getElementById('skel').classList.add('hide');
+  P=projections();W=weekly(D.daily);LF=fullWeeks(W);LW=LF[LF.length-1];PW=LF[LF.length-2];
+  document.getElementById('st').textContent=`Dane do ${dlab(D.daily[D.daily.length-1].date)} · pobrano ${new Date().toLocaleTimeString('pl-PL',{hour:'2-digit',minute:'2-digit'})}`;
+  chartsInit={};
+  RENDER.cockpit();RENDER.sales();RENDER.clients();RENDER.brands();RENDER.mkt();RENDER.funnel();RENDER.b2b();
+  document.getElementById('tab-'+curTab).classList.remove('hide');
+  chartsInit[curTab]=true;INIT[curTab]&&INIT[curTab]();
+}
+
+const RENDER={}, INIT={};
+
+// ====== COCKPIT ======
+RENDER.cockpit=function(){
+  const wow=PW?100*(LW.gmv-PW.gmv)/PW.gmv:null;
+  const avg4=LF.slice(-6,-2).reduce((s,x)=>s+x.gmv,0)/Math.max(1,LF.slice(-6,-2).length);
+  const peakPrev=PW&&PW.gmv>1.25*avg4;
+  const mr=D.monthly_results,lastMr=mr[mr.length-1];
+  const cumE=mr.reduce((s,m)=>s+ +m.ebitda,0),cumEB=mr.reduce((s,m)=>s+ +(m.ebitda_budget||0),0);
+  const paceF=P.bud?100*P.factored/P.bud.gmv:null,paceN=P.bud?100*P.naive/P.bud.gmv:null;
+  const mtdNew=P.mtdRows.reduce((s,r)=>s+r.new_customers,0),mtdRet=P.mtdRows.reduce((s,r)=>s+r.returning_orders,0);
   const paceNew=P.bud?100*(mtdNew/P.nd*P.dim)/P.bud.new_customers:null;
   const paceRet=P.bud?100*(mtdRet/P.nd*P.dim)/P.bud.returning_orders:null;
   const app30=D.daily.slice(-30).reduce((a,r)=>(a.a+=r.app_orders,a.w+=r.web_orders,a),{a:0,w:0});
   const as30=100*app30.a/(app30.a+app30.w);
   const beMonth=D.budgets.find(b=>+b.ebitda>0);
+  const mk=mtdOf(D.marketing_daily||[]);
+  const perfMtd=mk.reduce((s,r)=>s+ +(r.meta_spend||0)- +(r.meta_catering_spend||0)+ +(r.google_spend||0),0);
+  const perfProj=mk.length?perfMtd/mk.length*P.dim:null;
+  const limit=PERF_LIMIT[iso(new Date(P.y,P.mo,1)).slice(0,7)];
+  const fw=fullWeeks(wkAgg(D.funnel_daily||[],['sessions','s_purchase']));
+  const crW=fw.length?100*fw[fw.length-1].s_purchase/fw[fw.length-1].sessions:null;
+  const crP=fw.length>1?100*fw[fw.length-2].s_purchase/fw[fw.length-2].sessions:null;
 
   const flags=[];
-  if(lw&&lw.tr>28)flags.push({s:'warn',t:`Tester rate ${pc(lw.tr)} w tygodniu ${wlab(lw.week)} — powyżej progu 28% (rekord 29,8%).`});
-  if(wow!=null&&wow<-25)flags.push(peakPrev?{s:'info',t:`GMV ${sgn(wow)} WoW (${wlab(lw.week)}) — normalizacja po peaku z poprzedniego tygodnia, nie alarm.`}:{s:'warn',t:`GMV ${sgn(wow)} WoW (${wlab(lw.week)}) — bez peaku w tle, do wyjaśnienia.`});
-  if(paceF!=null&&paceF<80&&P.nd>=10)flags.push({s:'warn',t:`Pace GMV ${pc(paceF)} (DOM×DOW) przy ${P.nd} dniach miesiąca — poniżej 80%.`});
+  if(LW&&LW.tr>28)flags.push({s:'warn',t:`Tester rate ${pc(LW.tr)} w tygodniu ${wlab(LW.week)} — powyżej progu 28%.`});
+  if(wow!=null&&wow<-25)flags.push(peakPrev?{s:'info',t:`GMV ${sgn(wow)} WoW (${wlab(LW.week)}) — normalizacja po peaku z poprzedniego tygodnia, nie alarm.`}:{s:'warn',t:`GMV ${sgn(wow)} WoW (${wlab(LW.week)}) — bez peaku w tle, do wyjaśnienia.`});
+  if(paceF!=null&&paceF<80&&P.nd>=10)flags.push({s:'warn',t:`Pace GMV ${pc(paceF)} (sezonowy) przy ${P.nd} dniach miesiąca — poniżej 80%.`});
   if(paceRet!=null&&paceRet<90)flags.push({s:'warn',t:`Powracający na ${pc(paceRet)} budżetu — odchylenie od najstabilniejszego filaru.`});
   if(paceRet!=null&&paceRet>=98)flags.push({s:'ok',t:`Powracający ${pc(paceRet)} budżetu — filar retencji trzyma.`});
   if(paceNew!=null&&paceNew<75)flags.push({s:'info',t:`Nowi klienci na ${pc(paceNew)} budżetu — strukturalnie słaby punkt (trend od kwietnia).`});
+  if(limit&&perfProj&&perfProj>1.05*limit)flags.push({s:'warn',t:`Performance: projekcja ${k(perfProj)} vs limit ${k(limit)} (${pc(100*perfProj/limit,0)}) — pacing ponad limit.`});
+  if(crW!=null&&crP!=null&&crP-crW>0.5)flags.push({s:'info',t:`CR sesja→zakup spadł do ${pc(crW,2)} (z ${pc(crP,2)}) tydzień do tygodnia.`});
 
   const thr=[...D.threads].sort((a,b)=>(a.deadline||'9')<(b.deadline||'9')?-1:1);
-  const today=new Date();
-  const dleft=t=>t.deadline?Math.ceil((pd(t.deadline)-today)/86400000):null;
-
-  document.getElementById('st').textContent=`Dane do ${dlab(D.daily[D.daily.length-1].date)} · pobrano ${new Date().toLocaleTimeString('pl-PL',{hour:'2-digit',minute:'2-digit'})}`;
+  const today=new Date();const dleft=t=>t.deadline?Math.ceil((pd(t.deadline)-today)/86400000):null;
 
   document.getElementById('tab-cockpit').innerHTML=`
   <div class="card">
-    <h2>GMV ${MIES[P.mo]} ${P.y} — dni 1–${P.nd} z ${P.dim}</h2>
-    <div class="big amb">${k(P.mtd)} <span style="font-size:14px;color:var(--mut);font-weight:600">PLN</span></div>
+    <h2>GMV ${MIES[P.mo]} ${P.y} <span class="pill">dni 1–${P.nd} z ${P.dim}</span></h2>
+    <div class="big" id="heroGmv">${k(P.mtd)} <small>PLN</small></div>
     <div class="bar"><i style="width:${Math.min(100,P.bud?100*P.mtd/P.bud.gmv:0)}%"></i><s style="left:${100*P.nd/P.dim}%"></s></div>
-    <div class="proj"><span>projekcja liniowa <b>${k(P.naive)}</b> (${pc(paceN)})</span><span>sezonowa DOM×DOW <b>${k(P.factored)}</b> (${pc(paceF)})</span><span>budżet <b>${k(P.bud?.gmv)}</b></span></div>
+    <div class="proj"><span>liniowa <b>${k(P.naive)}</b> (${pc(paceN)})</span><span>sezonowa <b>${k(P.factored)}</b> (${pc(paceF)})</span><span>budżet <b>${k(P.bud?.gmv)}</b></span></div>
   </div>
   <div class="grid">
-    <div class="kpi"><div class="l">EBITDA ${mlab(lastMr.month)}${lastMr.is_final?'':' (wstępna)'}</div><div class="v ${+lastMr.ebitda<0?'neg':'pos'}">${k(+lastMr.ebitda)}</div><div class="d">narastająco ${k(cumE)} · <span class="${cumE>=cumEB?'pos':'neg'}">${cumE>=cumEB?'+':''}${k(cumE-cumEB)} vs plan</span></div></div>
-    <div class="kpi"><div class="l">CAC łączny ${mlab(lastMr.month)}</div><div class="v">${zl(+lastMr.cac)}</div><div class="d">realny ~${zl(+lastMr.cac_real)} · budżet ${zl(D.budgets.find(b=>b.month===lastMr.month)?.gmv?182:null)??'182 zł'}</div></div>
-    <div class="kpi"><div class="l">Udział aplikacji (30 dni)</div><div class="v">${pc(as30)}</div><div class="d">zamówienia · cel 50% przekroczony</div></div>
-    <div class="kpi"><div class="l">Tester rate (${lw?wlab(lw.week):'—'})</div><div class="v ${lw&&lw.tr>28?'neg':''}">${lw?pc(lw.tr):'—'}</div><div class="d">pierwsze zamówienia 1–5 dni · próg 28%</div></div>
+    <div class="kpi"><div class="l">EBITDA ${mlab(lastMr.month)}${lastMr.is_final?'':' (wstępna)'}</div><div class="v ${+lastMr.ebitda<0?'neg':'pos'}">${k(+lastMr.ebitda)}</div><div class="d">narastająco ${k(cumE)} · <span class="${cumE>=cumEB?'pos':'neg'}">${cumE>=cumEB?'+':''}${k(cumE-cumEB)} vs plan</span></div><canvas class="spark" id="spE"></canvas></div>
+    <div class="kpi"><div class="l">CAC łączny ${mlab(lastMr.month)}</div><div class="v">${zl(+lastMr.cac)}</div><div class="d">realny ~${zl(+lastMr.cac_real)} · budżet ${zl(D.budgets.find(b=>b.month===lastMr.month)?.cac)}</div><canvas class="spark" id="spC"></canvas></div>
+    <div class="kpi"><div class="l">Udział aplikacji (30 dni)</div><div class="v">${pc(as30)}</div><div class="d">zamówienia · cel 50% przekroczony</div><canvas class="spark" id="spA"></canvas></div>
+    <div class="kpi"><div class="l">Tester rate (${LW?wlab(LW.week):'—'})</div><div class="v ${LW&&LW.tr>28?'neg':''}">${LW?pc(LW.tr):'—'}</div><div class="d">pierwsze zam. 1–5 dni · próg 28%</div><canvas class="spark" id="spT"></canvas></div>
     <div class="kpi"><div class="l">Powracający — pace MTD</div><div class="v ${paceRet>=95?'pos':paceRet<90?'neg':''}">${pc(paceRet)}</div><div class="d">${nf.format(mtdRet)} zam. vs budżet ${nf.format(P.bud?.returning_orders??0)}</div></div>
     <div class="kpi"><div class="l">Nowi klienci — pace MTD</div><div class="v ${paceNew<75?'neg':''}">${pc(paceNew)}</div><div class="d">${nf.format(mtdNew)} vs budżet ${nf.format(P.bud?.new_customers??0)}</div></div>
   </div>
   ${flags.length?`<div class="card"><h2>Flagi</h2>${flags.map(f=>`<div class="flag ${f.s}">${f.t}</div>`).join('')}</div>`:''}
-  <div class="card"><h2>GMV 2026 — realizacja vs budżet (mln PLN)</h2><div class="ch"><canvas id="cMon"></canvas></div>
-  <div class="note">Break-even wg budżetu: <b>${beMonth?mlab(beMonth.month):'—'}</b> (EBITDA ${k(+beMonth?.ebitda)}). EBITDA w ujęciu bez aktywacji kosztów.</div></div>
-  <div class="card"><h2>GMV dziennie — ostatnie 8 tygodni</h2><div class="ch"><canvas id="cDay"></canvas></div></div>
+  <div class="card"><h2>GMV 2026 — realizacja vs budżet <span class="pill">mln PLN</span></h2><div class="ch"><canvas id="cMon"></canvas></div>
+  <div class="note">Break-even wg budżetu: <b>${beMonth?mlab(beMonth.month):'—'}</b> (EBITDA ${k(+beMonth?.ebitda)}). Jaśniejszy segment czerwca = projekcja sezonowa.</div></div>
+  <div class="card"><h2>GMV dziennie — 8 tygodni</h2><div class="ch"><canvas id="cDay"></canvas></div></div>
   <div class="card"><h2>Radar wątków</h2>${thr.map(t=>{const dl=dleft(t);return`<div class="thread"><span>${t.title}</span><span class="dl ${dl!=null&&dl<=7?'neg':'amb'}">${t.deadline?dlab(t.deadline)+' · '+(dl>=0?'za '+dl+' dni':Math.abs(dl)+' dni temu'):'—'}</span></div>`}).join('')}</div>
-  <div class="card"><h2>Świeżość danych</h2>${(D.refresh_log||[]).map(r=>`<div class="thread"><span>${r.source}</span><span class="dl">${new Date(r.refreshed_at).toLocaleString('pl-PL',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}</span></div>`).join('')}<div class="note">Transakcje odświeżane codziennie rano, gdy laptop jest włączony. Finanse miesięczne — po zamknięciu księgowym.</div></div>`;
-
-  const months26=D.monthly_results.map(m=>({l:mlab(m.month),r:+m.gmv}));
+  <div class="card"><h2>Świeżość danych</h2>${(D.refresh_log||[]).map(r=>`<div class="thread"><span>${r.source}</span><span class="dl">${new Date(r.refreshed_at).toLocaleString('pl-PL',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}</span></div>`).join('')}<div class="note">Transakcje i marketing odświeżane codziennie rano (gdy laptop włączony). Lejek GA4 ma ~1 dzień opóźnienia eksportu. Finanse miesięczne — po zamknięciu księgowym.</div></div>`;
+};
+INIT.cockpit=function(){
+  const mr=D.monthly_results;
+  spark('spE',mr.map(m=>+m.ebitda),'#4fbf8b');
+  spark('spC',mr.map(m=>+m.cac),'#ff9b00');
+  spark('spA',LF.slice(-10).map(x=>x.as??0),'#ff9b00');
+  spark('spT',LF.slice(-10).map(x=>x.tr??0),'#ff5f5a');
   const budArr=D.budgets.map(b=>({l:mlab(b.month),v:+b.gmv}));
+  const real=new Map(D.monthly_results.map(m=>[mlab(m.month),+m.gmv]));
   const curL=MIES[P.mo]+' '+String(P.y).slice(2);
-  if(!months26.find(x=>x.l===curL))months26.push({l:curL,r:P.mtd,proj:P.factored});
   mkChart('cMon',{type:'bar',data:{labels:budArr.map(x=>x.l),datasets:[
-    {label:'Realizacja',data:budArr.map(x=>{const m=months26.find(y=>y.l===x.l);return m?+(m.r/1e6).toFixed(2):null}),backgroundColor:'#ff9b00',borderRadius:4},
-    {label:'Projekcja',data:budArr.map(x=>{const m=months26.find(y=>y.l===x.l);return m&&m.proj?+((m.proj-m.r)/1e6).toFixed(2):null}),backgroundColor:'#ff9b0055',borderRadius:4},
-    {label:'Budżet',data:budArr.map(x=>+(x.v/1e6).toFixed(2)),backgroundColor:'#9eb5ac44',borderRadius:4}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{boxWidth:10,boxHeight:10}}},scales:{x:{stacked:true,grid:{display:false},ticks:{autoSkip:false}},y:{stacked:true}}}});
+    {label:'Realizacja',data:budArr.map(x=>real.has(x.l)?+(real.get(x.l)/1e6).toFixed(2):(x.l===curL?+(P.mtd/1e6).toFixed(2):null)),backgroundColor:'#ff9b00',borderRadius:4},
+    {label:'Projekcja',data:budArr.map(x=>x.l===curL?+((P.factored-P.mtd)/1e6).toFixed(2):null),backgroundColor:'#ff9b0055',borderRadius:4},
+    {label:'Budżet',data:budArr.map(x=>+(x.v/1e6).toFixed(2)),backgroundColor:'#9eb5ac3d',borderRadius:4}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:leg},scales:{x:{stacked:true,grid:{display:false},ticks:{autoSkip:false}},y:{stacked:true}}}});
   const d60=D.daily.slice(-56);
   const ma7=d60.map((_,i)=>{const a=d60.slice(Math.max(0,i-6),i+1);return a.reduce((s,r)=>s+ +r.gmv,0)/a.length});
   mkChart('cDay',{data:{labels:d60.map(r=>dlab(r.date)),datasets:[
-    {type:'bar',label:'GMV',data:d60.map(r=>Math.round(+r.gmv/1000)),backgroundColor:d60.map(r=>[0,6].includes(pd(r.date).getDay())?'#4fbf8b66':'#4fbf8b'),borderRadius:2},
+    {type:'bar',label:'GMV',data:d60.map(r=>Math.round(+r.gmv/1000)),backgroundColor:d60.map(r=>[0,6].includes(pd(r.date).getDay())?'#4fbf8b59':'#4fbf8b'),borderRadius:2},
     {type:'line',label:'Średnia 7 dni',data:ma7.map(v=>Math.round(v/1000)),borderColor:'#ff9b00',pointRadius:0,borderWidth:2,tension:.3}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{boxWidth:10,boxHeight:10}}},scales:{x:{ticks:{maxTicksLimit:8},grid:{display:false}},y:{title:{display:true,text:'tys. PLN'}}}}});
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:leg},scales:{x:{ticks:{maxTicksLimit:8},grid:{display:false}},y:{title:{display:true,text:'tys. PLN'}}}}});
+};
 
-  // SPRZEDAŻ
-  const w26=lf.slice(-26);
+// ====== SPRZEDAŻ ======
+RENDER.sales=function(){
   document.getElementById('tab-sales').innerHTML=`
   <div class="card"><h2>GMV tygodniowo (pon–ndz) — 26 tygodni</h2><div class="ch"><canvas id="sWeek"></canvas></div></div>
   <div class="card"><h2>Ostatnie 8 pełnych tygodni</h2><div class="tbl"><table><tr><th>Tydzień</th><th>GMV</th><th>WoW</th><th>Zam.</th><th>AOV</th><th>Tester</th><th>App</th></tr>
-  ${lf.slice(-8).map((x,i,arr)=>{const p=arr[i-1];const ww=p?100*(x.gmv-p.gmv)/p.gmv:null;return`<tr><td>${wlab(x.week)}</td><td><b>${nf.format(Math.round(x.gmv/1000))}k</b></td><td class="${ww>0?'pos':'neg'}">${ww!=null?sgn(ww):'—'}</td><td>${nf.format(x.orders)}</td><td>${zl(x.aov)}</td><td>${pc(x.tr)}</td><td>${pc(x.as)}</td></tr>`}).join('')}</table></div></div>
-  <div class="card"><h2>AOV i średnia długość diety — tygodniowo</h2><div class="ch"><canvas id="sAov"></canvas></div></div>
-  <div class="card"><h2>Udział Multidiety w zamówieniach</h2><div class="ch"><canvas id="sMulti"></canvas></div></div>`;
+  ${LF.slice(-8).map((x,i,arr)=>{const p=arr[i-1];const ww=p?100*(x.gmv-p.gmv)/p.gmv:null;return`<tr><td>${wlab(x.week)}</td><td><b>${kk(x.gmv)}</b></td><td class="${ww>0?'pos':'neg'}">${ww!=null?sgn(ww):'—'}</td><td>${nf.format(x.orders)}</td><td>${zl(x.aov)}</td><td>${pc(x.tr)}</td><td>${pc(x.as)}</td></tr>`}).join('')}</table></div></div>
+  <div class="card"><h2>AOV i średnia długość diety</h2><div class="ch"><canvas id="sAov"></canvas></div></div>
+  <div class="card"><h2>Udział Multidiety w zamówieniach</h2><div class="ch"><canvas id="sMulti"></canvas></div><div class="note">Multidieta = produkt „codziennie inny catering" (z tabeli multidiet_item). Niska adopcja to wątek redesignu konfiguratora.</div></div>`;
+};
+INIT.sales=function(){
+  const w26=LF.slice(-26);
   mkChart('sWeek',{type:'bar',data:{labels:w26.map(x=>wlab(x.week)),datasets:[{label:'GMV (tys. PLN)',data:w26.map(x=>Math.round(x.gmv/1000)),backgroundColor:'#ff9b00',borderRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{maxTicksLimit:7},grid:{display:false}},y:{}}}});
   mkChart('sAov',{type:'line',data:{labels:w26.map(x=>wlab(x.week)),datasets:[
     {label:'AOV (PLN)',data:w26.map(x=>Math.round(x.aov)),borderColor:'#ff9b00',pointRadius:0,borderWidth:2,tension:.3,yAxisID:'y'},
     {label:'Dni diety',data:w26.map(x=>+x.add.toFixed(1)),borderColor:'#a98fc9',borderDash:[5,4],pointRadius:0,borderWidth:2,tension:.3,yAxisID:'y2'}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{boxWidth:10,boxHeight:10}}},scales:{x:{ticks:{maxTicksLimit:7},grid:{display:false}},y:{position:'left'},y2:{position:'right',grid:{display:false}}}}});
-  mkChart('sMulti',{type:'line',data:{labels:w26.map(x=>wlab(x.week)),datasets:[{label:'% zamówień Multidieta',data:w26.map(x=>+x.ms.toFixed(1)),borderColor:'#4fbf8b',fill:true,backgroundColor:'#4fbf8b22',pointRadius:0,borderWidth:2,tension:.3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{maxTicksLimit:7},grid:{display:false}},y:{ticks:{callback:v=>v+'%'}}}}});
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:leg},scales:{x:{ticks:{maxTicksLimit:7},grid:{display:false}},y:{position:'left'},y2:{position:'right',grid:{display:false}}}}});
+  mkChart('sMulti',{type:'line',data:{labels:w26.map(x=>wlab(x.week)),datasets:[{label:'% zamówień Multidieta',data:w26.map(x=>+(x.ms||0).toFixed(1)),borderColor:'#4fbf8b',fill:true,backgroundColor:'#4fbf8b22',pointRadius:0,borderWidth:2,tension:.3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{maxTicksLimit:7},grid:{display:false}},y:{ticks:{callback:v=>v+'%'}}}}});
+};
 
-  // KLIENCI
+// ====== KLIENCI ======
+RENDER.clients=function(){
+  const mtdNew=P.mtdRows.reduce((s,r)=>s+r.new_customers,0),mtdRet=P.mtdRows.reduce((s,r)=>s+r.returning_orders,0);
+  const paceNew=P.bud?100*(mtdNew/P.nd*P.dim)/P.bud.new_customers:null;
+  const paceRet=P.bud?100*(mtdRet/P.nd*P.dim)/P.bud.returning_orders:null;
   const cohAll=D.cohorts.filter(c=>c.cohort_month>='2025-01-01');
   const cohM=[...new Set(cohAll.map(c=>c.cohort_month))].sort().slice(-12);
   const heat=cohM.map(cm=>{
     const size=cohAll.find(c=>c.cohort_month===cm&&c.activity_month===cm)?.buyers||0;
     const cells=[];
-    for(let off=1;off<=6;off++){
-      const am=new Date(pd(cm));am.setMonth(am.getMonth()+off);
+    for(let off=1;off<=6;off++){const am=new Date(pd(cm));am.setMonth(am.getMonth()+off);
       const row=cohAll.find(c=>c.cohort_month===cm&&c.activity_month.slice(0,7)===iso(am).slice(0,7));
       cells.push(row&&size?100*row.buyers/size:null)}
     return{cm,size,cells}});
@@ -272,58 +335,216 @@ function render(){
     <div class="kpi"><div class="l">Nowi MTD vs budżet</div><div class="v">${nf.format(mtdNew)}</div><div class="d">pace ${pc(paceNew)} · budżet ${nf.format(P.bud?.new_customers??0)}</div></div>
     <div class="kpi"><div class="l">Powracające zam. MTD</div><div class="v">${nf.format(mtdRet)}</div><div class="d">pace ${pc(paceRet)} · budżet ${nf.format(P.bud?.returning_orders??0)}</div></div>
   </div>
-  <div class="card"><h2>Tester rate (1–5 dni) — tygodniowo</h2><div class="ch"><canvas id="kTest"></canvas></div><div class="note">Czerwona linia = próg 28%. Strategia: ograniczać akwizycję testerów (LTV testera 744 zł vs 1 434 zł).</div></div>
+  <div class="card"><h2>Tester rate (1–5 dni) — tygodniowo</h2><div class="ch"><canvas id="kTest"></canvas></div><div class="note">Czerwona linia = próg 28%. LTV testera 744 zł vs 1 434 zł nie-testera — strategia: ograniczać akwizycję testerów.</div></div>
   <div class="card"><h2>Udział aplikacji — tygodniowo</h2><div class="ch"><canvas id="kApp"></canvas></div></div>
-  <div class="card"><h2>Retencja kohort (% kohorty aktywny w m+N)</h2><div class="tbl"><table class="heat"><tr><th>Kohorta</th><th>Rozmiar</th>${[1,2,3,4,5,6].map(i=>`<th>m+${i}</th>`).join('')}</tr>
+  <div class="card"><h2>Retencja kohort <span class="pill">% kohorty aktywny w m+N</span></h2><div class="tbl"><table class="heat"><tr><th>Kohorta</th><th>Rozmiar</th>${[1,2,3,4,5,6].map(i=>`<th>m+${i}</th>`).join('')}</tr>
   ${heat.map(h=>`<tr><td style="text-align:left">${mlab(h.cm)}</td><td>${nf.format(h.size)}</td>${h.cells.map(v=>{const bg=v==null?'transparent':`rgba(79,191,139,${Math.min(.85,v/40)})`;return`<td style="background:${bg}">${v==null?'·':v.toFixed(0)+'%'}</td>`}).join('')}</tr>`).join('')}</table></div>
-  <div class="note">Klient liczony w m+N, jeśli zrobił zamówienie N miesięcy po miesiącu pierwszego zakupu. Ostatnia kolumna z prawej może być niepełna (miesiąc w toku).</div></div>`;
+  <div class="note">Klient liczony w m+N, jeśli zrobił zamówienie N miesięcy po miesiącu pierwszego zakupu. Ostatnia komórka po przekątnej = miesiąc w toku.</div></div>`;
+};
+INIT.clients=function(){
+  const w26=LF.slice(-26);
   mkChart('kNvR',{type:'bar',data:{labels:w26.map(x=>wlab(x.week)),datasets:[
     {label:'Powracające',data:w26.map(x=>x.returning_orders),backgroundColor:'#4fbf8b',borderRadius:2},
     {label:'Nowe',data:w26.map(x=>x.new_orders),backgroundColor:'#ff9b00',borderRadius:2}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{boxWidth:10,boxHeight:10}}},scales:{x:{stacked:true,ticks:{maxTicksLimit:7},grid:{display:false}},y:{stacked:true}}}});
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:leg},scales:{x:{stacked:true,ticks:{maxTicksLimit:7},grid:{display:false}},y:{stacked:true}}}});
   mkChart('kTest',{type:'line',data:{labels:w26.map(x=>wlab(x.week)),datasets:[
-    {label:'Tester rate',data:w26.map(x=>+x.tr.toFixed(1)),borderColor:'#ff9b00',pointRadius:0,borderWidth:2,tension:.3},
+    {label:'Tester rate',data:w26.map(x=>+(x.tr||0).toFixed(1)),borderColor:'#ff9b00',pointRadius:0,borderWidth:2,tension:.3},
     {label:'Próg 28%',data:w26.map(()=>28),borderColor:'#ff5f5a',borderDash:[4,4],pointRadius:0,borderWidth:1.5}]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{maxTicksLimit:7},grid:{display:false}},y:{ticks:{callback:v=>v+'%'}}}}});
   mkChart('kApp',{type:'line',data:{labels:w26.map(x=>wlab(x.week)),datasets:[
     {label:'% zamówień z app',data:w26.map(x=>+(x.as??0).toFixed(1)),borderColor:'#ff9b00',pointRadius:0,borderWidth:2,tension:.3},
     {label:'% GMV z app',data:w26.map(x=>+(x.asg??0).toFixed(1)),borderColor:'#4fbf8b',borderDash:[5,4],pointRadius:0,borderWidth:2,tension:.3}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{boxWidth:10,boxHeight:10}}},scales:{x:{ticks:{maxTicksLimit:7},grid:{display:false}},y:{ticks:{callback:v=>v+'%'},suggestedMin:40,suggestedMax:70}}}});
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:leg},scales:{x:{ticks:{maxTicksLimit:7},grid:{display:false}},y:{ticks:{callback:v=>v+'%'},suggestedMin:40,suggestedMax:70}}}});
+};
 
-  // BRANDY
-  window.brandMode='mtd';
+// ====== BRANDY ======
+RENDER.brands=function(){
+  window.brandMode=window.brandMode||'mtd';
+  const prevM=iso(new Date(P.y,P.mo-1,1));
   document.getElementById('tab-brands').innerHTML=`
-  <div class="seg"><button id="bm-mtd" class="on" onclick="brandTab('mtd')">Czerwiec MTD</button><button id="bm-prev" onclick="brandTab('prev')">Maj (pełny)</button><button id="bm-4w" onclick="brandTab('4w')">4 tygodnie</button></div>
-  <div class="card"><h2 id="bTitle"></h2><div id="bList"></div><div class="note">Fioletowy pasek = GMV w wybranym okresie. Δ = zmiana vs analogiczny okres poprzedni. GMV brandu liczone item-level (Multidieta osobno jako Foodango).</div></div>
-  <div class="card"><h2>Koncentracja — udział TOP3 i TOP5 w GMV (miesięcznie)</h2><div class="ch"><canvas id="bConc"></canvas></div></div>`;
+  <div class="seg"><button id="bm-mtd" class="${window.brandMode==='mtd'?'on':''}" onclick="brandTab('mtd')">${MIES[P.mo]} MTD</button><button id="bm-prev" class="${window.brandMode==='prev'?'on':''}" onclick="brandTab('prev')">${mlab(prevM)} (pełny)</button><button id="bm-4w" class="${window.brandMode==='4w'?'on':''}" onclick="brandTab('4w')">4 tygodnie</button></div>
+  <div class="card"><h2 id="bTitle"></h2><div id="bList"></div><div class="note">Fioletowy pasek = GMV w wybranym okresie. Δ = zmiana vs analogiczny okres poprzedni. GMV brandu item-level (Multidieta osobno jako Foodango).</div></div>
+  <div class="card"><h2>Koncentracja — udział TOP3 i TOP5 w GMV</h2><div class="ch"><canvas id="bConc"></canvas></div></div>`;
   renderBrands();
+};
+INIT.brands=function(){
   const bm=[...new Set(D.brand_monthly.map(r=>r.month))].sort();
   const conc=bm.map(m=>{const rows=D.brand_monthly.filter(r=>r.month===m).sort((a,b)=>b.gmv-a.gmv);const tot=rows.reduce((s,r)=>s+ +r.gmv,0);return{m,t3:100*rows.slice(0,3).reduce((s,r)=>s+ +r.gmv,0)/tot,t5:100*rows.slice(0,5).reduce((s,r)=>s+ +r.gmv,0)/tot}});
   mkChart('bConc',{type:'line',data:{labels:conc.map(x=>mlab(x.m)),datasets:[
     {label:'TOP3',data:conc.map(x=>+x.t3.toFixed(1)),borderColor:'#ff9b00',pointRadius:0,borderWidth:2,tension:.3},
     {label:'TOP5',data:conc.map(x=>+x.t5.toFixed(1)),borderColor:'#a98fc9',pointRadius:0,borderWidth:2,tension:.3}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{boxWidth:10,boxHeight:10}}},scales:{x:{ticks:{maxTicksLimit:8},grid:{display:false}},y:{ticks:{callback:v=>v+'%'},suggestedMin:40,suggestedMax:80}}}});
-}
-
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:leg},scales:{x:{ticks:{maxTicksLimit:8},grid:{display:false}},y:{ticks:{callback:v=>v+'%'},suggestedMin:40,suggestedMax:80}}}});
+};
 function brandAgg(rows){const m=new Map();for(const r of rows){if(!m.has(r.brand))m.set(r.brand,{brand:r.brand,gmv:0,orders:0,nc:0});const o=m.get(r.brand);o.gmv+=+r.gmv;o.orders+=r.orders;o.nc+=r.new_customers}return[...m.values()].sort((a,b)=>b.gmv-a.gmv)}
 function brandTab(mode){window.brandMode=mode;document.querySelectorAll('.seg button').forEach(b=>b.classList.toggle('on',b.id==='bm-'+mode));renderBrands()}
 function renderBrands(){
-  const P=projections();
-  const curM=iso(new Date(P.y,P.mo,1)).slice(0,10);
-  const prevM=iso(new Date(P.y,P.mo-1,1)).slice(0,10);
-  const prev2M=iso(new Date(P.y,P.mo-2,1)).slice(0,10);
+  const curM=iso(new Date(P.y,P.mo,1));
+  const prevM=iso(new Date(P.y,P.mo-1,1));
+  const prev2M=iso(new Date(P.y,P.mo-2,1));
   let cur,ref,title;
   const wAll=[...new Set(D.brand_weekly.map(r=>r.week))].sort();
-  if(window.brandMode==='prev'){cur=brandAgg(D.brand_monthly.filter(r=>r.month.slice(0,10)===prevM));ref=brandAgg(D.brand_monthly.filter(r=>r.month.slice(0,10)===prev2M));title='Brandy — '+mlab(prevM)+' (pełny miesiąc) vs '+mlab(prev2M)}
-  else if(window.brandMode==='4w'){const w4=wAll.slice(-5,-1),w4p=wAll.slice(-9,-5);cur=brandAgg(D.brand_weekly.filter(r=>w4.includes(r.week)));ref=brandAgg(D.brand_weekly.filter(r=>w4p.includes(r.week)));title='Brandy — ostatnie 4 pełne tygodnie vs 4 wcześniejsze'}
-  else{cur=brandAgg(D.brand_monthly.filter(r=>r.month.slice(0,10)===curM));ref=brandAgg(D.brand_monthly.filter(r=>r.month.slice(0,10)===prevM)).map(x=>({...x,gmv:x.gmv*P.nd/30}));title='Brandy — '+MIES[P.mo]+' MTD (dni 1–'+P.nd+') vs proporcjonalny maj'}
+  if(window.brandMode==='prev'){cur=brandAgg(D.brand_monthly.filter(r=>r.month.slice(0,10)===prevM));ref=brandAgg(D.brand_monthly.filter(r=>r.month.slice(0,10)===prev2M));title='Brandy — '+mlab(prevM)+' vs '+mlab(prev2M)}
+  else if(window.brandMode==='4w'){const w4=wAll.slice(-5,-1),w4p=wAll.slice(-9,-5);cur=brandAgg(D.brand_weekly.filter(r=>w4.includes(r.week)));ref=brandAgg(D.brand_weekly.filter(r=>w4p.includes(r.week)));title='Brandy — 4 pełne tygodnie vs 4 wcześniejsze'}
+  else{cur=brandAgg(D.brand_monthly.filter(r=>r.month.slice(0,10)===curM));ref=brandAgg(D.brand_monthly.filter(r=>r.month.slice(0,10)===prevM)).map(x=>({...x,gmv:x.gmv*P.nd/30}));title='Brandy — '+MIES[P.mo]+' MTD (1–'+P.nd+') vs proporcjonalny '+mlab(prevM)}
   const tot=cur.reduce((s,x)=>s+x.gmv,0);
   const top=cur.slice(0,12);const max=top[0]?.gmv||1;
   document.getElementById('bTitle').textContent=title;
   document.getElementById('bList').innerHTML=top.map(x=>{
     const r=ref.find(y=>y.brand===x.brand);const d=r&&r.gmv>0?100*(x.gmv-r.gmv)/r.gmv:null;
-    return`<div class="brandrow"><span class="n">${x.brand.replace(' (Multidieta)','')}</span><span class="b"><i style="width:${100*x.gmv/max}%"></i></span><span class="v">${nf.format(Math.round(x.gmv/1000))}k · ${pc(100*x.gmv/tot,0)}</span><span class="d ${d>0?'pos':'neg'}">${d!=null?sgn(d):''}</span></div>`}).join('');
+    return`<div class="brandrow"><span class="n">${x.brand.replace(' (Multidieta)','')}</span><span class="b"><i style="width:${100*x.gmv/max}%"></i></span><span class="v">${kk(x.gmv)} · ${pc(100*x.gmv/tot,0)}</span><span class="d ${d>0?'pos':'neg'}">${d!=null?sgn(d):''}</span></div>`}).join('');
 }
+
+// ====== MARKETING ======
+RENDER.mkt=function(){
+  const mk=D.marketing_daily||[];
+  const mtd=mtdOf(mk);
+  const perfMtd=mtd.reduce((s,r)=>s+ +(r.meta_spend||0)- +(r.meta_catering_spend||0)+ +(r.google_spend||0),0);
+  const perfProj=mtd.length?perfMtd/mtd.length*P.dim:null;
+  const limit=PERF_LIMIT[iso(new Date(P.y,P.mo,1)).slice(0,7)];
+  const metaMtdS=mtd.reduce((s,r)=>s+ +(r.meta_spend||0),0);
+  const metaMtdV=mtd.reduce((s,r)=>s+ +(r.meta_purchase_value||0),0);
+  const metaMtdP=mtd.reduce((s,r)=>s+ +(r.meta_purchases||0),0);
+  const gMtd=mtd.reduce((s,r)=>s+ +(r.google_spend||0),0);
+  const pz=D.przesiadka_daily||[];
+  const pzMtd=mtdOf(pz);
+  const pzL=pzMtd.reduce((s,r)=>s+(r.leads||0),0),pzO=pzMtd.reduce((s,r)=>s+(r.sd_orders||0),0),pzG=pzMtd.reduce((s,r)=>s+ +(r.sd_gmv||0),0);
+  const sdD=Math.ceil((pd('2026-07-06')-new Date())/86400000);
+  const mr=D.monthly_results;
+  document.getElementById('tab-mkt').innerHTML=`
+  <div class="card">
+    <h2>Wydatki performance — ${MIES[P.mo]} MTD <span class="pill">Meta FDG + Google</span></h2>
+    <div class="big">${k(perfMtd)} <small>PLN</small></div>
+    ${limit?`<div class="bar"><i style="width:${Math.min(100,100*perfMtd/limit)}%"></i><s style="left:${100*P.nd/P.dim}%"></s></div>
+    <div class="proj"><span>projekcja <b>${k(perfProj)}</b></span><span>limit miesiąca <b>${k(limit)}</b> <span class="${perfProj>limit?'neg':'pos'}">(${pc(100*perfProj/limit,0)})</span></span></div>`:''}
+    <div class="note">Limit 250 tys. = decyzja zarządcza po maju (pierwotny budżet Excela: 150 tys.). Meta bez kampanii cateringów.</div>
+  </div>
+  <div class="grid">
+    <div class="kpi"><div class="l">Meta ROAS MTD</div><div class="v ${metaMtdV/metaMtdS>=4?'pos':''}">${(metaMtdV/metaMtdS).toLocaleString('pl-PL',{maximumFractionDigits:2})}</div><div class="d">maj: 5,2 (najlepszy 2026) · pixel, całe konto</div></div>
+    <div class="kpi"><div class="l">Meta koszt/zakup MTD</div><div class="v">${zl(metaMtdS/metaMtdP)}</div><div class="d">${nf.format(metaMtdP)} zakupów (pixel) · maj: 139 zł</div></div>
+    <div class="kpi"><div class="l">Spend Meta MTD</div><div class="v">${k(metaMtdS)}</div><div class="d">w tym cateringi ${k(mtd.reduce((s,r)=>s+ +(r.meta_catering_spend||0),0))}</div></div>
+    <div class="kpi"><div class="l">Spend Google MTD</div><div class="v">${k(gMtd)}</div><div class="d">panel pełny (search + PMax + brand)</div></div>
+  </div>
+  <div class="card"><h2>Wydatki dziennie — 10 tygodni <span class="pill">tys. PLN</span></h2><div class="ch"><canvas id="mSpend"></canvas></div></div>
+  <div class="card"><h2>Meta — ROAS i koszt/zakup tygodniowo</h2><div class="ch"><canvas id="mRoas"></canvas></div><div class="note">ROAS wg pixela Meta (atrybucja platformy — zawyżona vs rzeczywistość; trend ważniejszy niż poziom).</div></div>
+  <div class="card"><h2>CAC miesięcznie — łączny vs realny vs budżet</h2><div class="ch"><canvas id="mCac"></canvas></div><div class="note">CAC łączny = całość marketingu / nowi klienci. Realny = bez budżetów wydawanych w imieniu cateringów. Konwencja: nie oceniamy pierwszej transakcji przez rentowność — biznes żyje z powracalności.</div></div>
+  <h3 class="gsec">Kampania Przesiadka (SD 150)</h3>
+  <div class="card" style="border-color:#ff9b0066">
+    <div class="flag info" style="margin-bottom:10px">Decyzja strategiczna: zostaje czy zamykamy — <b>6.07, za ${sdD} dni</b>. Próg: skumulowana retencja kohort kwi+maj do 30.06 (>30–35% zostaje, <25% koniec). CAC łączny wg raportu leadowego: ~284 zł przy celu 285.</div>
+    <div class="grid" style="margin-bottom:0">
+      <div class="kpi"><div class="l">Leady ${MIES[P.mo]} MTD</div><div class="v">${nf.format(pzL)}</div><div class="d">kody SD wydane (bez batchy masowych)</div></div>
+      <div class="kpi"><div class="l">Zamówienia SD MTD</div><div class="v">${nf.format(pzO)}</div><div class="d">konwersja ${pc(pzL?100*pzO/pzL:null)} · GMV ${k(pzG)}</div></div>
+    </div>
+  </div>
+  <div class="card"><h2>Przesiadka — leady i zamówienia tygodniowo</h2><div class="ch"><canvas id="mPz"></canvas></div><div class="note">Pełny rachunek kosztowy (z alokacją 13% PMax) liczy poniedziałkowy raport leadowy — tu wolumeny i konwersja z bazy.</div></div>`;
+};
+INIT.mkt=function(){
+  const mw=fullWeeks(wkAgg(D.marketing_daily||[],['meta_spend','meta_catering_spend','google_spend','meta_purchase_value','meta_purchases'])).slice(-10);
+  mkChart('mSpend',{type:'bar',data:{labels:mw.map(x=>wlab(x.week)),datasets:[
+    {label:'Meta FDG',data:mw.map(x=>Math.round((x.meta_spend-x.meta_catering_spend)/1000)),backgroundColor:'#ff9b00',borderRadius:2},
+    {label:'Meta cateringi',data:mw.map(x=>Math.round(x.meta_catering_spend/1000)),backgroundColor:'#a98fc9',borderRadius:2},
+    {label:'Google',data:mw.map(x=>Math.round(x.google_spend/1000)),backgroundColor:'#4fbf8b',borderRadius:2}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:leg},scales:{x:{stacked:true,ticks:{maxTicksLimit:6},grid:{display:false}},y:{stacked:true}}}});
+  mkChart('mRoas',{data:{labels:mw.map(x=>wlab(x.week)),datasets:[
+    {type:'line',label:'ROAS',data:mw.map(x=>+(x.meta_purchase_value/x.meta_spend).toFixed(2)),borderColor:'#ff9b00',pointRadius:0,borderWidth:2,tension:.3,yAxisID:'y'},
+    {type:'line',label:'Koszt/zakup (zł)',data:mw.map(x=>Math.round(x.meta_spend/Math.max(1,x.meta_purchases))),borderColor:'#ff5f5a',borderDash:[5,4],pointRadius:0,borderWidth:2,tension:.3,yAxisID:'y2'}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:leg},scales:{x:{ticks:{maxTicksLimit:6},grid:{display:false}},y:{position:'left'},y2:{position:'right',grid:{display:false}}}}});
+  const mr=D.monthly_results;
+  mkChart('mCac',{data:{labels:mr.map(m=>mlab(m.month)),datasets:[
+    {type:'bar',label:'CAC łączny',data:mr.map(m=>+m.cac),backgroundColor:'#ff9b00',borderRadius:4},
+    {type:'bar',label:'CAC realny',data:mr.map(m=>m.cac_real?+m.cac_real:null),backgroundColor:'#4fbf8b',borderRadius:4},
+    {type:'line',label:'Budżet',data:mr.map(m=>{const b=D.budgets.find(x=>x.month===m.month);return b?+b.cac:null}),borderColor:'#f2f5f3',borderDash:[4,4],pointRadius:3,borderWidth:1.5}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:leg},scales:{x:{grid:{display:false}},y:{title:{display:true,text:'zł'}}}}});
+  const pw=fullWeeks(wkAgg(D.przesiadka_daily||[],['leads','sd_orders'])).slice(-8);
+  mkChart('mPz',{data:{labels:pw.map(x=>wlab(x.week)),datasets:[
+    {type:'bar',label:'Leady',data:pw.map(x=>x.leads),backgroundColor:'#a98fc9',borderRadius:3,yAxisID:'y'},
+    {type:'line',label:'Zamówienia SD',data:pw.map(x=>x.sd_orders),borderColor:'#ff9b00',pointRadius:3,borderWidth:2,tension:.3,yAxisID:'y2'}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:leg},scales:{x:{ticks:{maxTicksLimit:8},grid:{display:false}},y:{position:'left'},y2:{position:'right',grid:{display:false}}}}});
+};
+
+// ====== LEJEK ======
+RENDER.funnel=function(){
+  const fw=fullWeeks(wkAgg(D.funnel_daily||[],['sessions','s_atc','s_checkout','s_purchase','purchases','purchase_revenue']));
+  const lw=fw[fw.length-1],pw=fw[fw.length-2];
+  const cr=w=>w?100*w.s_purchase/w.sessions:null;
+  const steps=[['Sesje','sessions'],['Koszyk','s_atc'],['Checkout','s_checkout'],['Zakup','s_purchase']];
+  const funHtml=steps.map(([nm,key],i)=>{
+    const v=lw?lw[key]:0;const base=lw?lw.sessions:1;
+    const prevStep=i?lw[steps[i-1][1]]:null;
+    const pass=prevStep?100*v/prevStep:null;
+    const wowV=pw?100*(v-pw[key])/pw[key]:null;
+    return`<div class="step"><span class="nm">${nm}</span><span class="trk"><i style="width:${Math.max(7,100*v/base)}%"></i><span>${nf.format(v)}</span></span><span class="pct">${pass!=null?'→ '+pc(pass):''}<br><span class="${wowV>0?'pos':'neg'}">${wowV!=null?sgn(wowV)+' WoW':''}</span></span></div>`}).join('');
+  const ch=D.channel_daily||[];
+  const chW=new Map();
+  for(const r of ch){const w=iso(monday(pd(r.date)));if(!chW.has(w))chW.set(w,new Map());const m=chW.get(w);if(!m.has(r.channel))m.set(r.channel,{sessions:0,purchases:0,revenue:0});const o=m.get(r.channel);o.sessions+=r.sessions;o.purchases+=r.purchases;o.revenue+=+r.revenue}
+  const wks=[...chW.keys()].sort();const curW=iso(monday(new Date()));
+  const fullW=wks.filter(w=>w<curW);
+  const lcw=chW.get(fullW[fullW.length-1])||new Map(),pcw=chW.get(fullW[fullW.length-2])||new Map();
+  const chRows=[...lcw.entries()].map(([c,v])=>({c,...v,prev:pcw.get(c)})).sort((a,b)=>b.revenue-a.revenue);
+  document.getElementById('tab-funnel').innerHTML=`
+  <div class="card"><h2>Lejek — tydzień ${lw?wlab(lw.week):'—'} <span class="pill">sesje GA4</span></h2><div class="fun">${funHtml}</div>
+  <div class="note">Kroki liczone w sesjach (sesja z danym zdarzeniem), last-click. Eksport GA4 ma ~1 dzień opóźnienia.</div></div>
+  <div class="grid">
+    <div class="kpi"><div class="l">CR sesja→zakup</div><div class="v ${cr(lw)>=3.5?'pos':''}">${pc(cr(lw),2)}</div><div class="d">${pw?'poprzedni tydzień: '+pc(cr(pw),2):''}</div></div>
+    <div class="kpi"><div class="l">Revenue GA4 (tydzień)</div><div class="v">${k(lw?.purchase_revenue)}</div><div class="d">${pw?sgn(100*(lw.purchase_revenue-pw.purchase_revenue)/pw.purchase_revenue)+' WoW':''}</div></div>
+  </div>
+  <div class="card"><h2>CR i sesje — tygodniowo</h2><div class="ch"><canvas id="fCr"></canvas></div></div>
+  <div class="card"><h2>Kanały — tydzień ${lw?wlab(lw.week):'—'}</h2><div class="tbl"><table><tr><th>Kanał</th><th>Sesje</th><th>CR</th><th>Revenue</th><th>zł/sesję</th><th>Rev WoW</th></tr>
+  ${chRows.map(r=>{const wow=r.prev&&r.prev.revenue>0?100*(r.revenue-r.prev.revenue)/r.prev.revenue:null;return`<tr><td>${r.c}</td><td>${nf.format(r.sessions)}</td><td>${pc(100*r.purchases/r.sessions,2)}</td><td><b>${kk(r.revenue)}</b></td><td>${(r.revenue/r.sessions).toLocaleString('pl-PL',{maximumFractionDigits:1})}</td><td class="${wow>0?'pos':'neg'}">${wow!=null?sgn(wow):'—'}</td></tr>`}).join('')}</table></div>
+  <div class="note">Mapowanie kanałów z surowych źródeł sesji (last-click): SMS i Email po medium, Paid Search = google/cpc, Paid Social = źródła Meta. „Inne" zawiera ruch nieoznaczony (m.in. self-referral i aplikację) — jak Unassigned w raportach.</div></div>`;
+};
+INIT.funnel=function(){
+  const fw=fullWeeks(wkAgg(D.funnel_daily||[],['sessions','s_purchase'])).slice(-26);
+  mkChart('fCr',{data:{labels:fw.map(x=>wlab(x.week)),datasets:[
+    {type:'bar',label:'Sesje',data:fw.map(x=>x.sessions),backgroundColor:'#33524a',borderRadius:2,yAxisID:'y'},
+    {type:'line',label:'CR %',data:fw.map(x=>+(100*x.s_purchase/x.sessions).toFixed(2)),borderColor:'#ff9b00',pointRadius:0,borderWidth:2.5,tension:.3,yAxisID:'y2'}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:leg},scales:{x:{ticks:{maxTicksLimit:7},grid:{display:false}},y:{position:'left'},y2:{position:'right',grid:{display:false},ticks:{callback:v=>v+'%'}}}}});
+};
+
+// ====== B2B ======
+RENDER.b2b=function(){
+  const st=(D.b2b_status||[])[D.b2b_status.length-1];
+  const mr=D.monthly_results;
+  const lastMr=mr[mr.length-1];
+  const share=100*+lastMr.b2b/+lastMr.revenue_total;
+  const pk=D.b2b_packages||[];
+  const cats=['TOP 5','TOP 10','TOP 3','Pitch','Carry-over maj'];
+  const pkHtml=cats.map(cat=>{
+    const rows=pk.filter(p=>p.category===cat);if(!rows.length)return'';
+    const sum=rows.reduce((s,r)=>s+ +r.amount,0);
+    return`<h3 class="gsec" style="margin-top:14px">${cat} — ${k(sum)}</h3>
+    <div class="tbl"><table>${rows.map(r=>`<tr><td>${r.brand}</td><td style="text-align:left;color:var(--mut)">${r.package||''}</td><td><b>${kk(+r.amount)}</b></td><td style="color:${r.status&&r.status.includes('pitch')?'var(--amber)':'var(--mint)'};font-size:11px">${r.status}</td></tr>`).join('')}</table></div>`}).join('');
+  document.getElementById('tab-b2b').innerHTML=`
+  <div class="card">
+    <h2>B2B ${st?mlab(st.month):''} — zafakturowane <span class="pill green">w celu</span></h2>
+    <div class="big">${k(+st?.invoiced)} <small>PLN</small></div>
+    <div class="proj"><span>cel <b>${k(+st?.target_low)}–${k(+st?.target_high)}</b></span><span>pitche w toku <b>+${k(+st?.pitches)}</b></span><span>max <b>${k(+st?.invoiced + +st?.pitches)}</b></span></div>
+    <div class="note">${st?.note||''}</div>
+  </div>
+  <div class="grid">
+    <div class="kpi"><div class="l">B2B ${mlab(lastMr.month)} (księgowo)</div><div class="v pos">${k(+lastMr.b2b)}</div><div class="d">${pc(share,0)} przychodu razem · 327% planu</div></div>
+    <div class="kpi"><div class="l">Trajektoria 2026</div><div class="v">${mr.map(m=>Math.round(+m.b2b/1000)).join(' → ')}</div><div class="d">tys. PLN miesięcznie (sty → ${mlab(lastMr.month)})</div></div>
+  </div>
+  <div class="flag info" style="margin-bottom:12px">Twarda reguła: B2B to upside — nie wchodzi do prognoz ani baseline'u budżetowego.</div>
+  <div class="card"><h2>Przychody — prowizja vs B2B miesięcznie <span class="pill">tys. PLN</span></h2><div class="ch"><canvas id="bRev"></canvas></div></div>
+  <div class="card"><h2>Mini P&L 2026 <span class="pill">tys. PLN · EBITDA bez aktywacji</span></h2><div class="tbl"><table>
+    <tr><th></th>${mr.map(m=>`<th>${mlab(m.month)}</th>`).join('')}</tr>
+    <tr><td>Przychód razem</td>${mr.map(m=>`<td>${Math.round(+m.revenue_total/1000)}</td>`).join('')}</tr>
+    <tr><td>— prowizja</td>${mr.map(m=>`<td>${Math.round(+m.commission/1000)}</td>`).join('')}</tr>
+    <tr><td>— B2B</td>${mr.map(m=>`<td class="pos">${Math.round(+m.b2b/1000)}</td>`).join('')}</tr>
+    <tr><td>Marketing</td>${mr.map(m=>`<td>${Math.round(+m.marketing_total/1000)}</td>`).join('')}</tr>
+    <tr><td><b>EBITDA</b></td>${mr.map(m=>`<td class="${+m.ebitda<0?'neg':'pos'}"><b>${Math.round(+m.ebitda/1000)}</b></td>`).join('')}</tr>
+    <tr><td style="color:var(--mut)">EBITDA budżet</td>${mr.map(m=>`<td style="color:var(--mut)">${Math.round(+m.ebitda_budget/1000)}</td>`).join('')}</tr>
+  </table></div></div>
+  <div class="card"><h2>Pakiety — ${st?mlab(st.month):''} <span class="pill">stan z planu B2B</span></h2>${pkHtml}
+  <div class="note">Źródło: STAN_CZERWIEC.md (plan sprzedaży B2B). Aktualizacja przy zmianach stanu miesiąca.</div></div>`;
+};
+INIT.b2b=function(){
+  const mr=D.monthly_results;
+  mkChart('bRev',{type:'bar',data:{labels:mr.map(m=>mlab(m.month)),datasets:[
+    {label:'Prowizja',data:mr.map(m=>Math.round(+m.commission/1000)),backgroundColor:'#ff9b00',borderRadius:3},
+    {label:'B2B',data:mr.map(m=>Math.round(+m.b2b/1000)),backgroundColor:'#4fbf8b',borderRadius:3}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:leg},scales:{x:{stacked:true,grid:{display:false}},y:{stacked:true}}}});
+};
 
 document.getElementById('gate').classList.toggle('hide',!!getTok());
 refresh();
