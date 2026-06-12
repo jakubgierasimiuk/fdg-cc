@@ -7,44 +7,42 @@
 <meta name="theme-color" content="#14241e">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>Foodango Command Centre</title>
+<title>Foodango — mostek</title>
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="icon192.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon192.png">
+<link rel="shortcut icon" type="image/png" href="icon192.png">
 <link rel="apple-touch-icon" href="icon180.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#14241e;--card:#1d362d;--card2:#24423a;--line:#33524a;--txt:#f2f5f3;--mut:#9eb5ac;--amber:#ff9b00;--coral:#ff5f5a;--mint:#4fbf8b;--violet:#a98fc9;--grad:linear-gradient(120deg,#ffb52e,#ff9b00 45%,#ff5f5a)}
 *{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--txt);font-family:Urbanist,system-ui,sans-serif;font-size:15px;padding-bottom:76px;-webkit-font-smoothing:antialiased}
-header{position:sticky;top:0;z-index:10;background:rgba(20,36,30,.94);backdrop-filter:blur(10px);padding:12px 16px 8px;border-bottom:1px solid var(--line)}
-.brand{display:flex;align-items:center;gap:10px}
-.brand img{height:19px;display:block}
-.brand span{color:var(--mut);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1.6px;padding-top:2px}
-.status{display:flex;justify-content:space-between;align-items:center;margin-top:7px;font-size:12px;color:var(--mut)}
-.status button{background:var(--card2);color:var(--txt);border:1px solid var(--line);border-radius:8px;padding:4px 12px;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;transition:background .15s}
-.status button:active{transform:scale(.97)}
-main{padding:14px 14px 8px;max-width:780px;margin:0 auto}
-.card,.kpi{background:var(--card);border:1px solid var(--line);border-radius:16px;animation:in .4s ease both}
-.card{padding:15px;margin-bottom:12px}
-.card:nth-child(2){animation-delay:.04s}.card:nth-child(3){animation-delay:.08s}.card:nth-child(4){animation-delay:.12s}.card:nth-child(5){animation-delay:.16s}
+body{background:var(--bg);color:var(--txt);font-family:Urbanist,system-ui,sans-serif;font-size:15px;padding-bottom:74px;-webkit-font-smoothing:antialiased}
+header{position:sticky;top:0;z-index:10;background:rgba(20,36,30,.94);backdrop-filter:blur(10px);padding:9px 14px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px}
+header img{height:17px;flex-shrink:0}
+header .nm{color:var(--amber);font-size:13px;font-weight:800;letter-spacing:.4px;flex-shrink:0}
+header .st{color:var(--mut);font-size:11.5px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+header button{background:var(--card2);color:var(--txt);border:1px solid var(--line);border-radius:8px;padding:5px 12px;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;flex-shrink:0}
+main{padding:14px;max-width:1340px;margin:0 auto}
+section{display:grid;grid-template-columns:1fr;gap:0}
+.card,.kpi{background:var(--card);border:1px solid var(--line);border-radius:16px;animation:in .35s ease both}
+.card{padding:15px;margin-bottom:12px;min-width:0}
 @keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 .card h2{font-size:12.5px;font-weight:800;color:var(--mut);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px}
-.big{font-size:34px;font-weight:800;letter-spacing:-.8px;background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;font-variant-numeric:tabular-nums}
+.big{font-size:33px;font-weight:800;letter-spacing:-.8px;background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;font-variant-numeric:tabular-nums}
 .big small{font-size:15px;-webkit-text-fill-color:var(--mut);font-weight:600}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
-.kpi{padding:12px;position:relative;overflow:hidden}
-.grid .kpi:nth-child(2){animation-delay:.05s}.grid .kpi:nth-child(3){animation-delay:.1s}.grid .kpi:nth-child(4){animation-delay:.15s}.grid .kpi:nth-child(5){animation-delay:.2s}.grid .kpi:nth-child(6){animation-delay:.25s}
-.kpi .l{font-size:10.5px;color:var(--mut);text-transform:uppercase;letter-spacing:.6px;font-weight:600}
-.kpi .v{font-size:22px;font-weight:800;margin-top:4px;font-variant-numeric:tabular-nums}
-.kpi .d{font-size:11.5px;margin-top:3px;color:var(--mut);line-height:1.45}
-.kpi canvas.spark{position:absolute;right:10px;top:12px;opacity:.9}
-.pos{color:var(--mint)}.neg{color:var(--coral)}.amb{color:var(--amber)}
+.kpi{padding:12px}
+.kpi .l{font-size:10.5px;color:var(--mut);text-transform:uppercase;letter-spacing:.6px;font-weight:600;margin-bottom:4px}
+.kpi .row{display:flex;align-items:center;gap:8px;justify-content:space-between}
+.kpi .v{font-size:21px;font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap}
+.kpi canvas.spark{width:78px;height:30px;flex-shrink:0;opacity:.85}
+.kpi .d{font-size:11.5px;margin-top:4px;color:var(--mut);line-height:1.45}
+.pos{color:var(--mint)}.neg{color:var(--coral)}.amb{color:var(--amber)}.mut{color:var(--mut)}
 .bar{height:8px;background:#0e1b16;border-radius:6px;overflow:hidden;margin-top:10px;position:relative}
 .bar>i{display:block;height:100%;background:var(--grad);border-radius:6px;transition:width .8s cubic-bezier(.2,.8,.2,1)}
 .bar>s{position:absolute;top:-2px;bottom:-2px;width:2px;background:#fffa;border-radius:2px}
-.proj{display:flex;gap:14px;margin-top:10px;font-size:12.5px;color:var(--mut);flex-wrap:wrap}
+.proj{display:flex;gap:13px;margin-top:10px;font-size:12.5px;color:var(--mut);flex-wrap:wrap}
 .proj b{color:var(--txt);font-weight:700;font-variant-numeric:tabular-nums}
 .flag{display:flex;gap:9px;align-items:flex-start;padding:9px 11px;border-radius:11px;margin-bottom:6px;font-size:13px;background:var(--card2);line-height:1.45}
 .flag::before{content:"";width:8px;height:8px;border-radius:50%;margin-top:5px;flex-shrink:0}
@@ -55,19 +53,21 @@ main{padding:14px 14px 8px;max-width:780px;margin:0 auto}
 .thread .dl{white-space:nowrap;font-weight:700;font-size:12.5px}
 canvas{max-width:100%}
 .ch{position:relative;height:215px}
-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(16,32,26,.97);backdrop-filter:blur(10px);border-top:1px solid var(--line);z-index:20;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.scrollx{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.scrollx .inner{position:relative;height:215px}
+nav{position:fixed;bottom:0;left:0;right:0;background:rgba(16,32,26,.97);backdrop-filter:blur(10px);border-top:1px solid var(--line);z-index:20;overflow-x:auto;scrollbar-width:none}
 nav::-webkit-scrollbar{display:none}
-nav .wrap{display:flex;padding:6px 8px calc(7px + env(safe-area-inset-bottom));min-width:max-content;margin:0 auto;gap:2px}
-nav button{background:none;border:none;color:var(--mut);font-family:inherit;font-size:12.5px;font-weight:700;padding:9px 13px;border-radius:11px;white-space:nowrap;cursor:pointer;transition:all .2s}
+nav .wrap{display:flex;padding:6px 8px calc(7px + env(safe-area-inset-bottom));min-width:max-content;margin:0 auto;gap:2px;justify-content:flex-start}
+nav button{background:none;border:none;color:var(--mut);font-family:inherit;font-size:12.5px;font-weight:700;padding:9px 11px;border-radius:11px;white-space:nowrap;cursor:pointer}
 nav button.on{color:#14241e;background:var(--amber)}
 table{width:100%;border-collapse:collapse;font-size:12.5px;font-variant-numeric:tabular-nums}
-th{color:var(--mut);font-weight:600;text-align:right;padding:5px 6px;border-bottom:1px solid var(--line);white-space:nowrap;font-size:11.5px;text-transform:uppercase;letter-spacing:.4px}
+th{color:var(--mut);font-weight:600;text-align:right;padding:5px 6px;border-bottom:1px solid var(--line);white-space:nowrap;font-size:11px;text-transform:uppercase;letter-spacing:.4px}
 td{text-align:right;padding:6.5px 6px;border-bottom:1px solid #2a473e;white-space:nowrap}
 tr:last-child td{border-bottom:none}
 th:first-child,td:first-child{text-align:left}
 .tbl{overflow-x:auto;margin:0 -4px}
-.seg{display:flex;gap:6px;margin-bottom:10px}
-.seg button{flex:1;background:var(--card2);border:1px solid var(--line);color:var(--mut);border-radius:10px;padding:8px 4px;font-family:inherit;font-size:12.5px;font-weight:700;cursor:pointer;transition:all .15s}
+.seg{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+.seg button{flex:1;min-width:90px;background:var(--card2);border:1px solid var(--line);color:var(--mut);border-radius:10px;padding:8px 4px;font-family:inherit;font-size:12.5px;font-weight:700;cursor:pointer}
 .seg button.on{color:#14241e;background:var(--amber);border-color:var(--amber)}
 .heat td{padding:5px 4px;text-align:center;font-size:11.5px;border:1px solid #16291f;border-radius:4px}
 .brandrow{display:flex;align-items:center;gap:8px;padding:5.5px 0;font-size:13px}
@@ -78,11 +78,18 @@ th:first-child,td:first-child{text-align:left}
 .brandrow .d{flex:0 0 52px;text-align:right;font-size:11.5px;font-variant-numeric:tabular-nums}
 .fun{display:flex;flex-direction:column;gap:7px;margin:6px 0 2px}
 .fun .step{display:flex;align-items:center;gap:10px;font-size:12.5px}
-.fun .nm{flex:0 0 92px;color:var(--mut)}
+.fun .nm{flex:0 0 86px;color:var(--mut)}
 .fun .trk{flex:1;height:26px;background:#0e1b16;border-radius:7px;overflow:hidden;position:relative}
 .fun .trk i{display:block;height:100%;background:linear-gradient(90deg,#1D9E75,#4fbf8b);border-radius:7px;transition:width .8s ease}
 .fun .trk span{position:absolute;left:10px;top:0;bottom:0;display:flex;align-items:center;font-weight:700;font-size:12px;color:#eafff4}
 .fun .pct{flex:0 0 96px;text-align:right;font-size:11.5px;color:var(--mut);font-variant-numeric:tabular-nums}
+.brief{border:1px solid var(--line);border-radius:13px;padding:13px;margin-bottom:10px;background:var(--card2)}
+.brief h3{font-size:14px;font-weight:800;margin-bottom:6px}
+.brief .meta{font-size:11px;color:var(--mut);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+.brief .body{font-size:13.5px;line-height:1.6;color:var(--txt)}
+.brief button{margin-top:10px;background:var(--amber);color:#14241e;border:none;border-radius:9px;padding:7px 14px;font-family:inherit;font-weight:800;font-size:12.5px;cursor:pointer}
+details{margin-top:8px}
+summary{cursor:pointer;color:var(--mut);font-size:13px;font-weight:700;padding:6px 0}
 #gate{position:fixed;inset:0;background:var(--bg);z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:30px;text-align:center}
 #gate input{width:100%;max-width:380px;background:var(--card);border:1px solid var(--line);color:var(--txt);padding:12px;border-radius:10px;font-family:inherit}
 #gate button{background:var(--amber);color:#14241e;border:none;padding:12px 30px;border-radius:10px;font-weight:800;font-family:inherit;font-size:15px;cursor:pointer}
@@ -93,40 +100,58 @@ th:first-child,td:first-child{text-align:left}
 .pill.green{background:#4fbf8b22;color:var(--mint)}
 .skel{height:120px;border-radius:16px;background:linear-gradient(100deg,var(--card) 40%,var(--card2) 50%,var(--card) 60%);background-size:200% 100%;animation:sk 1.2s infinite linear;margin-bottom:12px}
 @keyframes sk{to{background-position:-200% 0}}
-h3.gsec{font-size:11.5px;font-weight:800;color:var(--amber);text-transform:uppercase;letter-spacing:1px;margin:4px 2px 8px}
+h3.gsec{font-size:11.5px;font-weight:800;color:var(--amber);text-transform:uppercase;letter-spacing:1px;margin:6px 2px 8px}
+@media(min-width:1000px){
+  section{grid-template-columns:1fr 1fr;gap:12px;align-items:start}
+  section>.card,section>div{margin-bottom:0}
+  .full{grid-column:1 / -1}
+  .grid{grid-template-columns:repeat(3,1fr)}
+  .grid.g2{grid-template-columns:repeat(2,1fr)}
+  nav .wrap{justify-content:center}
+  .ch{height:250px}
+}
 </style>
 </head>
 <body>
 <div id="gate" class="hide">
   <img src="logo.svg" alt="Foodango" style="height:30px;margin-bottom:4px">
-  <p style="color:var(--mut);max-width:340px">Podaj token dostępu, żeby połączyć się z danymi Command Centre.</p>
+  <p style="color:var(--mut);max-width:340px">Podaj token dostępu, żeby połączyć się z danymi.</p>
   <input id="tok" placeholder="token dostępu" autocomplete="off">
   <button onclick="saveTok()">Połącz</button>
 </div>
 
 <header>
-  <div class="brand"><img src="logo.svg" alt="Foodango"><span>command centre</span></div>
-  <div class="status"><span id="st">Łączenie…</span><button onclick="refresh(true)">Odśwież</button></div>
+  <img src="logo.svg" alt="Foodango"><span class="nm">mostek</span>
+  <span class="st" id="st">Łączenie…</span>
+  <button onclick="refresh(true)">Odśwież</button>
 </header>
 
 <main id="main">
 <div id="skel"><div class="skel"></div><div class="skel" style="height:180px"></div><div class="skel" style="height:90px"></div></div>
 <section id="tab-cockpit" class="hide"></section>
+<section id="tab-puls" class="hide"></section>
 <section id="tab-sales" class="hide"></section>
 <section id="tab-clients" class="hide"></section>
+<section id="tab-ret" class="hide"></section>
 <section id="tab-brands" class="hide"></section>
+<section id="tab-multi" class="hide"></section>
 <section id="tab-mkt" class="hide"></section>
-<section id="tab-funnel" class="hide"></section>
+<section id="tab-traffic" class="hide"></section>
+<section id="tab-seo" class="hide"></section>
 <section id="tab-b2b" class="hide"></section>
 </main>
 
 <nav><div class="wrap">
   <button data-t="cockpit" class="on" onclick="tab('cockpit')">Cockpit</button>
+  <button data-t="puls" onclick="tab('puls')">Puls <span id="pulsBadge"></span></button>
   <button data-t="sales" onclick="tab('sales')">Sprzedaż</button>
   <button data-t="clients" onclick="tab('clients')">Klienci</button>
+  <button data-t="ret" onclick="tab('ret')">Retencja</button>
   <button data-t="brands" onclick="tab('brands')">Brandy</button>
+  <button data-t="multi" onclick="tab('multi')">Multidieta</button>
   <button data-t="mkt" onclick="tab('mkt')">Marketing</button>
-  <button data-t="funnel" onclick="tab('funnel')">Lejek</button>
+  <button data-t="traffic" onclick="tab('traffic')">Ruch</button>
+  <button data-t="seo" onclick="tab('seo')">SEO</button>
   <button data-t="b2b" onclick="tab('b2b')">B2B</button>
 </div></nav>
 
@@ -138,9 +163,9 @@ const DOM_F=[0,.853,1.209,.937,.901,.759,1.101,.944,1.451,1.652,1.316,1.041,1.05
 const DOW_F={1:1.169,2:.871,3:.849,4:.841,5:1.056,6:.694,0:1.029};
 const MIES=['sty','lut','mar','kwi','maj','cze','lip','sie','wrz','paź','lis','gru'];
 const PERF_LIMIT={'2026-06':250000};
-let D=null, charts={}, chartsInit={}, curTab='cockpit';
+let D=null,charts={},chartsInit={},curTab='cockpit';
 
-function getTok(){const h=new URLSearchParams(location.hash.slice(1)).get('t');const t=h||localStorage.getItem('cc_t');if(h)localStorage.setItem('cc_t',h);if(t){try{const man={name:'Foodango Command Centre',short_name:'Foodango CC',start_url:location.pathname+'#t='+t,scope:location.pathname.replace(/[^/]*$/,''),display:'standalone',background_color:'#14241e',theme_color:'#14241e',icons:[{src:new URL('icon192.png',location.href).href,sizes:'192x192',type:'image/png',purpose:'any maskable'},{src:new URL('icon512.png',location.href).href,sizes:'512x512',type:'image/png'}]};document.querySelector('link[rel=manifest]').href=URL.createObjectURL(new Blob([JSON.stringify(man)],{type:'application/manifest+json'}))}catch(e){}}return t}
+function getTok(){const h=new URLSearchParams(location.hash.slice(1)).get('t');const t=h||localStorage.getItem('cc_t');if(h)localStorage.setItem('cc_t',h);if(t){try{const man={name:'Foodango — mostek',short_name:'Foodango',start_url:location.pathname+'#t='+t,scope:location.pathname.replace(/[^/]*$/,''),display:'standalone',background_color:'#14241e',theme_color:'#14241e',icons:[{src:new URL('icon192.png',location.href).href,sizes:'192x192',type:'image/png',purpose:'any maskable'},{src:new URL('icon512.png',location.href).href,sizes:'512x512',type:'image/png'}]};document.querySelector('link[rel=manifest]').href=URL.createObjectURL(new Blob([JSON.stringify(man)],{type:'application/manifest+json'}))}catch(e){}}return t}
 function saveTok(){const v=document.getElementById('tok').value.trim();if(v){localStorage.setItem('cc_t',v);location.hash='t='+v;location.reload()}}
 function tab(t){curTab=t;document.querySelectorAll('main section').forEach(s=>s.classList.add('hide'));document.getElementById('tab-'+t).classList.remove('hide');document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));window.scrollTo(0,0);if(D&&!chartsInit[t]){chartsInit[t]=true;INIT[t]&&INIT[t]()}}
 
@@ -156,23 +181,31 @@ const dlab=s=>{const d=pd(s);return d.getDate()+'.'+String(d.getMonth()+1).padSt
 const wlab=s=>{const a=pd(s),b=new Date(a);b.setDate(a.getDate()+6);return a.getDate()+'.'+String(a.getMonth()+1).padStart(2,'0')+'–'+b.getDate()+'.'+String(b.getMonth()+1).padStart(2,'0')};
 const mlab=s=>{const d=pd(s);return MIES[d.getMonth()]+' '+String(d.getFullYear()).slice(2)};
 function monday(d){const x=new Date(d);const g=(x.getDay()+6)%7;x.setDate(x.getDate()-g);return x}
-function wkAgg(rows,fields){const m=new Map();for(const r of rows){const w=iso(monday(pd(r.date)));if(!m.has(w)){const o={week:w,days:0};fields.forEach(f=>o[f]=0);m.set(w,o)}const o=m.get(w);o.days++;fields.forEach(f=>o[f]+= +(r[f]||0))}return[...m.values()].sort((a,b)=>a.week<b.week?-1:1)}
-function fullWeeks(w){const cur=iso(monday(new Date()));return w.filter(x=>x.week<cur&&x.days===7)}
-function mtdOf(rows){if(!rows.length)return[];const last=pd(rows[rows.length-1].date);return rows.filter(r=>{const d=pd(r.date);return d.getFullYear()===last.getFullYear()&&d.getMonth()===last.getMonth()})}
-function spark(id,data,color){const el=document.getElementById(id);if(!el||data.length<2)return;const ctx=el.getContext('2d');const W=el.width=120,H=el.height=34;const mn=Math.min(...data),mx=Math.max(...data),rg=mx-mn||1;ctx.strokeStyle=color;ctx.lineWidth=2;ctx.lineJoin='round';ctx.beginPath();data.forEach((v,i)=>{const x=i/(data.length-1)*(W-4)+2,y=H-3-((v-mn)/rg)*(H-8);i?ctx.lineTo(x,y):ctx.moveTo(x,y)});ctx.stroke()}
-function countUp(el,target,fmt){const t0=performance.now();const step=t=>{const p=Math.min(1,(t-t0)/700);el.textContent=fmt(target*(0.3+0.7*p)*(p===1?1:1));el.innerHTML=fmt(target*p<target?target*Math.pow(p,0.6):target);if(p<1)requestAnimationFrame(step);else el.innerHTML=fmt(target)};requestAnimationFrame(step)}
+function wkAgg(rows,fields,dateKey='date'){const m=new Map();for(const r of rows){const w=iso(monday(pd(r[dateKey])));if(!m.has(w)){const o={week:w,days:0};fields.forEach(f=>o[f]=0);m.set(w,o)}const o=m.get(w);o.days++;fields.forEach(f=>o[f]+= +(r[f]||0))}return[...m.values()].sort((a,b)=>a.week<b.week?-1:1)}
+function fullWeeks(w){const cur=iso(monday(new Date()));return w.filter(x=>x.week<cur&&x.days>=7)}
+function ma(arr,n=7){return arr.map((_,i)=>{const a=arr.slice(Math.max(0,i-n+1),i+1).filter(v=>v!=null&&!isNaN(v));return a.length?a.reduce((s,v)=>s+v,0)/a.length:null})}
+function spark(id,data,color){const el=document.getElementById(id);if(!el||data.length<2)return;const ctx=el.getContext('2d');const W=el.width=156,H=el.height=60;const vals=data.filter(v=>v!=null);const mn=Math.min(...vals),mx=Math.max(...vals),rg=mx-mn||1;ctx.strokeStyle=color;ctx.lineWidth=3;ctx.lineJoin='round';ctx.beginPath();data.forEach((v,i)=>{if(v==null)return;const x=i/(data.length-1)*(W-6)+3,y=H-5-((v-mn)/rg)*(H-12);i?ctx.lineTo(x,y):ctx.moveTo(x,y)});ctx.stroke()}
+function rate(monthIso,brand){
+  if(monthIso>='2026-06') return brand==='Paczka Smaku'?0.08:0.10;
+  if(monthIso>='2026-05') return (brand==='Paczka Smaku'||brand==='Fit Apetit')?0.08:((brand==='Sztos'||brand==='Pomelo')?0.09:0.10);
+  return null;
+}
 
+function fullDaily(){return D.daily.filter(r=>!r.is_partial)}
+function todayRow(){return D.daily.find(r=>r.is_partial)}
+function mtdOf(rows){if(!rows.length)return[];const last=pd(rows[rows.length-1].date);return rows.filter(r=>{const d=pd(r.date);return d.getFullYear()===last.getFullYear()&&d.getMonth()===last.getMonth()})}
 function weekly(daily){
   const m=new Map();
-  for(const r of daily){const w=iso(monday(pd(r.date)));if(!m.has(w))m.set(w,{week:w,days:0,gmv:0,orders:0,new_orders:0,returning_orders:0,new_customers:0,app:0,web:0,app_gmv:0,web_gmv:0,tester:0,multi:0,dd:0});
-    const o=m.get(w);o.days++;o.gmv+=+r.gmv;o.orders+=r.orders;o.new_orders+=r.new_orders;o.returning_orders+=r.returning_orders;o.new_customers+=r.new_customers;o.app+=r.app_orders;o.web+=r.web_orders;o.app_gmv+=+r.app_gmv;o.web_gmv+=+r.web_gmv;o.tester+=r.tester_new_orders;o.multi+=r.multidiet_orders;o.dd+=(+r.avg_diet_days||0)*r.orders}
-  return[...m.values()].sort((a,b)=>a.week<b.week?-1:1).map(o=>({...o,aov:o.gmv/o.orders,tr:o.new_orders?100*o.tester/o.new_orders:null,as:o.app+o.web?100*o.app/(o.app+o.web):null,asg:o.app_gmv+o.web_gmv?100*o.app_gmv/(o.app_gmv+o.web_gmv):null,add:o.dd/o.orders,ms:o.orders?100*o.multi/o.orders:null}))
+  for(const r of daily){const w=iso(monday(pd(r.date)));if(!m.has(w))m.set(w,{week:w,days:0,gmv:0,orders:0,new_orders:0,returning_orders:0,new_customers:0,app:0,web:0,app_gmv:0,web_gmv:0,tester:0,multi:0,multi_gmv:0,dd:0,new_gmv:0,s1:0,s2:0,s3:0,s4:0});
+    const o=m.get(w);o.days++;o.gmv+=+r.gmv;o.orders+=r.orders;o.new_orders+=r.new_orders;o.returning_orders+=r.returning_orders;o.new_customers+=r.new_customers;o.app+=r.app_orders;o.web+=r.web_orders;o.app_gmv+=+r.app_gmv;o.web_gmv+=+r.web_gmv;o.tester+=r.tester_new_orders;o.multi+=r.multidiet_orders;o.multi_gmv+=+(r.multidiet_gmv||0);o.dd+=(+r.avg_diet_days||0)*r.orders;o.new_gmv+=+(r.new_gmv||0);o.s1+=r.seg_1_5||0;o.s2+=r.seg_6_10||0;o.s3+=r.seg_11_20||0;o.s4+=r.seg_21||0}
+  return[...m.values()].sort((a,b)=>a.week<b.week?-1:1).map(o=>({...o,aov:o.gmv/o.orders,tr:o.new_orders?100*o.tester/o.new_orders:null,as:o.app+o.web?100*o.app/(o.app+o.web):null,asg:o.app_gmv+o.web_gmv?100*o.app_gmv/(o.app_gmv+o.web_gmv):null,add:o.dd/o.orders,ms:o.orders?100*o.multi/o.orders:null,ngp:o.gmv?100*o.new_gmv/o.gmv:null}))
 }
 function projections(){
-  const last=pd(D.daily[D.daily.length-1].date);
+  const fd=fullDaily();
+  const last=pd(fd[fd.length-1].date);
   const y=last.getFullYear(),mo=last.getMonth();
   const dim=new Date(y,mo+1,0).getDate();
-  const mtdRows=mtdOf(D.daily);
+  const mtdRows=mtdOf(fd);
   const mtd=mtdRows.reduce((s,r)=>s+ +r.gmv,0);
   const nd=mtdRows.length;
   const naive=mtd/nd*dim;
@@ -180,74 +213,89 @@ function projections(){
   for(let dd=1;dd<=dim;dd++){const dt=new Date(y,mo,dd);const f=DOM_F[dd]*DOW_F[dt.getDay()];if(dd<=last.getDate())fPast+=f;else fFut+=f}
   let factored=mtd+(mtd/fPast)*fFut;
   if(mo===11&&last.getDate()>=5)factored=naive*0.75;
+  const avg7=fd.slice(-7).reduce((s,r)=>s+ +r.gmv,0)/Math.min(7,fd.slice(-7).length);
+  const runrate=mtd+avg7*(dim-nd);
   const bud=D.budgets.find(b=>pd(b.month).getMonth()===mo&&pd(b.month).getFullYear()===y);
-  return{y,mo,dim,nd,mtd,naive,factored,bud,last,mtdRows};
+  const mKey=iso(new Date(y,mo,1)).slice(0,7);
+  const bm=D.brand_monthly.filter(r=>r.month.slice(0,7)===mKey);
+  let comm=0;for(const r of bm){const rt=rate(mKey,r.brand);if(rt)comm+=r.gmv*rt}
+  const commProj=mtd>0?comm*factored/mtd:null;
+  return{y,mo,dim,nd,mtd,naive,factored,runrate,bud,last,mtdRows,comm,commProj,mKey};
 }
-
 async function refresh(force){
   const tok=getTok();
   if(!tok){document.getElementById('gate').classList.remove('hide');document.getElementById('skel').classList.add('hide');return}
   const cache=localStorage.getItem('cc_d');
   if(cache&&!D){try{D=JSON.parse(cache);render()}catch(e){}}
-  document.getElementById('st').textContent='Pobieranie danych…';
+  document.getElementById('st').textContent='Pobieranie…';
   try{
     const r=await fetch(SB+'/rest/v1/rpc/fdg_cc_api',{method:'POST',headers:{'Content-Type':'application/json',apikey:ANON,Authorization:'Bearer '+ANON},body:JSON.stringify({p_token:tok})});
     if(!r.ok){if(r.status===400||r.status===401){localStorage.removeItem('cc_t');document.getElementById('gate').classList.remove('hide')}throw new Error(r.status)}
     D=await r.json();
     try{localStorage.setItem('cc_d',JSON.stringify(D))}catch(e){}
     render();
-  }catch(e){document.getElementById('st').textContent=D?'Offline — dane z pamięci urządzenia':'Błąd połączenia ('+e.message+')'}
+  }catch(e){document.getElementById('st').textContent=D?'Offline — dane z pamięci':'Błąd ('+e.message+')'}
 }
-
+async function markRead(id){
+  try{await fetch(SB+'/rest/v1/rpc/fdg_cc_mark_read',{method:'POST',headers:{'Content-Type':'application/json',apikey:ANON,Authorization:'Bearer '+ANON},body:JSON.stringify({p_token:getTok(),p_id:id})});
+    const b=D.briefs.find(x=>x.id===id);if(b)b.read_at=new Date().toISOString();
+    localStorage.setItem('cc_d',JSON.stringify(D));RENDER.puls();updateBadge();
+  }catch(e){}
+}
 function mkChart(id,cfg){if(charts[id]){charts[id].destroy()}const el=document.getElementById(id);if(!el)return;Chart.defaults.color='#9eb5ac';Chart.defaults.borderColor='#33524a55';Chart.defaults.font.family='Urbanist';Chart.defaults.plugins.tooltip.backgroundColor='#0e1b16';Chart.defaults.plugins.tooltip.borderColor='#33524a';Chart.defaults.plugins.tooltip.borderWidth=1;Chart.defaults.plugins.tooltip.padding=10;charts[id]=new Chart(el,cfg)}
 const leg={labels:{boxWidth:10,boxHeight:10,font:{size:11}}};
+const esc=s=>String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;');
+const mdl=s=>esc(s).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/\n/g,'<br>');
+function updateBadge(){const n=(D.briefs||[]).filter(b=>!b.read_at).length;document.getElementById('pulsBadge').textContent=n?'●':''}
 
-// ====== GLOBAL DERIVED ======
 let P,W,LF,LW,PW;
-
 function render(){
   document.getElementById('skel').classList.add('hide');
-  P=projections();W=weekly(D.daily);LF=fullWeeks(W);LW=LF[LF.length-1];PW=LF[LF.length-2];
-  document.getElementById('st').textContent=`Dane do ${dlab(D.daily[D.daily.length-1].date)} · pobrano ${new Date().toLocaleTimeString('pl-PL',{hour:'2-digit',minute:'2-digit'})}`;
+  P=projections();W=weekly(fullDaily());LF=fullWeeks(W);LW=LF[LF.length-1];PW=LF[LF.length-2];
+  const td=todayRow();
+  const lastD=fullDaily()[fullDaily().length-1];
+  document.getElementById('st').textContent=`do ${dlab(lastD.date)}${td?' · dziś '+kk(+td.gmv):''} · ${new Date().toLocaleTimeString('pl-PL',{hour:'2-digit',minute:'2-digit'})}`;
   chartsInit={};
-  RENDER.cockpit();RENDER.sales();RENDER.clients();RENDER.brands();RENDER.mkt();RENDER.funnel();RENDER.b2b();
+  Object.keys(RENDER).forEach(t=>RENDER[t]());
+  updateBadge();
   document.getElementById('tab-'+curTab).classList.remove('hide');
   chartsInit[curTab]=true;INIT[curTab]&&INIT[curTab]();
 }
+const RENDER={},INIT={};
 
-const RENDER={}, INIT={};
-
-// ====== COCKPIT ======
+// ===== COCKPIT =====
 RENDER.cockpit=function(){
+  const td=todayRow();
+  const mk=mtdOf((D.marketing_daily||[]));
+  const perfMtd=mk.reduce((s,r)=>s+ +(r.meta_spend||0)- +(r.meta_catering_spend||0)+ +(r.google_spend||0),0);
+  const perfProj=mk.length?perfMtd/mk.length*P.dim:null;
+  const limit=PERF_LIMIT[P.mKey];
+  const mtdNew=P.mtdRows.reduce((s,r)=>s+r.new_customers,0),mtdRet=P.mtdRows.reduce((s,r)=>s+r.returning_orders,0);
+  const paceF=P.bud?100*P.factored/P.bud.gmv:null,paceN=P.bud?100*P.naive/P.bud.gmv:null,paceR=P.bud?100*P.runrate/P.bud.gmv:null;
+  const paceNew=P.bud?100*(mtdNew/P.nd*P.dim)/P.bud.new_customers:null;
+  const paceRet=P.bud?100*(mtdRet/P.nd*P.dim)/P.bud.returning_orders:null;
+  const cacPaid=mtdNew?perfMtd/mtdNew:null;
+  const mr=D.monthly_results,lastMr=mr[mr.length-1];
+  const fd30=fullDaily().slice(-30);
+  const app30=fd30.reduce((a,r)=>(a.a+=r.app_orders,a.w+=r.web_orders,a),{a:0,w:0});
+  const as30=100*app30.a/(app30.a+app30.w);
+  const ngpMtd=100*P.mtdRows.reduce((s,r)=>s+ +(r.new_gmv||0),0)/P.mtd;
   const wow=PW?100*(LW.gmv-PW.gmv)/PW.gmv:null;
   const avg4=LF.slice(-6,-2).reduce((s,x)=>s+x.gmv,0)/Math.max(1,LF.slice(-6,-2).length);
   const peakPrev=PW&&PW.gmv>1.25*avg4;
-  const mr=D.monthly_results,lastMr=mr[mr.length-1];
-  const cumE=mr.reduce((s,m)=>s+ +m.ebitda,0),cumEB=mr.reduce((s,m)=>s+ +(m.ebitda_budget||0),0);
-  const paceF=P.bud?100*P.factored/P.bud.gmv:null,paceN=P.bud?100*P.naive/P.bud.gmv:null;
-  const mtdNew=P.mtdRows.reduce((s,r)=>s+r.new_customers,0),mtdRet=P.mtdRows.reduce((s,r)=>s+r.returning_orders,0);
-  const paceNew=P.bud?100*(mtdNew/P.nd*P.dim)/P.bud.new_customers:null;
-  const paceRet=P.bud?100*(mtdRet/P.nd*P.dim)/P.bud.returning_orders:null;
-  const app30=D.daily.slice(-30).reduce((a,r)=>(a.a+=r.app_orders,a.w+=r.web_orders,a),{a:0,w:0});
-  const as30=100*app30.a/(app30.a+app30.w);
-  const beMonth=D.budgets.find(b=>+b.ebitda>0);
-  const mk=mtdOf(D.marketing_daily||[]);
-  const perfMtd=mk.reduce((s,r)=>s+ +(r.meta_spend||0)- +(r.meta_catering_spend||0)+ +(r.google_spend||0),0);
-  const perfProj=mk.length?perfMtd/mk.length*P.dim:null;
-  const limit=PERF_LIMIT[iso(new Date(P.y,P.mo,1)).slice(0,7)];
   const fw=fullWeeks(wkAgg(D.funnel_daily||[],['sessions','s_purchase']));
   const crW=fw.length?100*fw[fw.length-1].s_purchase/fw[fw.length-1].sessions:null;
   const crP=fw.length>1?100*fw[fw.length-2].s_purchase/fw[fw.length-2].sessions:null;
 
   const flags=[];
-  if(LW&&LW.tr>28)flags.push({s:'warn',t:`Tester rate ${pc(LW.tr)} w tygodniu ${wlab(LW.week)} — powyżej progu 28%.`});
-  if(wow!=null&&wow<-25)flags.push(peakPrev?{s:'info',t:`GMV ${sgn(wow)} WoW (${wlab(LW.week)}) — normalizacja po peaku z poprzedniego tygodnia, nie alarm.`}:{s:'warn',t:`GMV ${sgn(wow)} WoW (${wlab(LW.week)}) — bez peaku w tle, do wyjaśnienia.`});
-  if(paceF!=null&&paceF<80&&P.nd>=10)flags.push({s:'warn',t:`Pace GMV ${pc(paceF)} (sezonowy) przy ${P.nd} dniach miesiąca — poniżej 80%.`});
+  if(LW&&LW.tr>28)flags.push({s:'warn',t:`Tester rate ${pc(LW.tr)} (${wlab(LW.week)}) — powyżej progu 28%.`});
+  if(wow!=null&&wow<-25)flags.push(peakPrev?{s:'info',t:`GMV ${sgn(wow)} WoW — normalizacja po peaku z poprzedniego tygodnia, nie alarm.`}:{s:'warn',t:`GMV ${sgn(wow)} WoW (${wlab(LW.week)}) — bez peaku w tle, do wyjaśnienia.`});
+  if(paceF!=null&&paceF<80&&P.nd>=10)flags.push({s:'warn',t:`Pace GMV ${pc(paceF)} (sezonowy) przy ${P.nd} dniach — poniżej 80%.`});
   if(paceRet!=null&&paceRet<90)flags.push({s:'warn',t:`Powracający na ${pc(paceRet)} budżetu — odchylenie od najstabilniejszego filaru.`});
-  if(paceRet!=null&&paceRet>=98)flags.push({s:'ok',t:`Powracający ${pc(paceRet)} budżetu — filar retencji trzyma.`});
-  if(paceNew!=null&&paceNew<75)flags.push({s:'info',t:`Nowi klienci na ${pc(paceNew)} budżetu — strukturalnie słaby punkt (trend od kwietnia).`});
-  if(limit&&perfProj&&perfProj>1.05*limit)flags.push({s:'warn',t:`Performance: projekcja ${k(perfProj)} vs limit ${k(limit)} (${pc(100*perfProj/limit,0)}) — pacing ponad limit.`});
-  if(crW!=null&&crP!=null&&crP-crW>0.5)flags.push({s:'info',t:`CR sesja→zakup spadł do ${pc(crW,2)} (z ${pc(crP,2)}) tydzień do tygodnia.`});
+  if(paceRet!=null&&paceRet>=98)flags.push({s:'ok',t:`Powracający ${pc(paceRet)} budżetu — filar trzyma.`});
+  if(paceNew!=null&&paceNew<75)flags.push({s:'info',t:`Nowi klienci na ${pc(paceNew)} budżetu.`});
+  if(limit&&perfProj&&perfProj>1.05*limit)flags.push({s:'warn',t:`Performance: projekcja ${k(perfProj)} vs limit ${k(limit)} (${pc(100*perfProj/limit,0)}).`});
+  if(crW!=null&&crP!=null&&crP-crW>0.5)flags.push({s:'info',t:`CR sesja→zakup spadł do ${pc(crW,2)} (z ${pc(crP,2)}) WoW.`});
 
   const thr=[...D.threads].sort((a,b)=>(a.deadline||'9')<(b.deadline||'9')?-1:1);
   const today=new Date();const dleft=t=>t.deadline?Math.ceil((pd(t.deadline)-today)/86400000):null;
@@ -255,98 +303,131 @@ RENDER.cockpit=function(){
   document.getElementById('tab-cockpit').innerHTML=`
   <div class="card">
     <h2>GMV ${MIES[P.mo]} ${P.y} <span class="pill">dni 1–${P.nd} z ${P.dim}</span></h2>
-    <div class="big" id="heroGmv">${k(P.mtd)} <small>PLN</small></div>
+    <div class="big">${k(P.mtd)} <small>PLN</small></div>
+    ${td?`<div class="d" style="font-size:13px;margin-top:6px">Dziś (częściowe): <b class="amb">${kk(+td.gmv)}</b> · ${td.orders} zam. · ${td.new_customers} nowych</div>`:''}
     <div class="bar"><i style="width:${Math.min(100,P.bud?100*P.mtd/P.bud.gmv:0)}%"></i><s style="left:${100*P.nd/P.dim}%"></s></div>
-    <div class="proj"><span>liniowa <b>${k(P.naive)}</b> (${pc(paceN)})</span><span>sezonowa <b>${k(P.factored)}</b> (${pc(paceF)})</span><span>budżet <b>${k(P.bud?.gmv)}</b></span></div>
+    <div class="proj"><span>liniowa <b>${k(P.naive)}</b> (${pc(paceN)})</span><span>sezonowa <b>${k(P.factored)}</b> (${pc(paceF)})</span><span>tempo 7 dni <b>${k(P.runrate)}</b> (${pc(paceR)})</span><span>budżet <b>${k(P.bud?.gmv)}</b></span></div>
   </div>
-  <div class="grid">
-    <div class="kpi"><div class="l">EBITDA ${mlab(lastMr.month)}${lastMr.is_final?'':' (wstępna)'}</div><div class="v ${+lastMr.ebitda<0?'neg':'pos'}">${k(+lastMr.ebitda)}</div><div class="d">narastająco ${k(cumE)} · <span class="${cumE>=cumEB?'pos':'neg'}">${cumE>=cumEB?'+':''}${k(cumE-cumEB)} vs plan</span></div><canvas class="spark" id="spE"></canvas></div>
-    <div class="kpi"><div class="l">CAC łączny ${mlab(lastMr.month)}</div><div class="v">${zl(+lastMr.cac)}</div><div class="d">realny ~${zl(+lastMr.cac_real)} · budżet ${zl(D.budgets.find(b=>b.month===lastMr.month)?.cac)}</div><canvas class="spark" id="spC"></canvas></div>
-    <div class="kpi"><div class="l">Udział aplikacji (30 dni)</div><div class="v">${pc(as30)}</div><div class="d">zamówienia · cel 50% przekroczony</div><canvas class="spark" id="spA"></canvas></div>
-    <div class="kpi"><div class="l">Tester rate (${LW?wlab(LW.week):'—'})</div><div class="v ${LW&&LW.tr>28?'neg':''}">${LW?pc(LW.tr):'—'}</div><div class="d">pierwsze zam. 1–5 dni · próg 28%</div><canvas class="spark" id="spT"></canvas></div>
-    <div class="kpi"><div class="l">Powracający — pace MTD</div><div class="v ${paceRet>=95?'pos':paceRet<90?'neg':''}">${pc(paceRet)}</div><div class="d">${nf.format(mtdRet)} zam. vs budżet ${nf.format(P.bud?.returning_orders??0)}</div></div>
-    <div class="kpi"><div class="l">Nowi klienci — pace MTD</div><div class="v ${paceNew<75?'neg':''}">${pc(paceNew)}</div><div class="d">${nf.format(mtdNew)} vs budżet ${nf.format(P.bud?.new_customers??0)}</div></div>
+  <div class="card">
+    <h2>Prowizja ${MIES[P.mo]} <span class="pill">wg stawek per catering</span></h2>
+    <div class="big">${k(P.comm)} <small>PLN</small></div>
+    <div class="proj"><span>projekcja końca mc <b>${k(P.commProj)}</b></span><span>stawki <b>10% / Paczka Smaku 8%</b></span></div>
+    <div class="note">Prowizja naliczona od GMV item-level realnymi stawkami (nie płaskie 8% z Card 296).</div>
   </div>
-  ${flags.length?`<div class="card"><h2>Flagi</h2>${flags.map(f=>`<div class="flag ${f.s}">${f.t}</div>`).join('')}</div>`:''}
-  <div class="card"><h2>GMV 2026 — realizacja vs budżet <span class="pill">mln PLN</span></h2><div class="ch"><canvas id="cMon"></canvas></div>
-  <div class="note">Break-even wg budżetu: <b>${beMonth?mlab(beMonth.month):'—'}</b> (EBITDA ${k(+beMonth?.ebitda)}). Jaśniejszy segment czerwca = projekcja sezonowa.</div></div>
-  <div class="card"><h2>GMV dziennie — 8 tygodni</h2><div class="ch"><canvas id="cDay"></canvas></div></div>
-  <div class="card"><h2>Radar wątków</h2>${thr.map(t=>{const dl=dleft(t);return`<div class="thread"><span>${t.title}</span><span class="dl ${dl!=null&&dl<=7?'neg':'amb'}">${t.deadline?dlab(t.deadline)+' · '+(dl>=0?'za '+dl+' dni':Math.abs(dl)+' dni temu'):'—'}</span></div>`}).join('')}</div>
-  <div class="card"><h2>Świeżość danych</h2>${(D.refresh_log||[]).map(r=>`<div class="thread"><span>${r.source}</span><span class="dl">${new Date(r.refreshed_at).toLocaleString('pl-PL',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}</span></div>`).join('')}<div class="note">Transakcje i marketing odświeżane codziennie rano (gdy laptop włączony). Lejek GA4 ma ~1 dzień opóźnienia eksportu. Finanse miesięczne — po zamknięciu księgowym.</div></div>`;
+  <div class="card full"><h2>GMV dziennie — 8 tygodni <span class="pill">jaśniejszy słupek = dziś, częściowe</span></h2><div class="ch"><canvas id="cDay"></canvas></div></div>
+  <div class="grid full">
+    <div class="kpi"><div class="l">CAC paid MTD (media ÷ nowi)</div><div class="row"><div class="v">${zl(cacPaid)}</div><canvas class="spark" id="spCP"></canvas></div><div class="d">spend Meta FDG+Google ${k(perfMtd)} ÷ ${nf.format(mtdNew)} nowych</div></div>
+    <div class="kpi"><div class="l">CAC łączny ${mlab(lastMr.month)} (księgowy)</div><div class="row"><div class="v">${zl(+lastMr.cac)}</div><canvas class="spark" id="spC"></canvas></div><div class="d">cały marketing ÷ nowi · realny ~${zl(+lastMr.cac_real)} · budżet ${zl(D.budgets.find(b=>b.month===lastMr.month)?.cac)}</div></div>
+    <div class="kpi"><div class="l">GMV: powracający vs nowi MTD</div><div class="row"><div class="v">${pc(100-ngpMtd,0)} / ${pc(ngpMtd,0)}</div></div><div class="d">${k(P.mtd*(100-ngpMtd)/100)} od powracających · ${k(P.mtd*ngpMtd/100)} od nowych</div></div>
+    <div class="kpi"><div class="l">Udział aplikacji (30 dni)</div><div class="row"><div class="v">${pc(as30)}</div><canvas class="spark" id="spA"></canvas></div><div class="d">zamówienia · cel 50% przekroczony</div></div>
+    <div class="kpi"><div class="l">Powracający — pace MTD</div><div class="row"><div class="v ${paceRet>=95?'pos':paceRet<90?'neg':''}">${pc(paceRet)}</div></div><div class="d">${nf.format(mtdRet)} zam. vs budżet ${nf.format(P.bud?.returning_orders??0)}</div></div>
+    <div class="kpi"><div class="l">Nowi klienci — pace MTD</div><div class="row"><div class="v ${paceNew<75?'neg':''}">${pc(paceNew)}</div><canvas class="spark" id="spN"></canvas></div><div class="d">${nf.format(mtdNew)} vs budżet ${nf.format(P.bud?.new_customers??0)}</div></div>
+  </div>
+  ${flags.length?`<div class="card full"><h2>Flagi</h2>${flags.map(f=>`<div class="flag ${f.s}">${f.t}</div>`).join('')}</div>`:''}
+  <div class="card"><h2>Radar wątków</h2>${thr.map(t=>{const dl=dleft(t);return`<div class="thread"><span>${t.title}</span><span class="dl ${dl!=null&&dl<=7?'neg':'amb'}">${t.deadline?dlab(t.deadline)+' · '+(dl>=0?'za '+dl+' dni':Math.abs(dl)+' dni temu'):'—'}</span></div>`}).join('')}
+  <div class="note">Radar zasilam ja: przy każdej naszej sesji i porannej rutynie synchronizuję otwarte wątki, decyzje i deadline'y z pamięci projektu.</div></div>
+  <div class="card"><h2>Świeżość danych</h2>${(D.refresh_log||[]).slice(0,10).map(r=>`<div class="thread"><span>${r.source}</span><span class="dl">${new Date(r.refreshed_at).toLocaleString('pl-PL',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}</span></div>`).join('')}<div class="note">Pełne odświeżenie rano 6:45; dzisiejsze GMV doładowywane w ciągu dnia (13:00, 18:00). Lejek GA4 ma ~1 dzień opóźnienia.</div></div>`;
 };
 INIT.cockpit=function(){
   const mr=D.monthly_results;
-  spark('spE',mr.map(m=>+m.ebitda),'#4fbf8b');
   spark('spC',mr.map(m=>+m.cac),'#ff9b00');
   spark('spA',LF.slice(-10).map(x=>x.as??0),'#ff9b00');
-  spark('spT',LF.slice(-10).map(x=>x.tr??0),'#ff5f5a');
-  const budArr=D.budgets.map(b=>({l:mlab(b.month),v:+b.gmv}));
-  const real=new Map(D.monthly_results.map(m=>[mlab(m.month),+m.gmv]));
-  const curL=MIES[P.mo]+' '+String(P.y).slice(2);
-  mkChart('cMon',{type:'bar',data:{labels:budArr.map(x=>x.l),datasets:[
-    {label:'Realizacja',data:budArr.map(x=>real.has(x.l)?+(real.get(x.l)/1e6).toFixed(2):(x.l===curL?+(P.mtd/1e6).toFixed(2):null)),backgroundColor:'#ff9b00',borderRadius:4},
-    {label:'Projekcja',data:budArr.map(x=>x.l===curL?+((P.factored-P.mtd)/1e6).toFixed(2):null),backgroundColor:'#ff9b0055',borderRadius:4},
-    {label:'Budżet',data:budArr.map(x=>+(x.v/1e6).toFixed(2)),backgroundColor:'#9eb5ac3d',borderRadius:4}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:leg},scales:{x:{stacked:true,grid:{display:false},ticks:{autoSkip:false}},y:{stacked:true}}}});
-  const d60=D.daily.slice(-56);
-  const ma7=d60.map((_,i)=>{const a=d60.slice(Math.max(0,i-6),i+1);return a.reduce((s,r)=>s+ +r.gmv,0)/a.length});
+  spark('spN',LF.slice(-10).map(x=>x.new_customers),'#4fbf8b');
+  const mk=D.marketing_daily||[];const fdm=new Map(fullDaily().map(r=>[r.date.slice(0,10),r]));
+  const cacD=mk.slice(-28).map(r=>{const d=fdm.get(r.date.slice(0,10));const nc=d?d.new_customers:0;const sp=+(r.meta_spend||0)- +(r.meta_catering_spend||0)+ +(r.google_spend||0);return nc?sp/nc:null});
+  spark('spCP',ma(cacD,7).filter(v=>v!=null),'#ff5f5a');
+  const d60=fullDaily().slice(-55).concat(todayRow()?[todayRow()]:[]);
+  const ma7=ma(d60.filter(r=>!r.is_partial).map(r=>+r.gmv),7);
   mkChart('cDay',{data:{labels:d60.map(r=>dlab(r.date)),datasets:[
-    {type:'bar',label:'GMV',data:d60.map(r=>Math.round(+r.gmv/1000)),backgroundColor:d60.map(r=>[0,6].includes(pd(r.date).getDay())?'#4fbf8b59':'#4fbf8b'),borderRadius:2},
-    {type:'line',label:'Średnia 7 dni',data:ma7.map(v=>Math.round(v/1000)),borderColor:'#ff9b00',pointRadius:0,borderWidth:2,tension:.3}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:leg},scales:{x:{ticks:{maxTicksLimit:8},grid:{display:false}},y:{title:{display:true,text:'tys. PLN'}}}}});
+    {type:'bar',label:'GMV',data:d60.map(r=>Math.round(+r.gmv/1000)),backgroundColor:d60.map(r=>r.is_partial?'#ffb52e88':([0,6].includes(pd(r.date).getDay())?'#4fbf8b59':'#4fbf8b')),borderRadius:2,order:2},
+    {type:'line',label:'Średnia 7 dni',data:ma7.map(v=>Math.round(v/1000)),borderColor:'#ff9b00',pointRadius:0,borderWidth:2,tension:.3,order:1}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:leg},scales:{x:{ticks:{maxTicksLimit:9},grid:{display:false}},y:{title:{display:true,text:'tys. PLN'}}}}});
 };
 
-// ====== SPRZEDAŻ ======
+// ===== PULS =====
+RENDER.puls=function(){
+  const br=D.briefs||[];
+  const unread=br.filter(b=>!b.read_at),read=br.filter(b=>b.read_at);
+  document.getElementById('tab-puls').innerHTML=`
+  <div class="card full"><h2>Do przeczytania <span class="pill">${unread.length}</span></h2>
+  ${unread.length?unread.map(b=>`<div class="brief"><div class="meta">${b.type==='weekly'?'Tydzień':b.type==='daily'?'Dzień':'Raport'} · ${dlab(b.brief_date)}${b.severity==='warn'?' · <span class="neg">uwaga</span>':''}</div><h3>${esc(b.title)}</h3><div class="body">${mdl(b.body)}</div><button onclick="markRead(${b.id})">Przeczytane ✓</button></div>`).join(''):'<div class="note">Wszystko przeczytane. Nowy brief dnia pojawia się rano po odświeżeniu danych, brief tygodnia — w poniedziałki.</div>'}
+  <details><summary>Archiwum (${read.length})</summary>${read.map(b=>`<div class="brief" style="opacity:.65"><div class="meta">${b.type} · ${dlab(b.brief_date)}</div><h3>${esc(b.title)}</h3><div class="body">${mdl(b.body)}</div></div>`).join('')}</details>
+  <div class="note">Briefy piszę ja — codziennie rano podsumowanie wczorajszego dnia (tylko jeśli jest coś wartego uwagi: odchylenia, anomalie, rekordy), w poniedziałki podsumowanie tygodnia. Zasada: zero szumu — gdy dzień jest zwyczajny, brief ma jedno zdanie.</div></div>`;
+};
+INIT.puls=function(){};
+
+// ===== SPRZEDAŻ =====
 RENDER.sales=function(){
+  const mtdOrders=P.mtdRows.reduce((s,r)=>s+r.orders,0);
+  const dt=D.diet_types_weekly||[];
+  const w4=[...new Set(dt.map(r=>r.week))].sort().slice(-4);
+  const dtAgg=new Map();
+  for(const r of dt.filter(x=>w4.includes(x.week))){if(!dtAgg.has(r.tag))dtAgg.set(r.tag,{gmv:0,orders:0});const o=dtAgg.get(r.tag);o.gmv+=+r.gmv;o.orders+=r.orders}
+  const dtTop=[...dtAgg.entries()].sort((a,b)=>b[1].gmv-a[1].gmv).slice(0,10);
+  const dtMax=dtTop[0]?.[1].gmv||1;
   document.getElementById('tab-sales').innerHTML=`
-  <div class="card"><h2>GMV tygodniowo (pon–ndz) — 26 tygodni</h2><div class="ch"><canvas id="sWeek"></canvas></div></div>
-  <div class="card"><h2>Ostatnie 8 pełnych tygodni</h2><div class="tbl"><table><tr><th>Tydzień</th><th>GMV</th><th>WoW</th><th>Zam.</th><th>AOV</th><th>Tester</th><th>App</th></tr>
-  ${LF.slice(-8).map((x,i,arr)=>{const p=arr[i-1];const ww=p?100*(x.gmv-p.gmv)/p.gmv:null;return`<tr><td>${wlab(x.week)}</td><td><b>${kk(x.gmv)}</b></td><td class="${ww>0?'pos':'neg'}">${ww!=null?sgn(ww):'—'}</td><td>${nf.format(x.orders)}</td><td>${zl(x.aov)}</td><td>${pc(x.tr)}</td><td>${pc(x.as)}</td></tr>`}).join('')}</table></div></div>
-  <div class="card"><h2>AOV i średnia długość diety</h2><div class="ch"><canvas id="sAov"></canvas></div></div>
-  <div class="card"><h2>Udział Multidiety w zamówieniach</h2><div class="ch"><canvas id="sMulti"></canvas></div><div class="note">Multidieta = produkt „codziennie inny catering" (z tabeli multidiet_item). Niska adopcja to wątek redesignu konfiguratora.</div></div>`;
+  <div class="grid full g2" style="margin-bottom:12px">
+    <div class="kpi"><div class="l">Zamówienia ${MIES[P.mo]} MTD</div><div class="row"><div class="v">${nf.format(mtdOrders)}</div><canvas class="spark" id="spO"></canvas></div><div class="d">pace ${pc(P.bud?100*(mtdOrders/P.nd*P.dim)/P.bud.orders:null)} vs budżet ${nf.format(P.bud?.orders??0)}</div></div>
+    <div class="kpi"><div class="l">AOV (${LW?wlab(LW.week):'—'})</div><div class="row"><div class="v">${zl(LW?.aov)}</div><canvas class="spark" id="spAov"></canvas></div><div class="d">śr. dieta ${LW?.add.toFixed(1)} dnia</div></div>
+  </div>
+  <div class="card"><h2>GMV tygodniowo (pon–ndz)</h2><div class="ch"><canvas id="sWeek"></canvas></div></div>
+  <div class="card"><h2>Zamówienia tygodniowo</h2><div class="ch"><canvas id="sOrd"></canvas></div></div>
+  <div class="card full"><h2>Ostatnie 8 pełnych tygodni</h2><div class="tbl"><table><tr><th>Tydzień</th><th>GMV</th><th>WoW</th><th>Zam.</th><th>AOV</th><th>Śr. dni</th><th>Tester</th><th>App</th></tr>
+  ${LF.slice(-8).map((x,i,arr)=>{const p=arr[i-1];const ww=p?100*(x.gmv-p.gmv)/p.gmv:null;return`<tr><td>${wlab(x.week)}</td><td><b>${kk(x.gmv)}</b></td><td class="${ww>0?'pos':'neg'}">${ww!=null?sgn(ww):'—'}</td><td>${nf.format(x.orders)}</td><td>${zl(x.aov)}</td><td>${x.add.toFixed(1)}</td><td>${pc(x.tr)}</td><td>${pc(x.as)}</td></tr>`}).join('')}</table></div></div>
+  <div class="card"><h2>Struktura długości diet <span class="pill">% zamówień</span></h2><div class="ch"><canvas id="sSeg"></canvas></div><div class="note">Strategia: ograniczać 1–5 dni (testerzy), stymulować dłuższe pierwsze zamówienia.</div></div>
+  <div class="card"><h2>AOV i długość diety</h2><div class="ch"><canvas id="sAov2"></canvas></div></div>
+  <div class="card full"><h2>Rodzaje diet — GMV 4 pełne tygodnie <span class="pill">kategorie platformy</span></h2>
+  ${dtTop.map(([tag,v])=>`<div class="brandrow"><span class="n">${tag}</span><span class="b"><i style="width:${100*v.gmv/dtMax}%;background:#4fbf8b"></i></span><span class="v">${kk(v.gmv)} · ${nf.format(v.orders)} zam.</span></div>`).join('')}
+  <div class="note">Dieta może mieć kilka kategorii (np. Keto i Bezglutenowa) — udziały się nie sumują do 100% GMV.</div></div>`;
 };
 INIT.sales=function(){
   const w26=LF.slice(-26);
-  mkChart('sWeek',{type:'bar',data:{labels:w26.map(x=>wlab(x.week)),datasets:[{label:'GMV (tys. PLN)',data:w26.map(x=>Math.round(x.gmv/1000)),backgroundColor:'#ff9b00',borderRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{maxTicksLimit:7},grid:{display:false}},y:{}}}});
-  mkChart('sAov',{type:'line',data:{labels:w26.map(x=>wlab(x.week)),datasets:[
+  spark('spO',LF.slice(-10).map(x=>x.orders),'#ff9b00');
+  spark('spAov',LF.slice(-10).map(x=>x.aov),'#a98fc9');
+  mkChart('sWeek',{type:'bar',data:{labels:w26.map(x=>wlab(x.week)),datasets:[{label:'GMV (tys.)',data:w26.map(x=>Math.round(x.gmv/1000)),backgroundColor:'#ff9b00',borderRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{maxTicksLimit:7},grid:{display:false}},y:{}}}});
+  mkChart('sOrd',{type:'bar',data:{labels:w26.map(x=>wlab(x.week)),datasets:[{label:'Zamówienia',data:w26.map(x=>x.orders),backgroundColor:'#4fbf8b',borderRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{maxTicksLimit:7},grid:{display:false}},y:{}}}});
+  mkChart('sSeg',{type:'bar',data:{labels:w26.map(x=>wlab(x.week)),datasets:[
+    {label:'1-5 dni',data:w26.map(x=>+(100*x.s1/x.orders).toFixed(1)),backgroundColor:'#ff5f5a',borderRadius:1},
+    {label:'6-10',data:w26.map(x=>+(100*x.s2/x.orders).toFixed(1)),backgroundColor:'#ff9b00',borderRadius:1},
+    {label:'11-20',data:w26.map(x=>+(100*x.s3/x.orders).toFixed(1)),backgroundColor:'#4fbf8b',borderRadius:1},
+    {label:'21+',data:w26.map(x=>+(100*x.s4/x.orders).toFixed(1)),backgroundColor:'#a98fc9',borderRadius:1}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:leg},scales:{x:{stacked:true,ticks:{maxTicksLimit:7},grid:{display:false}},y:{stacked:true,max:100,ticks:{callback:v=>v+'%'}}}}});
+  mkChart('sAov2',{type:'line',data:{labels:w26.map(x=>wlab(x.week)),datasets:[
     {label:'AOV (PLN)',data:w26.map(x=>Math.round(x.aov)),borderColor:'#ff9b00',pointRadius:0,borderWidth:2,tension:.3,yAxisID:'y'},
     {label:'Dni diety',data:w26.map(x=>+x.add.toFixed(1)),borderColor:'#a98fc9',borderDash:[5,4],pointRadius:0,borderWidth:2,tension:.3,yAxisID:'y2'}]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:leg},scales:{x:{ticks:{maxTicksLimit:7},grid:{display:false}},y:{position:'left'},y2:{position:'right',grid:{display:false}}}}});
-  mkChart('sMulti',{type:'line',data:{labels:w26.map(x=>wlab(x.week)),datasets:[{label:'% zamówień Multidieta',data:w26.map(x=>+(x.ms||0).toFixed(1)),borderColor:'#4fbf8b',fill:true,backgroundColor:'#4fbf8b22',pointRadius:0,borderWidth:2,tension:.3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{maxTicksLimit:7},grid:{display:false}},y:{ticks:{callback:v=>v+'%'}}}}});
 };
 
-// ====== KLIENCI ======
+// ===== KLIENCI =====
 RENDER.clients=function(){
   const mtdNew=P.mtdRows.reduce((s,r)=>s+r.new_customers,0),mtdRet=P.mtdRows.reduce((s,r)=>s+r.returning_orders,0);
   const paceNew=P.bud?100*(mtdNew/P.nd*P.dim)/P.bud.new_customers:null;
   const paceRet=P.bud?100*(mtdRet/P.nd*P.dim)/P.bud.returning_orders:null;
-  const cohAll=D.cohorts.filter(c=>c.cohort_month>='2025-01-01');
-  const cohM=[...new Set(cohAll.map(c=>c.cohort_month))].sort().slice(-12);
-  const heat=cohM.map(cm=>{
-    const size=cohAll.find(c=>c.cohort_month===cm&&c.activity_month===cm)?.buyers||0;
-    const cells=[];
-    for(let off=1;off<=6;off++){const am=new Date(pd(cm));am.setMonth(am.getMonth()+off);
-      const row=cohAll.find(c=>c.cohort_month===cm&&c.activity_month.slice(0,7)===iso(am).slice(0,7));
-      cells.push(row&&size?100*row.buyers/size:null)}
-    return{cm,size,cells}});
   document.getElementById('tab-clients').innerHTML=`
-  <div class="card"><h2>Zamówienia: nowe vs powracające — tygodniowo</h2><div class="ch"><canvas id="kNvR"></canvas></div></div>
-  <div class="grid">
-    <div class="kpi"><div class="l">Nowi MTD vs budżet</div><div class="v">${nf.format(mtdNew)}</div><div class="d">pace ${pc(paceNew)} · budżet ${nf.format(P.bud?.new_customers??0)}</div></div>
-    <div class="kpi"><div class="l">Powracające zam. MTD</div><div class="v">${nf.format(mtdRet)}</div><div class="d">pace ${pc(paceRet)} · budżet ${nf.format(P.bud?.returning_orders??0)}</div></div>
+  <div class="grid full g2" style="margin-bottom:12px">
+    <div class="kpi"><div class="l">Nowi klienci MTD</div><div class="row"><div class="v">${nf.format(mtdNew)}</div></div><div class="d">pace ${pc(paceNew)} · budżet ${nf.format(P.bud?.new_customers??0)}</div></div>
+    <div class="kpi"><div class="l">Powracające zamówienia MTD</div><div class="row"><div class="v">${nf.format(mtdRet)}</div></div><div class="d">pace ${pc(paceRet)} · budżet ${nf.format(P.bud?.returning_orders??0)}</div></div>
   </div>
-  <div class="card"><h2>Tester rate (1–5 dni) — tygodniowo</h2><div class="ch"><canvas id="kTest"></canvas></div><div class="note">Czerwona linia = próg 28%. LTV testera 744 zł vs 1 434 zł nie-testera — strategia: ograniczać akwizycję testerów.</div></div>
-  <div class="card"><h2>Udział aplikacji — tygodniowo</h2><div class="ch"><canvas id="kApp"></canvas></div></div>
-  <div class="card"><h2>Retencja kohort <span class="pill">% kohorty aktywny w m+N</span></h2><div class="tbl"><table class="heat"><tr><th>Kohorta</th><th>Rozmiar</th>${[1,2,3,4,5,6].map(i=>`<th>m+${i}</th>`).join('')}</tr>
-  ${heat.map(h=>`<tr><td style="text-align:left">${mlab(h.cm)}</td><td>${nf.format(h.size)}</td>${h.cells.map(v=>{const bg=v==null?'transparent':`rgba(79,191,139,${Math.min(.85,v/40)})`;return`<td style="background:${bg}">${v==null?'·':v.toFixed(0)+'%'}</td>`}).join('')}</tr>`).join('')}</table></div>
-  <div class="note">Klient liczony w m+N, jeśli zrobił zamówienie N miesięcy po miesiącu pierwszego zakupu. Ostatnia komórka po przekątnej = miesiąc w toku.</div></div>`;
+  <div class="card full"><h2>Akwizycja dziennie + CAC paid dnia <span class="pill">CAC = media ÷ nowi, śr. 7 dni</span></h2><div class="ch"><canvas id="kAcq"></canvas></div></div>
+  <div class="card"><h2>Zamówienia: nowe vs powracające</h2><div class="ch"><canvas id="kNvR"></canvas></div></div>
+  <div class="card"><h2>GMV: % od nowych klientów</h2><div class="ch"><canvas id="kNgp"></canvas></div></div>
+  <div class="card"><h2>Tester rate (1–5 dni)</h2><div class="ch"><canvas id="kTest"></canvas></div></div>
+  <div class="card"><h2>Udział aplikacji</h2><div class="ch"><canvas id="kApp"></canvas></div></div>`;
 };
 INIT.clients=function(){
   const w26=LF.slice(-26);
+  const fd=fullDaily().slice(-84);
+  const mkMap=new Map((D.marketing_daily||[]).map(r=>[r.date.slice(0,10),+(r.meta_spend||0)- +(r.meta_catering_spend||0)+ +(r.google_spend||0)]));
+  const cacRaw=fd.map(r=>{const sp=mkMap.get(r.date.slice(0,10));return sp&&r.new_customers?sp/r.new_customers:null});
+  mkChart('kAcq',{data:{labels:fd.map(r=>dlab(r.date)),datasets:[
+    {type:'bar',label:'Nowi klienci',data:fd.map(r=>r.new_customers),backgroundColor:'#ff9b00',borderRadius:2,order:2,yAxisID:'y'},
+    {type:'line',label:'CAC paid (MA7, zł)',data:ma(cacRaw,7).map(v=>v?Math.round(v):null),borderColor:'#ff5f5a',pointRadius:0,borderWidth:2,tension:.3,order:1,yAxisID:'y2'}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:leg},scales:{x:{ticks:{maxTicksLimit:10},grid:{display:false}},y:{position:'left'},y2:{position:'right',grid:{display:false}}}}});
   mkChart('kNvR',{type:'bar',data:{labels:w26.map(x=>wlab(x.week)),datasets:[
     {label:'Powracające',data:w26.map(x=>x.returning_orders),backgroundColor:'#4fbf8b',borderRadius:2},
     {label:'Nowe',data:w26.map(x=>x.new_orders),backgroundColor:'#ff9b00',borderRadius:2}]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:leg},scales:{x:{stacked:true,ticks:{maxTicksLimit:7},grid:{display:false}},y:{stacked:true}}}});
+  mkChart('kNgp',{type:'line',data:{labels:w26.map(x=>wlab(x.week)),datasets:[{label:'% GMV od nowych',data:w26.map(x=>+(x.ngp||0).toFixed(1)),borderColor:'#ff9b00',fill:true,backgroundColor:'#ff9b0022',pointRadius:0,borderWidth:2,tension:.3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{maxTicksLimit:7},grid:{display:false}},y:{ticks:{callback:v=>v+'%'}}}}});
   mkChart('kTest',{type:'line',data:{labels:w26.map(x=>wlab(x.week)),datasets:[
     {label:'Tester rate',data:w26.map(x=>+(x.tr||0).toFixed(1)),borderColor:'#ff9b00',pointRadius:0,borderWidth:2,tension:.3},
     {label:'Próg 28%',data:w26.map(()=>28),borderColor:'#ff5f5a',borderDash:[4,4],pointRadius:0,borderWidth:1.5}]},
@@ -357,14 +438,65 @@ INIT.clients=function(){
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:leg},scales:{x:{ticks:{maxTicksLimit:7},grid:{display:false}},y:{ticks:{callback:v=>v+'%'},suggestedMin:40,suggestedMax:70}}}});
 };
 
-// ====== BRANDY ======
+// ===== RETENCJA =====
+RENDER.ret=function(){
+  const cohAll=D.cohorts.filter(c=>c.cohort_month>='2025-01-01');
+  const cohM=[...new Set(cohAll.map(c=>c.cohort_month))].sort().slice(-12);
+  const heat=cohM.map(cm=>{
+    const size=cohAll.find(c=>c.cohort_month===cm&&c.activity_month===cm)?.buyers||0;
+    const cells=[];
+    for(let off=1;off<=6;off++){const am=new Date(pd(cm));am.setMonth(am.getMonth()+off);
+      const row=cohAll.find(c=>c.cohort_month===cm&&c.activity_month.slice(0,7)===iso(am).slice(0,7));
+      cells.push(row&&size?100*row.buyers/size:null)}
+    return{cm,size,cells}});
+  const segs=D.seg_retention||[];
+  const qs=[...new Set(segs.map(s=>s.cohort_q))].sort();
+  const segOrder=['1-5 dni (testerzy)','6-10 dni','11-20 dni','21+ dni'];
+  const br=D.brand_retention||[];
+  const od=D.orders_dist||[];
+  const odTot=od.reduce((s,o)=>s+o.customers,0);
+  const ltv=cohM.slice(-9,-1).map(cm=>{
+    const size=cohAll.find(c=>c.cohort_month===cm&&c.activity_month===cm)?.buyers||1;
+    const rows=cohAll.filter(c=>c.cohort_month===cm).sort((a,b)=>a.activity_month<b.activity_month?-1:1);
+    let cum=0;const pts=rows.slice(0,7).map(r=>{cum+=+r.gmv;return Math.round(cum/size)});
+    const orders=rows.reduce((s,r)=>s+(r.orders||0),0);
+    return{cm,size,pts,avgOrd:orders/size};
+  });
+  document.getElementById('tab-ret').innerHTML=`
+  <div class="card full"><h2>Retencja kohort <span class="pill">% kohorty aktywny w m+N</span></h2><div class="tbl"><table class="heat"><tr><th>Kohorta</th><th>Rozmiar</th>${[1,2,3,4,5,6].map(i=>`<th>m+${i}</th>`).join('')}</tr>
+  ${heat.map(h=>`<tr><td style="text-align:left">${mlab(h.cm)}</td><td>${nf.format(h.size)}</td>${h.cells.map(v=>{const bg=v==null?'transparent':`rgba(79,191,139,${Math.min(.85,v/40)})`;return`<td style="background:${bg}">${v==null?'·':v.toFixed(0)+'%'}</td>`}).join('')}</tr>`).join('')}</table></div></div>
+  <div class="card"><h2>Powroty wg długości 1. zamówienia <span class="pill">% z kolejnym zakupem w 90 dni</span></h2><div class="tbl"><table><tr><th>Segment</th>${qs.map(q=>`<th>${q.replace('20','')}</th>`).join('')}</tr>
+  ${segOrder.map(sg=>`<tr><td>${sg}</td>${qs.map(q=>{const r=segs.find(x=>x.segment===sg&&x.cohort_q===q);return`<td class="${r&&+r.returned_pct<40?'neg':''}">${r?pc(+r.returned_pct,0):'—'}</td>`}).join('')}</tr>`).join('')}</table></div>
+  <div class="note">Churn = 100% minus powyższe. Testerzy wracają najrzadziej — stąd strategia dłuższych pierwszych zamówień. Q1'26 ma jeszcze niepełne okno.</div></div>
+  <div class="card"><h2>Rozkład liczby zamówień na klienta <span class="pill">klienci od 2025</span></h2>
+  ${od.map(o=>`<div class="brandrow"><span class="n">${o.bucket}</span><span class="b"><i style="width:${100*o.customers/(od[0]?.customers||1)}%;background:#4fbf8b"></i></span><span class="v">${nf.format(o.customers)} · ${pc(100*o.customers/odTot,0)}</span></div>`).join('')}
+  <div class="note">${pc(100-(100*(od[0]?.customers||0)/odTot),0)} klientów zrobiło więcej niż jedno zamówienie.</div></div>
+  <div class="card"><h2>LTV — skumulowane GMV na klienta <span class="pill">m0–m6 od pierwszego zakupu</span></h2><div class="ch"><canvas id="rLtv"></canvas></div></div>
+  <div class="card full"><h2>Retencja per catering <span class="pill">pierwsze zakupy 09.25–03.26, okno 90 dni</span></h2><div class="tbl"><table><tr><th>Catering</th><th>Kohorta</th><th>Wraca do brandu</th><th>Wraca gdziekolwiek</th><th>AOV 1. zam.</th></tr>
+  ${br.map(b=>`<tr><td>${b.brand}</td><td>${nf.format(b.cohort_buyers)}</td><td class="${+b.ret90_same>=40?'pos':+b.ret90_same<25?'neg':''}"><b>${pc(+b.ret90_same)}</b></td><td>${pc(+b.ret90_any)}</td><td>${zl(+b.first_aov)}</td></tr>`).join('')}</table></div>
+  <div class="note">"Wraca do brandu" = kolejne zamówienie u tego samego cateringu w 90 dni; "gdziekolwiek" = u dowolnego na Foodango. Różnica = klienci przejęci przez inne brandy platformy.</div></div>`;
+};
+INIT.ret=function(){
+  const cohAll=D.cohorts.filter(c=>c.cohort_month>='2025-01-01');
+  const cohM=[...new Set(cohAll.map(c=>c.cohort_month))].sort().slice(-12);
+  const ltv=cohM.slice(-9,-1).map(cm=>{
+    const size=cohAll.find(c=>c.cohort_month===cm&&c.activity_month===cm)?.buyers||1;
+    const rows=cohAll.filter(c=>c.cohort_month===cm).sort((a,b)=>a.activity_month<b.activity_month?-1:1);
+    let cum=0;return{cm,pts:rows.slice(0,7).map(r=>{cum+=+r.gmv;return Math.round(cum/size)})};
+  });
+  const colors=['#ff9b00','#4fbf8b','#a98fc9','#ff5f5a','#ffd166','#7bd4b0','#c9b6e4','#ff9b9b'];
+  mkChart('rLtv',{type:'line',data:{labels:['m0','m+1','m+2','m+3','m+4','m+5','m+6'],datasets:ltv.map((l,i)=>({label:mlab(l.cm),data:l.pts,borderColor:colors[i%colors.length],pointRadius:2,borderWidth:2,tension:.2}))},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:leg},scales:{x:{grid:{display:false}},y:{title:{display:true,text:'zł / klienta'}}}}});
+};
+
+// ===== BRANDY =====
 RENDER.brands=function(){
   window.brandMode=window.brandMode||'mtd';
   const prevM=iso(new Date(P.y,P.mo-1,1));
   document.getElementById('tab-brands').innerHTML=`
-  <div class="seg"><button id="bm-mtd" class="${window.brandMode==='mtd'?'on':''}" onclick="brandTab('mtd')">${MIES[P.mo]} MTD</button><button id="bm-prev" class="${window.brandMode==='prev'?'on':''}" onclick="brandTab('prev')">${mlab(prevM)} (pełny)</button><button id="bm-4w" class="${window.brandMode==='4w'?'on':''}" onclick="brandTab('4w')">4 tygodnie</button></div>
-  <div class="card"><h2 id="bTitle"></h2><div id="bList"></div><div class="note">Fioletowy pasek = GMV w wybranym okresie. Δ = zmiana vs analogiczny okres poprzedni. GMV brandu item-level (Multidieta osobno jako Foodango).</div></div>
-  <div class="card"><h2>Koncentracja — udział TOP3 i TOP5 w GMV</h2><div class="ch"><canvas id="bConc"></canvas></div></div>`;
+  <div class="seg full"><button id="bm-mtd" class="${window.brandMode==='mtd'?'on':''}" onclick="brandTab('mtd')">${MIES[P.mo]} MTD</button><button id="bm-prev" class="${window.brandMode==='prev'?'on':''}" onclick="brandTab('prev')">${mlab(prevM)} (pełny)</button><button id="bm-4w" class="${window.brandMode==='4w'?'on':''}" onclick="brandTab('4w')">4 tygodnie</button></div>
+  <div class="card full"><h2 id="bTitle"></h2><div id="bList"></div><div class="note">Δ = zmiana vs analogiczny okres poprzedni. GMV item-level; Multidieta osobno jako Foodango.</div></div>
+  <div class="card full"><h2>Koncentracja — udział TOP3 i TOP5 w GMV</h2><div class="ch"><canvas id="bConc"></canvas></div></div>`;
   renderBrands();
 };
 INIT.brands=function(){
@@ -376,7 +508,7 @@ INIT.brands=function(){
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:leg},scales:{x:{ticks:{maxTicksLimit:8},grid:{display:false}},y:{ticks:{callback:v=>v+'%'},suggestedMin:40,suggestedMax:80}}}});
 };
 function brandAgg(rows){const m=new Map();for(const r of rows){if(!m.has(r.brand))m.set(r.brand,{brand:r.brand,gmv:0,orders:0,nc:0});const o=m.get(r.brand);o.gmv+=+r.gmv;o.orders+=r.orders;o.nc+=r.new_customers}return[...m.values()].sort((a,b)=>b.gmv-a.gmv)}
-function brandTab(mode){window.brandMode=mode;document.querySelectorAll('.seg button').forEach(b=>b.classList.toggle('on',b.id==='bm-'+mode));renderBrands()}
+function brandTab(mode){window.brandMode=mode;document.querySelectorAll('#tab-brands .seg button').forEach(b=>b.classList.toggle('on',b.id==='bm-'+mode));renderBrands()}
 function renderBrands(){
   const curM=iso(new Date(P.y,P.mo,1));
   const prevM=iso(new Date(P.y,P.mo-1,1));
@@ -387,91 +519,136 @@ function renderBrands(){
   else if(window.brandMode==='4w'){const w4=wAll.slice(-5,-1),w4p=wAll.slice(-9,-5);cur=brandAgg(D.brand_weekly.filter(r=>w4.includes(r.week)));ref=brandAgg(D.brand_weekly.filter(r=>w4p.includes(r.week)));title='Brandy — 4 pełne tygodnie vs 4 wcześniejsze'}
   else{cur=brandAgg(D.brand_monthly.filter(r=>r.month.slice(0,10)===curM));ref=brandAgg(D.brand_monthly.filter(r=>r.month.slice(0,10)===prevM)).map(x=>({...x,gmv:x.gmv*P.nd/30}));title='Brandy — '+MIES[P.mo]+' MTD (1–'+P.nd+') vs proporcjonalny '+mlab(prevM)}
   const tot=cur.reduce((s,x)=>s+x.gmv,0);
-  const top=cur.slice(0,12);const max=top[0]?.gmv||1;
+  const top=cur.slice(0,14);const max=top[0]?.gmv||1;
   document.getElementById('bTitle').textContent=title;
   document.getElementById('bList').innerHTML=top.map(x=>{
     const r=ref.find(y=>y.brand===x.brand);const d=r&&r.gmv>0?100*(x.gmv-r.gmv)/r.gmv:null;
     return`<div class="brandrow"><span class="n">${x.brand.replace(' (Multidieta)','')}</span><span class="b"><i style="width:${100*x.gmv/max}%"></i></span><span class="v">${kk(x.gmv)} · ${pc(100*x.gmv/tot,0)}</span><span class="d ${d>0?'pos':'neg'}">${d!=null?sgn(d):''}</span></div>`}).join('');
 }
 
-// ====== MARKETING ======
+// ===== MULTIDIETA =====
+RENDER.multi=function(){
+  const mtdM=P.mtdRows.reduce((s,r)=>s+r.multidiet_orders,0);
+  const mtdMG=P.mtdRows.reduce((s,r)=>s+ +(r.multidiet_gmv||0),0);
+  const mb=D.multidiet_brands||[];
+  const lastM=[...new Set(mb.map(r=>r.month))].sort().slice(-1)[0];
+  const mbL=mb.filter(r=>r.month===lastM).sort((a,b)=>b.items-a.items).slice(0,12);
+  const mbMax=mbL[0]?.items||1;
+  document.getElementById('tab-multi').innerHTML=`
+  <div class="grid full" style="margin-bottom:12px">
+    <div class="kpi"><div class="l">Zamówienia Multidiety MTD</div><div class="row"><div class="v">${nf.format(mtdM)}</div></div><div class="d">${pc(100*mtdM/Math.max(1,P.mtdRows.reduce((s,r)=>s+r.orders,0)),1)} wszystkich zamówień</div></div>
+    <div class="kpi"><div class="l">GMV Multidiety MTD</div><div class="row"><div class="v">${k(mtdMG)}</div></div><div class="d">AOV ${zl(mtdM?mtdMG/mtdM:null)}</div></div>
+    <div class="kpi"><div class="l">Status produktu</div><div class="row"><div class="v amb">niszowy</div></div><div class="d">unikalna propozycja wartości — adopcja do zbudowania (redesign konfiguratora w toku)</div></div>
+  </div>
+  <div class="card"><h2>Multidieta — zamówienia i GMV tygodniowo</h2><div class="ch"><canvas id="mMulti"></canvas></div></div>
+  <div class="card"><h2>Skład Multidiety — brandy <span class="pill">${lastM?mlab(lastM):''}, pozycje dzienne</span></h2>
+  ${mbL.map(x=>`<div class="brandrow"><span class="n">${x.brand}</span><span class="b"><i style="width:${100*x.items/mbMax}%"></i></span><span class="v">${nf.format(x.items)} dni</span></div>`).join('')}
+  <div class="note">Które cateringi klienci wybierają wewnątrz Multidiety (liczba dni dostaw w zamówieniach Multidiety).</div></div>`;
+};
+INIT.multi=function(){
+  const w26=LF.slice(-26);
+  mkChart('mMulti',{data:{labels:w26.map(x=>wlab(x.week)),datasets:[
+    {type:'bar',label:'Zamówienia',data:w26.map(x=>x.multi),backgroundColor:'#a98fc9',borderRadius:3,order:2,yAxisID:'y'},
+    {type:'line',label:'GMV (tys.)',data:w26.map(x=>+(x.multi_gmv/1000).toFixed(1)),borderColor:'#ff9b00',pointRadius:0,borderWidth:2,tension:.3,order:1,yAxisID:'y2'}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:leg},scales:{x:{ticks:{maxTicksLimit:7},grid:{display:false}},y:{position:'left'},y2:{position:'right',grid:{display:false}}}}});
+};
+
+// ===== MARKETING =====
 RENDER.mkt=function(){
   const mk=D.marketing_daily||[];
   const mtd=mtdOf(mk);
   const perfMtd=mtd.reduce((s,r)=>s+ +(r.meta_spend||0)- +(r.meta_catering_spend||0)+ +(r.google_spend||0),0);
   const perfProj=mtd.length?perfMtd/mtd.length*P.dim:null;
-  const limit=PERF_LIMIT[iso(new Date(P.y,P.mo,1)).slice(0,7)];
-  const metaMtdS=mtd.reduce((s,r)=>s+ +(r.meta_spend||0),0);
-  const metaMtdV=mtd.reduce((s,r)=>s+ +(r.meta_purchase_value||0),0);
-  const metaMtdP=mtd.reduce((s,r)=>s+ +(r.meta_purchases||0),0);
-  const gMtd=mtd.reduce((s,r)=>s+ +(r.google_spend||0),0);
+  const limit=PERF_LIMIT[P.mKey];
+  const metaS=mtd.reduce((s,r)=>s+ +(r.meta_spend||0),0),metaV=mtd.reduce((s,r)=>s+ +(r.meta_purchase_value||0),0),metaP=mtd.reduce((s,r)=>s+ +(r.meta_purchases||0),0);
+  const gS=mtd.reduce((s,r)=>s+ +(r.google_spend||0),0),gC=mtd.reduce((s,r)=>s+ +(r.google_conversions||0),0),gV=mtd.reduce((s,r)=>s+ +(r.google_conv_value||0),0);
   const pz=D.przesiadka_daily||[];
   const pzMtd=mtdOf(pz);
   const pzL=pzMtd.reduce((s,r)=>s+(r.leads||0),0),pzO=pzMtd.reduce((s,r)=>s+(r.sd_orders||0),0),pzG=pzMtd.reduce((s,r)=>s+ +(r.sd_gmv||0),0);
   const sdD=Math.ceil((pd('2026-07-06')-new Date())/86400000);
-  const mr=D.monthly_results;
+  const pco=D.przesiadka_cohorts||[];
   document.getElementById('tab-mkt').innerHTML=`
-  <div class="card">
+  <div class="card full">
     <h2>Wydatki performance — ${MIES[P.mo]} MTD <span class="pill">Meta FDG + Google</span></h2>
     <div class="big">${k(perfMtd)} <small>PLN</small></div>
     ${limit?`<div class="bar"><i style="width:${Math.min(100,100*perfMtd/limit)}%"></i><s style="left:${100*P.nd/P.dim}%"></s></div>
-    <div class="proj"><span>projekcja <b>${k(perfProj)}</b></span><span>limit miesiąca <b>${k(limit)}</b> <span class="${perfProj>limit?'neg':'pos'}">(${pc(100*perfProj/limit,0)})</span></span></div>`:''}
-    <div class="note">Limit 250 tys. = decyzja zarządcza po maju (pierwotny budżet Excela: 150 tys.). Meta bez kampanii cateringów.</div>
+    <div class="proj"><span>projekcja <b>${k(perfProj)}</b></span><span>limit <b>${k(limit)}</b> <span class="${perfProj>limit?'neg':'pos'}">(${pc(100*perfProj/limit,0)})</span></span></div>`:''}
+    <div class="note">CAC łączny (księgowy) = cały marketing ÷ nowi klienci, raz na miesiąc. CAC paid (tu i w Cockpicie) = media Meta FDG + Google ÷ nowi, liczony na bieżąco — te dwie liczby celowo się różnią.</div>
   </div>
-  <div class="grid">
-    <div class="kpi"><div class="l">Meta ROAS MTD</div><div class="v ${metaMtdV/metaMtdS>=4?'pos':''}">${(metaMtdV/metaMtdS).toLocaleString('pl-PL',{maximumFractionDigits:2})}</div><div class="d">maj: 5,2 (najlepszy 2026) · pixel, całe konto</div></div>
-    <div class="kpi"><div class="l">Meta koszt/zakup MTD</div><div class="v">${zl(metaMtdS/metaMtdP)}</div><div class="d">${nf.format(metaMtdP)} zakupów (pixel) · maj: 139 zł</div></div>
-    <div class="kpi"><div class="l">Spend Meta MTD</div><div class="v">${k(metaMtdS)}</div><div class="d">w tym cateringi ${k(mtd.reduce((s,r)=>s+ +(r.meta_catering_spend||0),0))}</div></div>
-    <div class="kpi"><div class="l">Spend Google MTD</div><div class="v">${k(gMtd)}</div><div class="d">panel pełny (search + PMax + brand)</div></div>
+  <div class="grid full">
+    <div class="kpi"><div class="l">Meta ROAS MTD (pixel)</div><div class="row"><div class="v ${metaV/metaS>=4?'pos':''}">${(metaV/metaS).toLocaleString('pl-PL',{maximumFractionDigits:2})}</div></div><div class="d">maj: 5,2 · trend ważniejszy niż poziom</div></div>
+    <div class="kpi"><div class="l">Meta koszt/zakup MTD</div><div class="row"><div class="v">${zl(metaS/Math.max(1,metaP))}</div></div><div class="d">${nf.format(metaP)} zakupów · maj: 139 zł</div></div>
+    <div class="kpi"><div class="l">Google ROAS MTD (panel)</div><div class="row"><div class="v">${(gV/Math.max(1,gS)).toLocaleString('pl-PL',{maximumFractionDigits:2})}</div></div><div class="d">wartość konwersji ÷ koszt</div></div>
+    <div class="kpi"><div class="l">Google koszt/konwersję MTD</div><div class="row"><div class="v">${zl(gS/Math.max(1,gC))}</div></div><div class="d">${nf.format(gC)} konwersji (atrybucja Google)</div></div>
+    <div class="kpi"><div class="l">Spend Meta MTD</div><div class="row"><div class="v">${k(metaS)}</div></div><div class="d">w tym cateringi ${k(mtd.reduce((s,r)=>s+ +(r.meta_catering_spend||0),0))}</div></div>
+    <div class="kpi"><div class="l">Spend Google MTD</div><div class="row"><div class="v">${k(gS)}</div></div><div class="d">search + PMax + brand</div></div>
   </div>
-  <div class="card"><h2>Wydatki dziennie — 10 tygodni <span class="pill">tys. PLN</span></h2><div class="ch"><canvas id="mSpend"></canvas></div></div>
-  <div class="card"><h2>Meta — ROAS i koszt/zakup tygodniowo</h2><div class="ch"><canvas id="mRoas"></canvas></div><div class="note">ROAS wg pixela Meta (atrybucja platformy — zawyżona vs rzeczywistość; trend ważniejszy niż poziom).</div></div>
-  <div class="card"><h2>CAC miesięcznie — łączny vs realny vs budżet</h2><div class="ch"><canvas id="mCac"></canvas></div><div class="note">CAC łączny = całość marketingu / nowi klienci. Realny = bez budżetów wydawanych w imieniu cateringów. Konwencja: nie oceniamy pierwszej transakcji przez rentowność — biznes żyje z powracalności.</div></div>
-  <h3 class="gsec">Kampania Przesiadka (SD 150)</h3>
-  <div class="card" style="border-color:#ff9b0066">
-    <div class="flag info" style="margin-bottom:10px">Decyzja strategiczna: zostaje czy zamykamy — <b>6.07, za ${sdD} dni</b>. Próg: skumulowana retencja kohort kwi+maj do 30.06 (>30–35% zostaje, <25% koniec). CAC łączny wg raportu leadowego: ~284 zł przy celu 285.</div>
+  <div class="card full"><h2>Wydatki DZIENNIE od 1 stycznia <span class="pill">przewijaj w bok</span></h2><div class="scrollx"><div class="inner" id="mSpendWrap"><canvas id="mSpendD"></canvas></div></div></div>
+  <div class="card"><h2>ROAS tygodniowo — Meta vs Google</h2><div class="ch"><canvas id="mRoas"></canvas></div></div>
+  <div class="card"><h2>CAC paid i CPA — dziennie (MA7)</h2><div class="ch"><canvas id="mCacD"></canvas></div><div class="note">CAC paid = media ÷ nowi klienci dnia. CPA = media ÷ wszystkie zamówienia dnia.</div></div>
+  <div class="card full"><h2>CAC miesięcznie — łączny vs realny vs budżet</h2><div class="ch"><canvas id="mCac"></canvas></div></div>
+  <h3 class="gsec full">Kampania Przesiadka (SD 150)</h3>
+  <div class="card full" style="border-color:#ff9b0066">
+    <div class="flag warn" style="margin-bottom:10px">Decyzja 6.07 (za ${sdD} dni). Skumulowana retencja kohort kwi+maj: <b>${(()=>{const a=pco.filter(c=>c.cohort_month<'2026-06');const b=a.reduce((s,c)=>s+c.buyers,0),r=a.reduce((s,c)=>s+c.returned,0);return b?pc(100*r/b,1):'—'})()}</b> — próg: powyżej 30–35% zostaje, poniżej 25% zamykamy. Okno majowej kohorty jeszcze niepełne (diety ~17–20 dni).</div>
     <div class="grid" style="margin-bottom:0">
-      <div class="kpi"><div class="l">Leady ${MIES[P.mo]} MTD</div><div class="v">${nf.format(pzL)}</div><div class="d">kody SD wydane (bez batchy masowych)</div></div>
-      <div class="kpi"><div class="l">Zamówienia SD MTD</div><div class="v">${nf.format(pzO)}</div><div class="d">konwersja ${pc(pzL?100*pzO/pzL:null)} · GMV ${k(pzG)}</div></div>
+      <div class="kpi"><div class="l">Leady ${MIES[P.mo]} MTD</div><div class="row"><div class="v">${nf.format(pzL)}</div></div><div class="d">kody SD (bez batchy)</div></div>
+      <div class="kpi"><div class="l">Zamówienia SD MTD</div><div class="row"><div class="v">${nf.format(pzO)}</div></div><div class="d">konwersja ${pc(pzL?100*pzO/pzL:null)}</div></div>
+      <div class="kpi"><div class="l">GMV Przesiadki MTD</div><div class="row"><div class="v">${k(pzG)}</div></div><div class="d">AOV ${zl(pzO?pzG/pzO:null)}</div></div>
     </div>
   </div>
-  <div class="card"><h2>Przesiadka — leady i zamówienia tygodniowo</h2><div class="ch"><canvas id="mPz"></canvas></div><div class="note">Pełny rachunek kosztowy (z alokacją 13% PMax) liczy poniedziałkowy raport leadowy — tu wolumeny i konwersja z bazy.</div></div>`;
+  <div class="card"><h2>Przesiadka — zamówienia (słupki) i leady</h2><div class="ch"><canvas id="mPz"></canvas></div></div>
+  <div class="card"><h2>Przesiadka — GMV tygodniowo i retencja kohort</h2><div class="ch"><canvas id="mPzG"></canvas></div><div class="note">Retencja: % klientów z 1. zakupem SD, którzy zrobili kolejne zamówienie (jakiekolwiek). Czerwcowa kohorta — okno dopiero startuje. Pełny rachunek CAC z alokacją PMax liczy poniedziałkowy raport leadowy.</div></div>`;
 };
 INIT.mkt=function(){
-  const mw=fullWeeks(wkAgg(D.marketing_daily||[],['meta_spend','meta_catering_spend','google_spend','meta_purchase_value','meta_purchases'])).slice(-10);
-  mkChart('mSpend',{type:'bar',data:{labels:mw.map(x=>wlab(x.week)),datasets:[
-    {label:'Meta FDG',data:mw.map(x=>Math.round((x.meta_spend-x.meta_catering_spend)/1000)),backgroundColor:'#ff9b00',borderRadius:2},
-    {label:'Meta cateringi',data:mw.map(x=>Math.round(x.meta_catering_spend/1000)),backgroundColor:'#a98fc9',borderRadius:2},
-    {label:'Google',data:mw.map(x=>Math.round(x.google_spend/1000)),backgroundColor:'#4fbf8b',borderRadius:2}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:leg},scales:{x:{stacked:true,ticks:{maxTicksLimit:6},grid:{display:false}},y:{stacked:true}}}});
-  mkChart('mRoas',{data:{labels:mw.map(x=>wlab(x.week)),datasets:[
-    {type:'line',label:'ROAS',data:mw.map(x=>+(x.meta_purchase_value/x.meta_spend).toFixed(2)),borderColor:'#ff9b00',pointRadius:0,borderWidth:2,tension:.3,yAxisID:'y'},
-    {type:'line',label:'Koszt/zakup (zł)',data:mw.map(x=>Math.round(x.meta_spend/Math.max(1,x.meta_purchases))),borderColor:'#ff5f5a',borderDash:[5,4],pointRadius:0,borderWidth:2,tension:.3,yAxisID:'y2'}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:leg},scales:{x:{ticks:{maxTicksLimit:6},grid:{display:false}},y:{position:'left'},y2:{position:'right',grid:{display:false}}}}});
+  const mk=D.marketing_daily||[];
+  const wrap=document.getElementById('mSpendWrap');if(wrap){wrap.style.width=Math.max(700,mk.length*11)+'px'}
+  mkChart('mSpendD',{type:'bar',data:{labels:mk.map(r=>dlab(r.date)),datasets:[
+    {label:'Meta FDG',data:mk.map(r=>Math.round((+(r.meta_spend||0)- +(r.meta_catering_spend||0))/100)/10),backgroundColor:'#ff9b00',borderRadius:1},
+    {label:'Meta cateringi',data:mk.map(r=>Math.round(+(r.meta_catering_spend||0)/100)/10),backgroundColor:'#a98fc9',borderRadius:1},
+    {label:'Google',data:mk.map(r=>Math.round(+(r.google_spend||0)/100)/10),backgroundColor:'#4fbf8b',borderRadius:1}]},
+    options:{responsive:true,maintainAspectRatio:false,animation:false,plugins:{legend:leg},scales:{x:{stacked:true,ticks:{maxTicksLimit:30},grid:{display:false}},y:{stacked:true,title:{display:true,text:'tys. PLN'}}}}});
+  const mw=fullWeeks(wkAgg(mk,['meta_spend','meta_catering_spend','google_spend','meta_purchase_value','meta_purchases','google_conv_value'])).slice(-12);
+  mkChart('mRoas',{type:'line',data:{labels:mw.map(x=>wlab(x.week)),datasets:[
+    {label:'Meta (pixel)',data:mw.map(x=>+(x.meta_purchase_value/x.meta_spend).toFixed(2)),borderColor:'#ff9b00',pointRadius:0,borderWidth:2,tension:.3},
+    {label:'Google (panel)',data:mw.map(x=>+(x.google_conv_value/Math.max(1,x.google_spend)).toFixed(2)),borderColor:'#4fbf8b',borderDash:[5,4],pointRadius:0,borderWidth:2,tension:.3}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:leg},scales:{x:{ticks:{maxTicksLimit:6},grid:{display:false}},y:{}}}});
+  const fdm=new Map(fullDaily().map(r=>[r.date.slice(0,10),r]));
+  const mk84=mk.slice(-84);
+  const cacRaw=mk84.map(r=>{const d=fdm.get(r.date.slice(0,10));const sp=+(r.meta_spend||0)- +(r.meta_catering_spend||0)+ +(r.google_spend||0);return d&&d.new_customers?sp/d.new_customers:null});
+  const cpaRaw=mk84.map(r=>{const d=fdm.get(r.date.slice(0,10));const sp=+(r.meta_spend||0)- +(r.meta_catering_spend||0)+ +(r.google_spend||0);return d&&d.orders?sp/d.orders:null});
+  mkChart('mCacD',{type:'line',data:{labels:mk84.map(r=>dlab(r.date)),datasets:[
+    {label:'CAC paid (MA7)',data:ma(cacRaw,7).map(v=>v?Math.round(v):null),borderColor:'#ff5f5a',pointRadius:0,borderWidth:2,tension:.3},
+    {label:'CPA (MA7)',data:ma(cpaRaw,7).map(v=>v?Math.round(v):null),borderColor:'#ff9b00',borderDash:[5,4],pointRadius:0,borderWidth:2,tension:.3}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:leg},scales:{x:{ticks:{maxTicksLimit:8},grid:{display:false}},y:{title:{display:true,text:'zł'}}}}});
   const mr=D.monthly_results;
   mkChart('mCac',{data:{labels:mr.map(m=>mlab(m.month)),datasets:[
     {type:'bar',label:'CAC łączny',data:mr.map(m=>+m.cac),backgroundColor:'#ff9b00',borderRadius:4},
     {type:'bar',label:'CAC realny',data:mr.map(m=>m.cac_real?+m.cac_real:null),backgroundColor:'#4fbf8b',borderRadius:4},
     {type:'line',label:'Budżet',data:mr.map(m=>{const b=D.budgets.find(x=>x.month===m.month);return b?+b.cac:null}),borderColor:'#f2f5f3',borderDash:[4,4],pointRadius:3,borderWidth:1.5}]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:leg},scales:{x:{grid:{display:false}},y:{title:{display:true,text:'zł'}}}}});
-  const pw=fullWeeks(wkAgg(D.przesiadka_daily||[],['leads','sd_orders'])).slice(-8);
+  const pw=fullWeeks(wkAgg(D.przesiadka_daily||[],['leads','sd_orders','sd_gmv'])).slice(-8);
   mkChart('mPz',{data:{labels:pw.map(x=>wlab(x.week)),datasets:[
-    {type:'bar',label:'Leady',data:pw.map(x=>x.leads),backgroundColor:'#a98fc9',borderRadius:3,yAxisID:'y'},
-    {type:'line',label:'Zamówienia SD',data:pw.map(x=>x.sd_orders),borderColor:'#ff9b00',pointRadius:3,borderWidth:2,tension:.3,yAxisID:'y2'}]},
+    {type:'bar',label:'Zamówienia SD',data:pw.map(x=>x.sd_orders),backgroundColor:'#ff9b00',borderRadius:3,order:2,yAxisID:'y'},
+    {type:'line',label:'Leady',data:pw.map(x=>x.leads),borderColor:'#a98fc9',pointRadius:3,borderWidth:2,tension:.3,order:1,yAxisID:'y2'}]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:leg},scales:{x:{ticks:{maxTicksLimit:8},grid:{display:false}},y:{position:'left'},y2:{position:'right',grid:{display:false}}}}});
+  const pco=D.przesiadka_cohorts||[];
+  mkChart('mPzG',{data:{labels:pw.map(x=>wlab(x.week)),datasets:[
+    {type:'bar',label:'GMV SD (tys.)',data:pw.map(x=>Math.round(x.sd_gmv/1000)),backgroundColor:'#4fbf8b',borderRadius:3,yAxisID:'y',order:2},
+    {type:'line',label:'Retencja kohorty mc (%)',data:pw.map(x=>{const c=pco.find(p=>p.cohort_month.slice(0,7)===x.week.slice(0,7));return c?+c.ret_pct:null}),borderColor:'#ff5f5a',pointRadius:4,borderWidth:2,yAxisID:'y2',order:1}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:leg},scales:{x:{ticks:{maxTicksLimit:8},grid:{display:false}},y:{position:'left'},y2:{position:'right',grid:{display:false},suggestedMax:40,ticks:{callback:v=>v+'%'}}}}});
 };
 
-// ====== LEJEK ======
-RENDER.funnel=function(){
+// ===== RUCH =====
+RENDER.traffic=function(){
   const fw=fullWeeks(wkAgg(D.funnel_daily||[],['sessions','s_atc','s_checkout','s_purchase','purchases','purchase_revenue']));
-  const lw=fw[fw.length-1],pw=fw[fw.length-2];
+  const lw=fw[fw.length-1],pw2=fw[fw.length-2];
   const cr=w=>w?100*w.s_purchase/w.sessions:null;
   const steps=[['Sesje','sessions'],['Koszyk','s_atc'],['Checkout','s_checkout'],['Zakup','s_purchase']];
   const funHtml=steps.map(([nm,key],i)=>{
     const v=lw?lw[key]:0;const base=lw?lw.sessions:1;
     const prevStep=i?lw[steps[i-1][1]]:null;
     const pass=prevStep?100*v/prevStep:null;
-    const wowV=pw?100*(v-pw[key])/pw[key]:null;
+    const wowV=pw2?100*(v-pw2[key])/pw2[key]:null;
     return`<div class="step"><span class="nm">${nm}</span><span class="trk"><i style="width:${Math.max(7,100*v/base)}%"></i><span>${nf.format(v)}</span></span><span class="pct">${pass!=null?'→ '+pc(pass):''}<br><span class="${wowV>0?'pos':'neg'}">${wowV!=null?sgn(wowV)+' WoW':''}</span></span></div>`}).join('');
   const ch=D.channel_daily||[];
   const chW=new Map();
@@ -480,63 +657,145 @@ RENDER.funnel=function(){
   const fullW=wks.filter(w=>w<curW);
   const lcw=chW.get(fullW[fullW.length-1])||new Map(),pcw=chW.get(fullW[fullW.length-2])||new Map();
   const chRows=[...lcw.entries()].map(([c,v])=>({c,...v,prev:pcw.get(c)})).sort((a,b)=>b.revenue-a.revenue);
-  document.getElementById('tab-funnel').innerHTML=`
-  <div class="card"><h2>Lejek — tydzień ${lw?wlab(lw.week):'—'} <span class="pill">sesje GA4</span></h2><div class="fun">${funHtml}</div>
-  <div class="note">Kroki liczone w sesjach (sesja z danym zdarzeniem), last-click. Eksport GA4 ma ~1 dzień opóźnienia.</div></div>
-  <div class="grid">
-    <div class="kpi"><div class="l">CR sesja→zakup</div><div class="v ${cr(lw)>=3.5?'pos':''}">${pc(cr(lw),2)}</div><div class="d">${pw?'poprzedni tydzień: '+pc(cr(pw),2):''}</div></div>
-    <div class="kpi"><div class="l">Revenue GA4 (tydzień)</div><div class="v">${k(lw?.purchase_revenue)}</div><div class="d">${pw?sgn(100*(lw.purchase_revenue-pw.purchase_revenue)/pw.purchase_revenue)+' WoW':''}</div></div>
-  </div>
-  <div class="card"><h2>CR i sesje — tygodniowo</h2><div class="ch"><canvas id="fCr"></canvas></div></div>
+  const lnd=D.landing_weekly||[];
+  const lndW=[...new Set(lnd.map(r=>r.week))].sort();
+  const lndL=lnd.filter(r=>r.week===lndW[lndW.length-1]).sort((a,b)=>b.sessions-a.sessions).slice(0,12);
+  const lndP=new Map(lnd.filter(r=>r.week===lndW[lndW.length-2]).map(r=>[r.landing,r]));
+  window.sesMode=window.sesMode||'w';
+  document.getElementById('tab-traffic').innerHTML=`
+  <div class="card"><h2>Lejek — tydzień ${lw?wlab(lw.week):'—'} <span class="pill">sesje GA4, last-click</span></h2><div class="fun">${funHtml}</div>
+  <div class="grid g2" style="margin:12px 0 0">
+    <div class="kpi"><div class="l">CR sesja→zakup</div><div class="row"><div class="v ${cr(lw)>=3.5?'pos':''}">${pc(cr(lw),2)}</div></div><div class="d">${pw2?'poprzedni: '+pc(cr(pw2),2):''}</div></div>
+    <div class="kpi"><div class="l">Sesje (tydzień)</div><div class="row"><div class="v">${nf.format(lw?.sessions)}</div></div><div class="d">${pw2?sgn(100*(lw.sessions-pw2.sessions)/pw2.sessions)+' WoW':''}</div></div>
+  </div></div>
+  <div class="card"><h2>Sesje w czasie</h2>
+  <div class="seg"><button id="sm-d" class="${window.sesMode==='d'?'on':''}" onclick="sesTab('d')">Dni</button><button id="sm-w" class="${window.sesMode==='w'?'on':''}" onclick="sesTab('w')">Tygodnie</button><button id="sm-m" class="${window.sesMode==='m'?'on':''}" onclick="sesTab('m')">Miesiące</button></div>
+  <div class="ch"><canvas id="tSes"></canvas></div></div>
+  <div class="card full"><h2>CR i sesje — tygodniowo</h2><div class="ch"><canvas id="tCr"></canvas></div></div>
   <div class="card"><h2>Kanały — tydzień ${lw?wlab(lw.week):'—'}</h2><div class="tbl"><table><tr><th>Kanał</th><th>Sesje</th><th>CR</th><th>Revenue</th><th>zł/sesję</th><th>Rev WoW</th></tr>
   ${chRows.map(r=>{const wow=r.prev&&r.prev.revenue>0?100*(r.revenue-r.prev.revenue)/r.prev.revenue:null;return`<tr><td>${r.c}</td><td>${nf.format(r.sessions)}</td><td>${pc(100*r.purchases/r.sessions,2)}</td><td><b>${kk(r.revenue)}</b></td><td>${(r.revenue/r.sessions).toLocaleString('pl-PL',{maximumFractionDigits:1})}</td><td class="${wow>0?'pos':'neg'}">${wow!=null?sgn(wow):'—'}</td></tr>`}).join('')}</table></div>
-  <div class="note">Mapowanie kanałów z surowych źródeł sesji (last-click): SMS i Email po medium, Paid Search = google/cpc, Paid Social = źródła Meta. „Inne" zawiera ruch nieoznaczony (m.in. self-referral i aplikację) — jak Unassigned w raportach.</div></div>`;
+  <div class="note">„Inne" = ruch nieoznaczony (m.in. aplikacja i self-referral) — jak Unassigned w raportach.</div></div>
+  <div class="card"><h2>Kanały — sesje w czasie (top 5)</h2><div class="ch"><canvas id="tChT"></canvas></div></div>
+  <div class="card full"><h2>Strony wejścia — tydzień ${lndW.length?wlab(lndW[lndW.length-1]):'—'} <span class="pill">top 12</span></h2><div class="tbl"><table><tr><th>Strona</th><th>Sesje</th><th>WoW</th><th>Zakupy</th><th>CR</th></tr>
+  ${lndL.map(r=>{const p=lndP.get(r.landing);const wow=p?100*(r.sessions-p.sessions)/p.sessions:null;return`<tr><td style="max-width:280px;overflow:hidden;text-overflow:ellipsis">${esc(r.landing)}</td><td>${nf.format(r.sessions)}</td><td class="${wow>0?'pos':'neg'}">${wow!=null?sgn(wow):'—'}</td><td>${r.purchases}</td><td>${pc(100*r.purchases/r.sessions,2)}</td></tr>`}).join('')}</table></div></div>`;
 };
-INIT.funnel=function(){
+function sesTab(m){window.sesMode=m;document.querySelectorAll('#tab-traffic .seg button').forEach(b=>b.classList.toggle('on',b.id==='sm-'+m));drawSes()}
+function drawSes(){
+  const f=D.funnel_daily||[];
+  let labels,data;
+  if(window.sesMode==='d'){const r=f.slice(-60);labels=r.map(x=>dlab(x.date));data=r.map(x=>x.sessions)}
+  else if(window.sesMode==='m'){const m=new Map();for(const r of f){const k2=r.date.slice(0,7);m.set(k2,(m.get(k2)||0)+r.sessions)}const e=[...m.entries()].sort();labels=e.map(x=>mlab(x[0]+'-01'));data=e.map(x=>x[1])}
+  else{const w=fullWeeks(wkAgg(f,['sessions']));labels=w.map(x=>wlab(x.week));data=w.map(x=>x.sessions)}
+  mkChart('tSes',{type:'bar',data:{labels,datasets:[{label:'Sesje',data,backgroundColor:'#4fbf8b',borderRadius:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{maxTicksLimit:8},grid:{display:false}},y:{}}}});
+}
+INIT.traffic=function(){
+  drawSes();
   const fw=fullWeeks(wkAgg(D.funnel_daily||[],['sessions','s_purchase'])).slice(-26);
-  mkChart('fCr',{data:{labels:fw.map(x=>wlab(x.week)),datasets:[
-    {type:'bar',label:'Sesje',data:fw.map(x=>x.sessions),backgroundColor:'#33524a',borderRadius:2,yAxisID:'y'},
-    {type:'line',label:'CR %',data:fw.map(x=>+(100*x.s_purchase/x.sessions).toFixed(2)),borderColor:'#ff9b00',pointRadius:0,borderWidth:2.5,tension:.3,yAxisID:'y2'}]},
+  mkChart('tCr',{data:{labels:fw.map(x=>wlab(x.week)),datasets:[
+    {type:'line',label:'CR %',data:fw.map(x=>+(100*x.s_purchase/x.sessions).toFixed(2)),borderColor:'#ff9b00',pointRadius:0,borderWidth:2.5,tension:.3,yAxisID:'y2',order:1},
+    {type:'bar',label:'Sesje',data:fw.map(x=>x.sessions),backgroundColor:'#33524a',borderRadius:2,yAxisID:'y',order:2}]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:leg},scales:{x:{ticks:{maxTicksLimit:7},grid:{display:false}},y:{position:'left'},y2:{position:'right',grid:{display:false},ticks:{callback:v=>v+'%'}}}}});
+  const ch=D.channel_daily||[];
+  const agg=new Map();
+  for(const r of ch){const w=iso(monday(pd(r.date)));const key2=r.channel;if(!agg.has(key2))agg.set(key2,new Map());agg.get(key2).set(w,(agg.get(key2).get(w)||0)+r.sessions)}
+  const tot=[...agg.entries()].map(([c,m])=>({c,sum:[...m.values()].reduce((s,v)=>s+v,0)})).sort((a,b)=>b.sum-a.sum).slice(0,5);
+  const wks=fullWeeks(wkAgg(ch,['sessions'])).map(x=>x.week).slice(-16);
+  const colors=['#ff9b00','#4fbf8b','#a98fc9','#ff5f5a','#9eb5ac'];
+  mkChart('tChT',{type:'line',data:{labels:wks.map(wlab),datasets:tot.map((t,i)=>({label:t.c,data:wks.map(w=>agg.get(t.c).get(w)||0),borderColor:colors[i],pointRadius:0,borderWidth:2,tension:.3}))},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:leg},scales:{x:{ticks:{maxTicksLimit:6},grid:{display:false}},y:{}}}});
 };
 
-// ====== B2B ======
+// ===== SEO =====
+RENDER.seo=function(){
+  const s=D.seo_daily||[];
+  const l28=s.slice(-28),p28=s.slice(-56,-28);
+  const sum=(a,f)=>a.reduce((x,r)=>x+ +(r[f]||0),0);
+  const cl=sum(l28,'clicks'),cp=sum(p28,'clicks'),im=sum(l28,'impressions'),ip=sum(p28,'impressions');
+  const posL=l28.length?l28.reduce((x,r)=>x+ +r.position,0)/l28.length:null;
+  const posP=p28.length?p28.reduce((x,r)=>x+ +r.position,0)/p28.length:null;
+  const q=D.seo_queries||[];
+  const qL=q.filter(x=>x.period==='last28'),qP=new Map(q.filter(x=>x.period==='prev28').map(x=>[x.query,x]));
+  const orgW=fullWeeks(wkAgg((D.channel_daily||[]).filter(r=>r.channel==='Organic Search'),['sessions','revenue']));
+  const orgL=orgW[orgW.length-1];
+  document.getElementById('tab-seo').innerHTML=`
+  <div class="grid full">
+    <div class="kpi"><div class="l">Kliknięcia (28 dni)</div><div class="row"><div class="v">${nf.format(cl)}</div></div><div class="d ${cl>=cp?'pos':'neg'}">${cp?sgn(100*(cl-cp)/cp)+' vs poprzednie 28 dni':''}</div></div>
+    <div class="kpi"><div class="l">Wyświetlenia (28 dni)</div><div class="row"><div class="v">${k(im)}</div></div><div class="d ${im>=ip?'pos':'neg'}">${ip?sgn(100*(im-ip)/ip):''}</div></div>
+    <div class="kpi"><div class="l">Średnia pozycja</div><div class="row"><div class="v">${posL?posL.toFixed(1):'—'}</div></div><div class="d">${posP?'poprzednio '+posP.toFixed(1)+(posL<posP?' — poprawa':''):''}</div></div>
+    <div class="kpi"><div class="l">Sesje organiczne (tydzień)</div><div class="row"><div class="v">${orgL?nf.format(orgL.sessions):'—'}</div></div><div class="d">revenue ${orgL?kk(orgL.revenue):'—'}</div></div>
+  </div>
+  <div class="card full"><h2>Kliknięcia i pozycja — dziennie <span class="pill">Search Console</span></h2><div class="ch"><canvas id="seoD"></canvas></div><div class="note">Dane GSC w hurtowni od 13.04.2026. Pozycja: niżej = lepiej (oś odwrócona).</div></div>
+  <div class="card full"><h2>Top frazy — ostatnie 28 dni</h2><div class="tbl"><table><tr><th>Fraza</th><th>Kliknięcia</th><th>Δ</th><th>Wyświetlenia</th><th>Pozycja</th></tr>
+  ${qL.map(r=>{const p=qP.get(r.query);const d=p?r.clicks-p.clicks:null;return`<tr><td>${esc(r.query)}</td><td><b>${r.clicks}</b></td><td class="${d>0?'pos':d<0?'neg':'mut'}">${d!=null?(d>0?'+':'')+d:'—'}</td><td>${nf.format(r.impressions)}</td><td>${(+r.position).toFixed(1)}</td></tr>`}).join('')}</table></div>
+  <div class="note">Pełniejsza zakładka SEO (strony, kanibalizacja fraz, content) — do rozbudowy w kolejnej iteracji.</div></div>`;
+};
+INIT.seo=function(){
+  const s=(D.seo_daily||[]);
+  mkChart('seoD',{data:{labels:s.map(r=>dlab(r.date)),datasets:[
+    {type:'bar',label:'Kliknięcia',data:s.map(r=>r.clicks),backgroundColor:'#4fbf8b',borderRadius:2,yAxisID:'y',order:2},
+    {type:'line',label:'Pozycja śr.',data:s.map(r=>+r.position),borderColor:'#ff9b00',pointRadius:0,borderWidth:2,tension:.3,yAxisID:'y2',order:1}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:leg},scales:{x:{ticks:{maxTicksLimit:8},grid:{display:false}},y:{position:'left'},y2:{position:'right',reverse:true,grid:{display:false}}}}});
+};
+
+// ===== B2B =====
 RENDER.b2b=function(){
   const st=(D.b2b_status||[])[D.b2b_status.length-1];
-  const mr=D.monthly_results;
-  const lastMr=mr[mr.length-1];
-  const share=100*+lastMr.b2b/+lastMr.revenue_total;
+  const mr=D.monthly_results,lastMr=mr[mr.length-1];
   const pk=D.b2b_packages||[];
-  const cats=['TOP 5','TOP 10','TOP 3','Pitch','Carry-over maj'];
-  const pkHtml=cats.map(cat=>{
-    const rows=pk.filter(p=>p.category===cat);if(!rows.length)return'';
-    const sum=rows.reduce((s,r)=>s+ +r.amount,0);
-    return`<h3 class="gsec" style="margin-top:14px">${cat} — ${k(sum)}</h3>
-    <div class="tbl"><table>${rows.map(r=>`<tr><td>${r.brand}</td><td style="text-align:left;color:var(--mut)">${r.package||''}</td><td><b>${kk(+r.amount)}</b></td><td style="color:${r.status&&r.status.includes('pitch')?'var(--amber)':'var(--mint)'};font-size:11px">${r.status}</td></tr>`).join('')}</table></div>`}).join('');
+  const pkgByBrand=new Map();
+  for(const p of pk){if(p.status&&p.status.includes('pitch'))continue;const key2=p.brand;pkgByBrand.set(key2,(pkgByBrand.get(key2)||0)+ +p.amount)}
+  const bm=D.brand_monthly;
+  const months=[...new Set(bm.map(r=>r.month))].sort();
+  const m3=months.slice(-4,-1); // 3 pełne miesiące (bez bieżącego MTD)
+  const [mA,,mC]=[m3[0],m3[1],m3[2]];
+  const agg=m=>{const x=new Map();for(const r of bm.filter(z=>z.month===m)){x.set(r.brand,{gmv:+r.gmv,nc:r.new_customers})}return x};
+  const aA=agg(mA),aC=agg(mC);
+  const ret=new Map((D.brand_retention||[]).map(b=>[b.brand,b]));
+  const rows=[...aC.entries()].map(([brand,v])=>{
+    const prev=aA.get(brand);
+    const trend=prev&&prev.gmv>3000?100*(v.gmv-prev.gmv)/prev.gmv:null;
+    const r=ret.get(brand);
+    const pkg=pkgByBrand.get(brand)||pkgByBrand.get(brand.replace('UrbanFits','Urban Fits'))||0;
+    const commission=v.gmv*(rate(mC.slice(0,7),brand)||0.10);
+    return{brand,gmv:v.gmv,nc:v.nc,trend,ret:r?+r.ret90_same:null,retAny:r?+r.ret90_any:null,pkg,commission};
+  }).filter(r=>r.gmv>10000).sort((a,b)=>b.gmv-a.gmv).slice(0,18);
+  function suggest(b){
+    if(b.trend!=null&&b.trend>30&&!b.pkg)return['Gwiazda bez pakietu — propozycja premium','pos'];
+    if(b.trend!=null&&b.trend>30)return['Rośnie — dosprzedaż / utrzymać sloty','pos'];
+    if(b.ret!=null&&b.ret>=38&&!b.pkg&&b.gmv>60000)return['Wysoka retencja, brak pakietu — potencjał B2B','amb'];
+    if(b.pkg&&b.trend!=null&&b.trend<-25)return['Pakiet nie broni się — rozmowa o formacie','neg'];
+    if(b.pkg&&b.ret!=null&&b.ret<25)return['Niska retencja przy pakiecie — ryzyko churnu partnera','neg'];
+    if(b.trend!=null&&b.trend<-30)return['Wyraźny spadek — diagnoza przyczyn','neg'];
+    return['Stabilny','mut'];
+  }
   document.getElementById('tab-b2b').innerHTML=`
   <div class="card">
     <h2>B2B ${st?mlab(st.month):''} — zafakturowane <span class="pill green">w celu</span></h2>
     <div class="big">${k(+st?.invoiced)} <small>PLN</small></div>
-    <div class="proj"><span>cel <b>${k(+st?.target_low)}–${k(+st?.target_high)}</b></span><span>pitche w toku <b>+${k(+st?.pitches)}</b></span><span>max <b>${k(+st?.invoiced + +st?.pitches)}</b></span></div>
-    <div class="note">${st?.note||''}</div>
+    <div class="proj"><span>cel <b>${k(+st?.target_low)}–${k(+st?.target_high)}</b></span><span>pitche <b>+${k(+st?.pitches)}</b></span></div>
   </div>
-  <div class="grid">
-    <div class="kpi"><div class="l">B2B ${mlab(lastMr.month)} (księgowo)</div><div class="v pos">${k(+lastMr.b2b)}</div><div class="d">${pc(share,0)} przychodu razem · 327% planu</div></div>
-    <div class="kpi"><div class="l">Trajektoria 2026</div><div class="v">${mr.map(m=>Math.round(+m.b2b/1000)).join(' → ')}</div><div class="d">tys. PLN miesięcznie (sty → ${mlab(lastMr.month)})</div></div>
+  <div class="card">
+    <h2>B2B w przychodzie <span class="pill">${mlab(lastMr.month)}</span></h2>
+    <div class="big">${pc(100*+lastMr.b2b/+lastMr.revenue_total,0)}</div>
+    <div class="proj"><span>${k(+lastMr.b2b)} z ${k(+lastMr.revenue_total)} przychodu razem</span><span>trajektoria <b>${mr.map(m=>Math.round(+m.b2b/1000)).join(' → ')}</b> tys.</span></div>
+    <div class="note">Twarda reguła: B2B = upside, nie wchodzi do prognoz.</div>
   </div>
-  <div class="flag info" style="margin-bottom:12px">Twarda reguła: B2B to upside — nie wchodzi do prognoz ani baseline'u budżetowego.</div>
-  <div class="card"><h2>Przychody — prowizja vs B2B miesięcznie <span class="pill">tys. PLN</span></h2><div class="ch"><canvas id="bRev"></canvas></div></div>
-  <div class="card"><h2>Mini P&L 2026 <span class="pill">tys. PLN · EBITDA bez aktywacji</span></h2><div class="tbl"><table>
+  <div class="card full"><h2>Cateringi zarządczo — ${mlab(mC)} <span class="pill">trend vs ${mlab(mA)} · retencja 90 dni · pakiety czerwiec</span></h2>
+  <div class="tbl"><table><tr><th>Catering</th><th>GMV</th><th>Trend 3 mc</th><th>Prowizja FDG</th><th>Nowi</th><th>Retencja</th><th>Pakiet B2B</th><th>Sugestia</th></tr>
+  ${rows.map(b=>{const s=suggest(b);return`<tr><td>${b.brand.replace(' (Multidieta)','')}</td><td><b>${kk(b.gmv)}</b></td><td class="${b.trend>0?'pos':'neg'}">${b.trend!=null?sgn(b.trend):'—'}</td><td>${kk(b.commission)}</td><td>${b.nc}</td><td class="${b.ret>=40?'pos':b.ret!=null&&b.ret<25?'neg':''}">${b.ret!=null?pc(b.ret,0):'—'}</td><td>${b.pkg?kk(b.pkg):'<span class="mut">brak</span>'}</td><td style="text-align:left" class="${s[1]}">${s[0]}</td></tr>`}).join('')}</table></div>
+  <div class="note">Prowizja wg realnych stawek (${mlab(mC)}). Retencja = % klientów wracających do tego samego brandu w 90 dni (kohorty 09.25–03.26). Sugestie generowane regułami — traktuj jako podpowiedź do rozmów, nie wyrok.</div></div>
+  <div class="card full"><h2>Przychody — prowizja vs B2B miesięcznie <span class="pill">tys. PLN</span></h2><div class="ch"><canvas id="bRev"></canvas></div></div>
+  <div class="card full"><details><summary>Pakiety ${st?mlab(st.month):''} — szczegóły slotów (${pk.length})</summary>
+  <div class="tbl" style="margin-top:8px"><table>${pk.map(r=>`<tr><td>${r.category}</td><td>${r.brand}</td><td style="text-align:left;color:var(--mut)">${r.package||''}</td><td><b>${kk(+r.amount)}</b></td><td style="color:${r.status&&r.status.includes('pitch')?'var(--amber)':'var(--mint)'};font-size:11px">${r.status}</td></tr>`).join('')}</table></div></details>
+  <details><summary>Mini P&L 2026 (tys. PLN, EBITDA bez aktywacji)</summary>
+  <div class="tbl" style="margin-top:8px"><table>
     <tr><th></th>${mr.map(m=>`<th>${mlab(m.month)}</th>`).join('')}</tr>
     <tr><td>Przychód razem</td>${mr.map(m=>`<td>${Math.round(+m.revenue_total/1000)}</td>`).join('')}</tr>
     <tr><td>— prowizja</td>${mr.map(m=>`<td>${Math.round(+m.commission/1000)}</td>`).join('')}</tr>
     <tr><td>— B2B</td>${mr.map(m=>`<td class="pos">${Math.round(+m.b2b/1000)}</td>`).join('')}</tr>
     <tr><td>Marketing</td>${mr.map(m=>`<td>${Math.round(+m.marketing_total/1000)}</td>`).join('')}</tr>
     <tr><td><b>EBITDA</b></td>${mr.map(m=>`<td class="${+m.ebitda<0?'neg':'pos'}"><b>${Math.round(+m.ebitda/1000)}</b></td>`).join('')}</tr>
-    <tr><td style="color:var(--mut)">EBITDA budżet</td>${mr.map(m=>`<td style="color:var(--mut)">${Math.round(+m.ebitda_budget/1000)}</td>`).join('')}</tr>
-  </table></div></div>
-  <div class="card"><h2>Pakiety — ${st?mlab(st.month):''} <span class="pill">stan z planu B2B</span></h2>${pkHtml}
-  <div class="note">Źródło: STAN_CZERWIEC.md (plan sprzedaży B2B). Aktualizacja przy zmianach stanu miesiąca.</div></div>`;
+  </table></div></details></div>`;
 };
 INIT.b2b=function(){
   const mr=D.monthly_results;
