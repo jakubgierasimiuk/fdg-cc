@@ -110,6 +110,12 @@ h3.gsec{font-size:11.5px;font-weight:800;color:var(--amber);text-transform:upper
   nav .wrap{justify-content:center}
   .ch{height:250px}
 }
+.inf{display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;border-radius:50%;border:1px solid var(--mut);color:var(--mut);font-size:9.5px;font-weight:800;font-style:normal;line-height:1;cursor:pointer;vertical-align:middle;margin-left:5px;opacity:.6;flex:0 0 auto;text-transform:none;-webkit-user-select:none;user-select:none}
+.inf::before{content:"i"}
+.inf:hover{opacity:1;border-color:var(--amber);color:var(--amber)}
+.brandrow .rk{flex:0 0 20px;text-align:right;color:var(--mut);font-weight:700;font-size:12px;font-variant-numeric:tabular-nums}
+#tip{position:fixed;z-index:60;max-width:300px;background:#0c1813;border:1px solid var(--amber);border-radius:11px;padding:11px 13px;font-size:12.5px;line-height:1.5;color:var(--txt);box-shadow:0 10px 32px #000b}
+#tip b{color:var(--amber)}
 </style>
 </head>
 <body>
@@ -155,6 +161,7 @@ h3.gsec{font-size:11.5px;font-weight:800;color:var(--amber);text-transform:upper
   <button data-t="seo" onclick="tab('seo')">SEO</button>
   <button data-t="b2b" onclick="tab('b2b')">B2B</button>
 </div></nav>
+<div id="tip" class="hide"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script>
@@ -168,7 +175,7 @@ let D=null,charts={},chartsInit={},curTab='cockpit';
 
 function getTok(){const h=new URLSearchParams(location.hash.slice(1)).get('t');const t=h||localStorage.getItem('cc_t');if(h)localStorage.setItem('cc_t',h);if(t){try{const man={name:'Foodango — mostek',short_name:'Foodango',start_url:location.pathname+'#t='+t,scope:location.pathname.replace(/[^/]*$/,''),display:'standalone',background_color:'#14241e',theme_color:'#14241e',icons:[{src:new URL('icon192.png',location.href).href,sizes:'192x192',type:'image/png',purpose:'any maskable'},{src:new URL('icon512.png',location.href).href,sizes:'512x512',type:'image/png'}]};document.querySelector('link[rel=manifest]').href=URL.createObjectURL(new Blob([JSON.stringify(man)],{type:'application/manifest+json'}))}catch(e){}}return t}
 function saveTok(){const v=document.getElementById('tok').value.trim();if(v){localStorage.setItem('cc_t',v);location.hash='t='+v;location.reload()}}
-function tab(t){curTab=t;document.querySelectorAll('main section').forEach(s=>s.classList.add('hide'));document.getElementById('tab-'+t).classList.remove('hide');document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));window.scrollTo(0,0);if(D&&!chartsInit[t]){chartsInit[t]=true;INIT[t]&&INIT[t]()}}
+function tab(t){curTab=t;document.querySelectorAll('main section').forEach(s=>s.classList.add('hide'));document.getElementById('tab-'+t).classList.remove('hide');document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));window.scrollTo(0,0);if(D&&!chartsInit[t]){chartsInit[t]=true;INIT[t]&&INIT[t]()}if(t==='mkt')setTimeout(function(){var s=document.querySelector('#tab-mkt .scrollx');if(s)s.scrollLeft=s.scrollWidth},160)}
 
 const pd=s=>{const[a,b,c]=s.slice(0,10).split('-').map(Number);return new Date(a,b-1,c)};
 const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
@@ -248,6 +255,91 @@ const leg={labels:{boxWidth:10,boxHeight:10,font:{size:11}}};
 const esc=s=>String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;');
 const mdl=s=>esc(s).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/\n/g,'<br>');
 function updateBadge(){const n=(D.briefs||[]).filter(b=>!b.read_at).length;document.getElementById('pulsBadge').textContent=n?'●':''}
+const DEFS={
+"gmv_mtd":"GMV od 1. dnia miesiąca do dziś (MTD) z BigQuery (logika Card 296): tylko status CONFIRMED, bez admin_payment; wartość = before + dostawa − rabaty na poziomie zamówienia. Pasek = realizacja vs budżet. Trzy projekcje końca mc: liniowa (MTD/dni × dni), sezonowa (mnożniki dzień miesiąca × dzień tygodnia na pozostałe dni) i tempo z 7 dni (MTD + śr. 7 dni × pozostałe).",
+"prowizja_mtd":"Prowizja Foodango od GMV item-level realnymi stawkami per catering (od czerwca 2026: 10%, Paczka Smaku 8%) — nie płaskie 8% z Card 296. Suma za miesiąc do dziś; projekcja końca mc skalowana proporcją sezonowej projekcji GMV. Multidieta liczona jako osobna pozycja brandu.",
+"cday":"Dzienne GMV (CONFIRMED bez admin_payment) za ostatnie ~8 tygodni z BigQuery. Jaśniejszy słupek = dziś (dane częściowe, doładowywane w ciągu dnia), weekend jaśniejszy. Linia = średnia krocząca z 7 pełnych dni (dzisiejszy słupek wykluczony ze średniej).",
+"cac_paid_mtd":"Koszt pozyskania nowego klienta z płatnych mediów w bieżącym miesiącu (MTD): wydatki Performance ÷ nowi klienci. Wydatki = Meta FDG (spend Meta − kampanie cateringów po campaign_name 'promo catering') + Google. Nowy = buyer z pierwszym opłaconym zakupem w tym miesiącu. Tylko media paid, bez reszty marketingu. Uwaga: okno danych marketingowych w ETL to 14 dni.",
+"cac_laczny":"CAC księgowy z tabeli monthly_results za ostatni zamknięty miesiąc: cały budżet marketingowy ÷ nowi klienci. Dane wprowadzane ręcznie po zamknięciu księgowym, nie liczone na żywo z transakcji. Obok wariant realny (skorygowany) i budżet CAC z planu.",
+"gmv_split":"Podział GMV MTD między klientów powracających i nowych. Nowy = zamówienie w dniu pierwszego opłaconego zakupu danego buyera (is_first); reszta to powracający. Udział nowych = new_gmv ÷ całe GMV MTD, na danych CONFIRMED bez admin_payment.",
+"app_share_30":"Udział aplikacji mobilnej w zamówieniach z ostatnich 30 pełnych dni. Platforma z order_request_client: app = mobile-ios + mobile-android, web = web. Liczone jako zamówienia app ÷ (app + web); zamówienia bez oznaczonej platformy nie wchodzą do mianownika.",
+"pace_ret":"Tempo realizacji budżetu zamówień powracających w bieżącym miesiącu: projekcja liniowa (zamówienia powracających MTD / liczba dni × dni w miesiącu) ÷ cel z planu (tabela budgets). Powracający = zamówienie poza dniem pierwszego zakupu buyera. Najstabilniejszy filar, śledzony osobno.",
+"pace_new":"Tempo realizacji budżetu nowych klientów w bieżącym miesiącu: projekcja liniowa (nowi klienci MTD / liczba dni × dni w miesiącu) ÷ cel z planu (tabela budgets). Nowy klient = unikalny buyer, którego pierwszy opłacony zakup (is_first) wypadł w tym miesiącu.",
+"flagi":"Automatyczne reguły ostrzegawcze liczone na żywo z danych zakładki: tester rate ostatniego pełnego tygodnia powyżej 28%, spadek GMV WoW poniżej −25% (z rozróżnieniem normalizacji po peaku), pace sezonowy GMV poniżej 80% (przy min. 10 dniach), pace powracających poniżej 90%, projekcja Performance powyżej 105% limitu, spadek CR sesja→zakup WoW o ponad 0,5 pkt proc. Bez ręcznego wkładu.",
+"radar":"Otwarte wątki projektu z deadline'ami, sortowane rosnąco po dacie; pozycje do 7 dni oznaczone na czerwono. Zasilane ręcznie z pamięci projektu (otwarte wątki, decyzje) przy sesjach i porannej rutynie — nie liczone z transakcji.",
+"swiezosc":"Znaczniki czasu ostatniego odświeżenia każdego źródła z logu rutyny ETL. Pełne odświeżenie rano 6:45; dzisiejsze GMV doładowywane w ciągu dnia (13:00, 18:00). Lejek i dane GA4 mają ~1–2 dni opóźnienia względem transakcji.",
+"puls":"Lista briefów do przeczytania: krótkie notatki narracyjne (brief dnia rano po odświeżeniu danych, brief tygodnia w poniedziałki), nie metryka liczona z transakcji. Źródło: tabela briefs (foodango_cc) — pokazywane tylko nieprzeczytane; przeczytane lądują w Archiwum. Każdy brief ma typ, datę i opcjonalną flagę uwagi. Dzień zwyczajny też daje brief, tylko jednozdaniowy — zasada zero szumu.",
+"zam_mtd":"Liczba zamówień narastająco od 1. dnia bieżącego miesiąca do OSTATNIEGO ZAKOŃCZONEGO dnia (bieżący, niepełny dzień jest wykluczony). Źródło: configuration_order (logika Card 296) — status CONFIRMED, bez admin_payment, data wg paid_at. Pace = projekcja liniowa (MTD/liczba_dni × dni_w_miesiącu) ÷ budżet zamówień z planu.",
+"aov_week":"Średnia wartość zamówienia za ostatni pełny tydzień (pon–ndz): GMV tygodnia ÷ liczba zamówień. GMV na poziomie zamówienia (wartość przed rabatem + dostawa − rabaty), tylko CONFIRMED bez admin_payment. Śr. dieta = średnia (ważona zamówieniami) liczba dni dostaw na zamówienie z dat configurationItem.",
+"sweek":"GMV per pełny tydzień (pon–ndz) za ostatnie 26 tygodni. Źródło: configuration_order, tylko CONFIRMED bez admin_payment. GMV na poziomie zamówienia = wartość przed rabatem + dostawa − suma rabatów. Słupki w tysiącach PLN; bieżący niepełny tydzień pomijany.",
+"sord":"Liczba zamówień per pełny tydzień (pon–ndz) za ostatnie 26 tygodni. Źródło: configuration_order, tylko CONFIRMED bez admin_payment, zamówienie przypisane do tygodnia wg daty opłaty (paid_at). Liczy zamówienia, nie klientów; bieżący niepełny tydzień pomijany.",
+"tab8w":"Ostatnie 8 pełnych tygodni (pon–ndz), metryki z configuration_order (CONFIRMED, bez admin_payment). GMV na poziomie zamówienia, WoW = zmiana GMV tydzień do tygodnia. Tester = udział pierwszych zamówień z dietą 1–5 dni; App = udział zamówień z aplikacji (mobile-ios + android) w sumie aplikacja + web wg client_type.",
+"seg_len":"Struktura długości diet jako % zamówień w 4 koszykach (1–5 / 6–10 / 11–20 / 21+ dni), per pełny tydzień, ostatnie 26 tygodni. Długość = liczba dni dostaw na zamówienie z dat configurationItem. Źródło: configuration_order (CONFIRMED, bez admin_payment); udziały w tygodniu sumują się do 100% zamówień.",
+"aov_dl":"Dwie linie per pełny tydzień (ostatnie 26 tyg.): średnia wartość zamówienia (GMV ÷ zamówienia, PLN) oraz średnia (ważona zamówieniami) długość diety w dniach dostaw. Źródło: configuration_order (CONFIRMED, bez admin_payment). Pokazuje, czy wzrost AOV wynika z dłuższych diet, czy z droższego dnia diety.",
+"diet_types":"GMV per kategoria diety (tag platformy) zsumowane z 4 ostatnich tygodni kalendarzowych (z bieżącym, niepełnym tygodniem — bez dzisiejszego dnia), top 10. GMV na poziomie pozycji (item.before + część dostawy − proporcjonalny rabat); źródło configuration_order + diets_tags + tag (CONFIRMED, bez admin_payment). Procent = udział kategorii w całym GMV tych tygodni; dieta może mieć kilka kategorii, więc udziały nie sumują się do 100%.",
+"nowi_mtd":"Liczba unikalnych nowych klientów od 1. dnia bieżącego miesiąca do dziś (buyer, którego pierwszy opłacony dzień zakupu = ten dzień). Źródło: configuration_order, CONFIRMED bez admin_payment (logika Card 296). Pace = projekcja liniowa (MTD/liczba_dni × dni_w_miesiącu) ÷ budżet z planu.",
+"powr_mtd":"Liczba zamówień od klientów powracających w bieżącym miesiącu (zamówienia NIE w dniu pierwszego zakupu buyera). Źródło: configuration_order, CONFIRMED bez admin_payment. Pace = projekcja liniowa (MTD/liczba_dni × dni_w_miesiącu) ÷ budżet powracających z planu.",
+"kacq":"Słupki: liczba nowych klientów dziennie (pierwszy opłacony zakup buyera) za ostatnie 84 pełne dni (bez dnia bieżącego). Linia: CAC paid jako 7-dniowa średnia krocząca = (Meta FDG + Google) ÷ nowi klienci dnia. Meta FDG = wydatki Meta minus kampanie cateringów. Dni bez wydatku lub bez akwizycji pomijane w średniej CAC.",
+"knvr":"Zamówienia w podziale na nowe (w dniu pierwszego zakupu buyera) i powracające, tygodniowo (pon–ndz), tylko pełne tygodnie, ostatnie 26. Na słupku % powracających i nowych; w dymku obie liczby. Źródło: configuration_order, CONFIRMED bez admin_payment. To zamówienia, nie unikalni klienci.",
+"kngp":"Udział GMV pochodzącego od nowych klientów = GMV zamówień w dniu pierwszego zakupu ÷ całe GMV tygodnia. GMV na poziomie zamówienia (cena przed rabatem + dostawa − rabaty), CONFIRMED bez admin_payment. Tygodniowo, pełne tygodnie.",
+"ktest":"Tester rate = odsetek pierwszych zamówień o długości diety 1–5 dni wśród wszystkich pierwszych zamówień tygodnia. Długość liczona z dni dostaw w configurationItem.dates. Czerwona linia = próg 28% (powyżej = zbyt dużo płytkiej akwizycji). Tygodniowo, pełne tygodnie.",
+"kapp":"Dwie linie tygodniowo: udział aplikacji w zamówieniach (app ÷ app+web) i w GMV (GMV app ÷ GMV app+web). App = mobile-ios + mobile-android, web = web, wg client_type z order_request_client. Zamówienia bez rozpoznanej platformy wykluczone z mianownika.",
+"koh_ret":"Procent klientów z danej kohorty (miesiąc pierwszego opłaconego zakupu) aktywnych w m+N. Źródło: configuration_order + payment, CONFIRMED bez admin_payment. Mianownik = rozmiar kohorty w m0 (unikalni kupujący w miesiącu startu); licznik = unikalni kupujący kohorty w m+N. Kohorty od 2025-01, m+1..m+6.",
+"seg_ret":"Procent klientów, którzy w ciągu 90 dni od pierwszego zamówienia zrobili kolejny zakup, w podziale na długość 1. zamówienia (1-5 testerzy / 6-10 / 11-20 / 21+). Kohorty kwartalne, CONFIRMED bez admin_payment. Churn = 100% minus ta wartość. Każda pokazana kohorta ma pełne okno 90 dni.",
+"ord_dist":"Rozkład klientów wg łącznej liczby zamówień (1, 2, 3-5, 6-10, 11+), tylko klienci z pierwszym zakupem od 2025-01-01. Źródło: configuration_order + payment, CONFIRMED bez admin_payment. Procenty liczone od sumy wszystkich klientów w tym oknie.",
+"ltv":"Skumulowane GMV na klienta kohorty, narastająco m0..m+6. GMV poziomu zamówienia (przed rabatem + dostawa − rabaty, CONFIRMED bez admin_payment) sumowane po miesiącach aktywności kohorty i dzielone przez jej rozmiar w m0. Każda linia to inny miesiąc pierwszego zakupu.",
+"brand_ret":"Dla klientów z pierwszym zakupem u danego cateringu: % wracających w 90 dni do tego samego brandu oraz gdziekolwiek na Foodango (różnica = przejęci przez inne brandy). Plus AOV 1. zamówienia. Kohorta krocząca: pierwsze zakupy od 9 mc do 90 dni wstecz, min. 30 klientów; Multidieta osobno.",
+"brand_rank":"Ranking cateringów wg GMV item-level (alokacja rabatu jak Card 296): CONFIRMED bez admin_payment, wartość pozycji = cena przed rabatem + dostawa/liczba pozycji − proporcjonalny rabat. Tryby: bieżący miesiąc MTD, poprzedni pełny miesiąc albo 4 pełne tygodnie. Δ = zmiana vs analogiczny poprzedni okres; w MTD baza poprzedniego miesiąca skalowana mnożnikiem dzień/30. Multidieta osobno jako Foodango (Multidieta).",
+"concentration":"Jaką część całego GMV item-level dają największe brandy w danym miesiącu. Co miesiąc brandy sortowane malejąco po GMV; TOP3 = suma trzech największych ÷ GMV wszystkich, TOP5 analogicznie dla pięciu. Im wyżej linie, tym większa koncentracja (uzależnienie od kilku cateringów). Multidieta jako osobny brand.",
+"multi_orders":"Liczba zamówień Multidiety od 1. dnia bieżącego miesiąca do dziś (MTD) oraz ich udział we wszystkich zamówieniach. Zamówienie jest Multidietą, gdy jego order_id występuje jako multidiet_id w tabeli multidiet_item. CONFIRMED bez admin_payment, data wg paid_at; bieżący dzień częściowy.",
+"multi_gmv":"GMV zamówień Multidiety narastająco od 1. dnia miesiąca (MTD) plus AOV (GMV ÷ liczba zamówień Multidiety). GMV na poziomie zamówienia: wartość przed rabatem + dostawa − rabaty (CONFIRMED, bez admin_payment). Filtr Multidiety przez tabelę multidiet_item.",
+"multi_status":"Ręczna etykieta jakościowa pozycjonująca Multidietę jako produkt niszowy — unikalna propozycja wartości (codziennie inny catering), której adopcję dopiero budujemy (redesign konfiguratora w toku). Tekst wpisany na stałe, nie wartość liczona z danych.",
+"multi_week":"Tygodniowo (pon–ndz, tylko pełne tygodnie): słupki to liczba zamówień Multidiety, linia to ich GMV w tysiącach PLN. Te same definicje co KPI — zamówienie wg tabeli multidiet_item, GMV na poziomie zamówienia (CONFIRMED, bez admin_payment). Ostatnie 26 pełnych tygodni.",
+"multi_brands":"Które cateringi klienci wybierają wewnątrz zamówień Multidiety, mierzone liczbą pozycji (dni dostaw) per catering w NAJNOWSZYM miesiącu w danych — bieżący miesiąc bywa częściowy. Źródło: multidiet_item złączone z catering po merchant_id (CONFIRMED, bez admin_payment, wg paid_at). To udział dni, nie GMV.",
+"perf_mtd":"Wydatki performance od 1. dnia miesiąca do wczoraj (MTD): Meta FDG (spend Meta minus kampanie cateringów) plus Google. Źródło: marketing_daily (Meta z airbyte insights, Google z CampaignStats). Projekcja liniowa = MTD ÷ dni z danymi × dni w miesiącu. Limit to próg zarządczy (czerwiec: 250 tys.), nie budżet księgowy.",
+"meta_roas":"Zwrot z wydatków Meta z piksela (MTD): purchase_value ÷ CAŁY spend Meta (łącznie z kampaniami cateringów, nie Meta FDG). Źródło: airbyte raw facebook ads insights (dedup ad_id+date). Haczyk: ROAS pixelowy zawyża (atrybucja Meta click+view) — czytaj trend, nie poziom.",
+"meta_cpp":"Średni koszt zakupu z piksela Meta w MTD: CAŁY spend Meta (z cateringami) ÷ liczba zakupów (purchases z piksela). Źródło: airbyte raw facebook ads insights. Zakupy wg atrybucji Meta, nie tożsame z zamówieniami w systemie Foodango.",
+"google_roas":"Zwrot z wydatków Google wg panelu Google Ads (MTD): wartość konwersji ÷ koszt. Źródło: google_ads_raw CampaignStats. Atrybucja Google, więc poziom nieporównywalny wprost z ROAS Meta (inny model przypisania).",
+"google_cpa":"Średni koszt jednej konwersji Google w MTD: koszt ÷ liczba konwersji wg panelu Google Ads. Źródło: google_ads_raw CampaignStats. Konwersje liczone atrybucją Google (nie 1:1 z zamówieniami w bazie Foodango).",
+"spend_meta":"Całość wydatków na Meta narastająco od 1. dnia miesiąca (MTD), łącznie z kampaniami cateringów. Źródło: airbyte raw facebook ads insights. Część cateringów (campaign_name 'promo catering') jest wyłączana przy liczeniu Meta FDG i CAC paid.",
+"spend_google":"Całość wydatków Google Ads (search + PMax + brand) narastająco od 1. dnia miesiąca (MTD). Źródło: google_ads_raw CampaignStats (koszt z metrics_cost_micros). Cała pula wchodzi do performance/media przy liczeniu CAC paid.",
+"spend_daily":"Dzienne wydatki (od 1 stycznia) w trzech warstwach: Meta FDG (spend Meta minus cateringi), Meta cateringi (kampanie 'promo catering') i Google. Źródło: marketing_daily. Słupek dnia to faktyczny spend, bez wygładzania; warstwy skumulowane.",
+"roas_week":"ROAS tydzień do tygodnia (ostatnie ~12 pełnych tygodni pon–ndz): Meta z piksela (purchase_value ÷ cały spend Meta) oraz Google z panelu (wartość konwersji ÷ koszt). Źródło: marketing_daily agregowane tygodniowo. Niepełny bieżący tydzień pominięty; inna atrybucja — porównuj trendy.",
+"cacd":"Dwie krzywe dzienne wygładzone średnią z 7 dni (MA7). CAC paid = media (Meta FDG + Google) ÷ nowi klienci dnia. CPA = te same media ÷ wszystkie zamówienia dnia. Media z marketing_daily, nowi/zamówienia z dziennych transakcji (CONFIRMED bez admin_payment). To CAC bieżący, nie księgowy.",
+"cac_month":"Miesięczny CAC łączny (cały budżet marketingowy ÷ nowi klienci) i CAC realny (wariant skorygowany) zestawione z budżetem CAC z planu. Źródło: monthly_results — dane wprowadzane ręcznie po zamknięciu księgowym miesiąca, nie liczone na żywo. Budżet z tabeli budgets.",
+"pz_leads":"Liczba leadów Przesiadki w MTD: kody rabatowe SD wystawione w promotion_coupon (UPPER(phrase) LIKE 'SD%'). Źródło: foodango_raw.promotion_coupon. Stary batch z 22.04 jest poza 14-dniowym oknem zapytania, więc nie zawyża liczby.",
+"pz_orders":"Zamówienia na kodzie SD w MTD: CONFIRMED, bez admin_payment, kod SD w configuration.discount_code (UPPER LIKE 'SD%'), liczone po dniu opłacenia (paid_at). Źródło: configuration_order. Konwersja = zamówienia SD ÷ leady SD.",
+"pz_gmv":"GMV z zamówień na kodzie SD w MTD: wartość przed rabatem + dostawa − rabaty, tylko CONFIRMED bez admin_payment. Źródło: configuration_order. AOV = to GMV ÷ liczba zamówień SD.",
+"pz_chart1":"Tygodniowo (ostatnie 8 pełnych tygodni pon–ndz): słupki = zamówienia na kodzie SD (CONFIRMED, bez admin_payment), linia = leady SD z promotion_coupon. Źródło: przesiadka_daily, agregat tygodniowy. Bieżący niepełny tydzień pominięty.",
+"pz_chart2":"Słupki = tygodniowe GMV na kodzie SD; linia = retencja kohorty miesiąca (% klientów z 1. zakupem SD, którzy zrobili kolejne jakiekolwiek zamówienie). Flaga decyzji 6.07 pokazuje skumulowaną retencję kohort kwiecień+maj (próg: powyżej 30–35% zostaje, poniżej 25% zamykamy). Haczyk: okno majowej kohorty niepełne, więc zaniża.",
+"lejek":"Lejek sesyjny GA4 za ostatni pełny tydzień (pon–ndz): Sesje → Koszyk (add_to_cart) → Checkout (begin_checkout) → Zakup (purchase), każdy etap to unikalne sesje z danym eventem. Pass-through = % sesji etapu vs poprzedni krok; WoW = zmiana liczby sesji etapu vs poprzedni pełny tydzień. Bez atrybucji kanałowej (wszystkie sesje).",
+"cr":"Współczynnik konwersji sesja→zakup za ostatni pełny tydzień: unikalne sesje z eventem purchase ÷ sesje zaangażowane (z co najmniej jednym zdarzeniem e-commerce). Mianownik zaangażowanych odsiewa ruch botowy/niezaangażowany, który zniekształcał wskaźnik (artefakt kwietnia). Dane GA4 z ~1–2 dni opóźnienia — tylko domknięte tygodnie.",
+"sesje_week":"Liczba unikalnych sesji GA4 w ostatnim pełnym tygodniu (pon–ndz). Sesja = user_pseudo_id + ga_session_id ze źródła analytics_439921618. WoW to zmiana vs poprzedni pełny tydzień. Dane GA4 z ~1–2 dniowym opóźnieniem, dlatego bieżący niedomknięty tydzień nie jest pokazywany.",
+"sesje_chart":"Przebieg liczby sesji GA4 w czasie z przełącznikiem agregacji: Dni (ostatnie 60 dni), Tygodnie (tylko pełne pon–ndz) lub Miesiące. Źródło: funnel_daily z GA4. Widok tygodniowy i miesięczny sumuje sesje dzienne; dni surowe. Dane z ~1–2 dni opóźnieniem.",
+"cr_chart":"Tygodniowy przebieg (ostatnie 26 pełnych tygodni pon–ndz): słupki to liczba wszystkich sesji, linia to CR sesja→zakup liczony od sesji zaangażowanych (z ≥1 zdarzeniem e-commerce). Słupki pokazują wolumen ruchu, linia jakość konwersji. Tylko domknięte tygodnie (opóźnienie GA4).",
+"kanaly":"Kanały ruchu za ostatni pełny tydzień, mapowane własną regułą ze źródła/medium last-click GA4 (Paid Search, Paid Social, Email, SMS, Organic, Direct, Referral, Inne). Kolumny: Sesje, CR (eventy purchase ÷ sesje), Revenue z purchase GA4, zł/sesję, Rev WoW. „Inne” = ruch nieoznaczony (m.in. aplikacja i self-referral).",
+"kanaly_chart":"Przebieg liczby sesji w czasie dla 5 największych kanałów (ostatnie 16 pełnych tygodni pon–ndz). Top 5 wybierany po sumie sesji w całym oknie. Kanały mapowane ze źródła/medium last-click GA4; „Inne” to ruch nieoznaczony (m.in. aplikacja).",
+"landing":"Top 12 stron wejścia (pierwsza odsłona w sesji, ścieżka URL bez query) za ostatni pełny tydzień, GA4. Kolumny: Sesje, WoW vs poprzedni tydzień, Zakupy (eventy purchase w sesjach wchodzących z tej strony) i CR (zakupy ÷ sesje). Źródło: landing_weekly, atrybucja po pierwszym page_view sesji.",
+"seo_clicks":"Suma kliknięć z wyników organicznych Google w ostatnich 28 dniach. Źródło: Google Search Console (searchdata_site_impression). Liczba pod spodem to zmiana względem poprzednich 28 dni. Dane w hurtowni od 13.04.2026, z 2–3 dniami opóźnienia.",
+"seo_impr":"Suma wyświetleń strony Foodango w wynikach Google w ostatnich 28 dniach (ile razy link pojawił się użytkownikom). Źródło: Google Search Console. Pod spodem zmiana vs poprzednie 28 dni. Dane od 13.04.2026, opóźnienie 2–3 dni.",
+"seo_pos":"Średnia pozycja Foodango w Google z 28 dni. To zwykła (nieważona) średnia z 28 wartości dziennych, gdzie każdy dzień = sum_top_position/wyświetlenia + 1 z Search Console (w obrębie dnia ważona wyświetleniami). Niżej = lepiej. Pod spodem wartość z poprzednich 28 dni.",
+"seo_org":"Liczba sesji z kanału Organic Search w ostatnim pełnym tygodniu (pon–ndz). Źródło: GA4 (analytics_439921618), kanał przypisany regułą last-click po source/medium (medium=organic). Pod spodem przychód z tych sesji. To dane GA4, nie Search Console — opóźnienie ~1–2 dni.",
+"seo_chart":"Dzienny przebieg kliknięć (słupki) i średniej pozycji (linia) z Google Search Console. Oś pozycji odwrócona, bo niżej = lepiej, więc rosnąca linia to poprawa rankingu. Historia w hurtowni zaczyna się 13.04.2026.",
+"seo_queries":"Top 25 fraz wyszukiwań z największą liczbą kliknięć w ostatnich 28 dniach, z Google Search Console. Kolumna Δ to zmiana kliknięć danej frazy względem poprzednich 28 dni (te same frazy). Pozycja: niżej = lepiej. Frazy bez nazwy pominięte.",
+"b2b_invoiced":"Przychód B2B zafakturowany od cateringów w danym miesiącu (listingi TOP5/10/3, jednodniówki, Oferta Dnia, kampanie Meta) plus cel niski–wysoki i wartość otwartych pitchy. Dane ręczne ze STAN_*.md (tabela b2b_status), nie liczone z transakcji. B2B to upside — nie wchodzi do prognoz EBITDA.",
+"b2b_share":"Udział B2B w przychodzie razem: B2B ÷ (prowizja + B2B) za ostatni miesiąc w monthly_results. Trajektoria to wartości B2B w tys. PLN kolejno wszystkimi miesiącami. Źródło: monthly_results — dane wprowadzane ręcznie po zamknięciu księgowym, nie z transakcji na żywo.",
+"b2b_table":"Tylko ostatni pełny miesiąc (bez bieżącego MTD), cateringi z GMV > 10 tys., top 18. GMV item-level (CONFIRMED bez admin_payment); Multidieta osobno. Trend = zmiana GMV vs miesiąc 2 wcześniej (gdy tamten > 3 tys.). Prowizja = GMV × realna stawka (10%, Paczka Smaku 8%). Retencja = % klientów wracających do tego samego brandu w 90 dni (kohorty 9–3 mc wstecz, min. 30 osób).",
+"b2b_rev":"Miesięczne zestawienie dwóch źródeł przychodu: prowizja od GMV (wg realnych stawek per catering) i przychód B2B, w tys. PLN. Nad słupkiem udział B2B w przychodzie. Mini P&L dokłada przychód razem, marketing i EBITDA (bez aktywacji kosztów). Źródło: monthly_results — dane ręczne po zamknięciu księgowym."
+};
+function inf(k){return DEFS[k]?'<span class="inf" data-k="'+k+'" role="button" aria-label="jak liczę"></span>':''}
+function showTip(el){var k=el.getAttribute('data-k'),txt=DEFS[k];if(!txt)return;var tip=document.getElementById('tip');tip.innerHTML='<b>Jak to liczę:</b> '+esc(txt);tip.classList.remove('hide');tip.dataset.k=k;var r=el.getBoundingClientRect(),tw=tip.offsetWidth,th=tip.offsetHeight,left=r.left+r.width/2-tw/2;left=Math.max(8,Math.min(left,innerWidth-tw-8));var top=r.bottom+8;if(top+th>innerHeight-8)top=r.top-th-8;tip.style.left=left+'px';tip.style.top=Math.max(8,top)+'px'}
+function hideTip(){var t=document.getElementById('tip');if(t){t.classList.add('hide');t.dataset.k=''}}
+document.addEventListener('click',function(e){var i=e.target.closest&&e.target.closest('.inf');if(i){e.stopPropagation();var t=document.getElementById('tip');if(t.dataset.k===i.getAttribute('data-k')&&!t.classList.contains('hide'))hideTip();else showTip(i)}else if(!(e.target.closest&&e.target.closest('#tip')))hideTip()});
+document.addEventListener('mouseover',function(e){if(!matchMedia('(hover:hover)').matches)return;var i=e.target.closest&&e.target.closest('.inf');if(i)showTip(i)});
+document.addEventListener('mouseout',function(e){if(!matchMedia('(hover:hover)').matches)return;var i=e.target.closest&&e.target.closest('.inf');if(i)hideTip()});
+window.addEventListener('scroll',hideTip,true);window.addEventListener('resize',hideTip);
+const pctStack={id:'pctStack',afterDatasetsDraw:function(c){var ds=c.data.datasets;if(ds.length<2)return;var ctx=c.ctx,m0=c.getDatasetMeta(0),m1=c.getDatasetMeta(1);ctx.save();ctx.font='700 9px Urbanist';ctx.textAlign='center';ctx.textBaseline='middle';for(var i=0;i<m0.data.length;i++){var a=+ds[0].data[i]||0,b=+ds[1].data[i]||0,t=a+b;if(!t)continue;var e0=m0.data[i],e1=m1.data[i];if(!e0||!e1||e0.width<13)continue;var pa=Math.round(100*a/t),h0=Math.abs(e0.base-e0.y),h1=Math.abs(e1.base-e1.y);if(h0>=13){ctx.fillStyle='#0e1b16';ctx.fillText(pa+'%',e0.x,(e0.y+e0.base)/2)}if(h1>=13){ctx.fillStyle='#3a2300';ctx.fillText((100-pa)+'%',e1.x,(e1.y+e1.base)/2)}}ctx.restore()}};
+const b2bPct={id:'b2bPct',afterDatasetsDraw:function(c){var ds=c.data.datasets;if(ds.length<2)return;var ctx=c.ctx,m1=c.getDatasetMeta(1);ctx.save();ctx.font='700 10px Urbanist';ctx.textAlign='center';ctx.textBaseline='bottom';ctx.fillStyle='#4fbf8b';for(var i=0;i<m1.data.length;i++){var a=+ds[0].data[i]||0,b=+ds[1].data[i]||0,t=a+b;if(!t)continue;var e=m1.data[i];if(!e)continue;ctx.fillText(Math.round(100*b/t)+'%',e.x,e.y-3)}ctx.restore()}};
 
 let P,W,LF,LW,PW;
 function renderStaleBanner(){
@@ -301,9 +393,9 @@ RENDER.cockpit=function(){
   const wow=PW?100*(LW.gmv-PW.gmv)/PW.gmv:null;
   const avg4=LF.slice(-6,-2).reduce((s,x)=>s+x.gmv,0)/Math.max(1,LF.slice(-6,-2).length);
   const peakPrev=PW&&PW.gmv>1.25*avg4;
-  const fw=fullWeeks(wkAgg(D.funnel_daily||[],['sessions','s_purchase']));
-  const crW=fw.length?100*fw[fw.length-1].s_purchase/fw[fw.length-1].sessions:null;
-  const crP=fw.length>1?100*fw[fw.length-2].s_purchase/fw[fw.length-2].sessions:null;
+  const fw=fullWeeks(wkAgg(D.funnel_daily||[],['sessions','s_purchase','eng_sessions']));
+  const crW=fw.length?100*fw[fw.length-1].s_purchase/(fw[fw.length-1].eng_sessions||fw[fw.length-1].sessions):null;
+  const crP=fw.length>1?100*fw[fw.length-2].s_purchase/(fw[fw.length-2].eng_sessions||fw[fw.length-2].sessions):null;
 
   const flags=[];
   if(LW&&LW.tr>28)flags.push({s:'warn',t:`Tester rate ${pc(LW.tr)} (${wlab(LW.week)}) — powyżej progu 28%.`});
@@ -320,31 +412,31 @@ RENDER.cockpit=function(){
 
   document.getElementById('tab-cockpit').innerHTML=`
   <div class="card">
-    <h2>GMV ${MIES[P.mo]} ${P.y} <span class="pill">dni 1–${P.nd} z ${P.dim}</span></h2>
+    <h2>GMV ${MIES[P.mo]} ${P.y} <span class="pill">dni 1–${P.nd} z ${P.dim}</span>${inf('gmv_mtd')}</h2>
     <div class="big">${k(P.mtd)} <small>PLN</small></div>
     ${td?`<div class="d" style="font-size:13px;margin-top:6px">Dziś (częściowe): <b class="amb">${kk(+td.gmv)}</b> · ${td.orders} zam. · ${td.new_customers} nowych</div>`:''}
     <div class="bar"><i style="width:${Math.min(100,P.bud?100*P.mtd/P.bud.gmv:0)}%"></i><s style="left:${100*P.nd/P.dim}%"></s></div>
     <div class="proj"><span>liniowa <b>${k(P.naive)}</b> (${pc(paceN)})</span><span>sezonowa <b>${k(P.factored)}</b> (${pc(paceF)})</span><span>tempo 7 dni <b>${k(P.runrate)}</b> (${pc(paceR)})</span><span>budżet <b>${k(P.bud?.gmv)}</b></span></div>
   </div>
   <div class="card">
-    <h2>Prowizja ${MIES[P.mo]} <span class="pill">wg stawek per catering</span></h2>
+    <h2>Prowizja ${MIES[P.mo]} <span class="pill">wg stawek per catering</span>${inf('prowizja_mtd')}</h2>
     <div class="big">${k(P.comm)} <small>PLN</small></div>
     <div class="proj"><span>projekcja końca mc <b>${k(P.commProj)}</b></span><span>stawki <b>10% / Paczka Smaku 8%</b></span></div>
     <div class="note">Prowizja naliczona od GMV item-level realnymi stawkami (nie płaskie 8% z Card 296).</div>
   </div>
-  <div class="card full"><h2>GMV dziennie — 8 tygodni <span class="pill">jaśniejszy słupek = dziś, częściowe</span></h2><div class="ch"><canvas id="cDay"></canvas></div></div>
+  <div class="card full"><h2>GMV dziennie — 8 tygodni <span class="pill">jaśniejszy słupek = dziś, częściowe</span>${inf('cday')}</h2><div class="ch"><canvas id="cDay"></canvas></div></div>
   <div class="grid full">
-    <div class="kpi"><div class="l">CAC paid MTD (media ÷ nowi)</div><div class="row"><div class="v">${zl(cacPaid)}</div><canvas class="spark" id="spCP"></canvas></div><div class="d">spend Meta FDG+Google ${k(perfMtd)} ÷ ${nf.format(mtdNew)} nowych</div></div>
-    <div class="kpi"><div class="l">CAC łączny ${mlab(lastMr.month)} (księgowy)</div><div class="row"><div class="v">${zl(+lastMr.cac)}</div><canvas class="spark" id="spC"></canvas></div><div class="d">cały marketing ÷ nowi · realny ~${zl(+lastMr.cac_real)} · budżet ${zl(D.budgets.find(b=>b.month===lastMr.month)?.cac)}</div></div>
-    <div class="kpi"><div class="l">GMV: powracający vs nowi MTD</div><div class="row"><div class="v">${pc(100-ngpMtd,0)} / ${pc(ngpMtd,0)}</div></div><div class="d">${k(P.mtd*(100-ngpMtd)/100)} od powracających · ${k(P.mtd*ngpMtd/100)} od nowych</div></div>
-    <div class="kpi"><div class="l">Udział aplikacji (30 dni)</div><div class="row"><div class="v">${pc(as30)}</div><canvas class="spark" id="spA"></canvas></div><div class="d">zamówienia · cel 50% przekroczony</div></div>
-    <div class="kpi"><div class="l">Powracający — pace MTD</div><div class="row"><div class="v ${paceRet>=95?'pos':paceRet<90?'neg':''}">${pc(paceRet)}</div></div><div class="d">${nf.format(mtdRet)} zam. vs budżet ${nf.format(P.bud?.returning_orders??0)}</div></div>
-    <div class="kpi"><div class="l">Nowi klienci — pace MTD</div><div class="row"><div class="v ${paceNew<75?'neg':''}">${pc(paceNew)}</div><canvas class="spark" id="spN"></canvas></div><div class="d">${nf.format(mtdNew)} vs budżet ${nf.format(P.bud?.new_customers??0)}</div></div>
+    <div class="kpi"><div class="l">CAC paid MTD (media ÷ nowi)${inf('cac_paid_mtd')}</div><div class="row"><div class="v">${zl(cacPaid)}</div><canvas class="spark" id="spCP"></canvas></div><div class="d">spend Meta FDG+Google ${k(perfMtd)} ÷ ${nf.format(mtdNew)} nowych</div></div>
+    <div class="kpi"><div class="l">CAC łączny ${mlab(lastMr.month)} (księgowy)${inf('cac_laczny')}</div><div class="row"><div class="v">${zl(+lastMr.cac)}</div><canvas class="spark" id="spC"></canvas></div><div class="d">cały marketing ÷ nowi · realny ~${zl(+lastMr.cac_real)} · budżet ${zl(D.budgets.find(b=>b.month===lastMr.month)?.cac)}</div></div>
+    <div class="kpi"><div class="l">GMV: powracający vs nowi MTD${inf('gmv_split')}</div><div class="row"><div class="v">${pc(100-ngpMtd,0)} / ${pc(ngpMtd,0)}</div></div><div class="d">${k(P.mtd*(100-ngpMtd)/100)} od powracających · ${k(P.mtd*ngpMtd/100)} od nowych</div></div>
+    <div class="kpi"><div class="l">Udział aplikacji (30 dni)${inf('app_share_30')}</div><div class="row"><div class="v">${pc(as30)}</div><canvas class="spark" id="spA"></canvas></div><div class="d">zamówienia · cel 50% przekroczony</div></div>
+    <div class="kpi"><div class="l">Powracający — pace MTD${inf('pace_ret')}</div><div class="row"><div class="v ${paceRet>=95?'pos':paceRet<90?'neg':''}">${pc(paceRet)}</div></div><div class="d">${nf.format(mtdRet)} zam. vs budżet ${nf.format(P.bud?.returning_orders??0)}</div></div>
+    <div class="kpi"><div class="l">Nowi klienci — pace MTD${inf('pace_new')}</div><div class="row"><div class="v ${paceNew<75?'neg':''}">${pc(paceNew)}</div><canvas class="spark" id="spN"></canvas></div><div class="d">${nf.format(mtdNew)} vs budżet ${nf.format(P.bud?.new_customers??0)}</div></div>
   </div>
-  ${flags.length?`<div class="card full"><h2>Flagi</h2>${flags.map(f=>`<div class="flag ${f.s}">${f.t}</div>`).join('')}</div>`:''}
-  <div class="card"><h2>Radar wątków</h2>${thr.map(t=>{const dl=dleft(t);return`<div class="thread"><span>${t.title}</span><span class="dl ${dl!=null&&dl<=7?'neg':'amb'}">${t.deadline?dlab(t.deadline)+' · '+(dl>=0?'za '+dl+' dni':Math.abs(dl)+' dni temu'):'—'}</span></div>`}).join('')}
+  ${flags.length?`<div class="card full"><h2>Flagi${inf('flagi')}</h2>${flags.map(f=>`<div class="flag ${f.s}">${f.t}</div>`).join('')}</div>`:''}
+  <div class="card"><h2>Radar wątków${inf('radar')}</h2>${thr.map(t=>{const dl=dleft(t);return`<div class="thread"><span>${t.title}</span><span class="dl ${dl!=null&&dl<=7?'neg':'amb'}">${t.deadline?dlab(t.deadline)+' · '+(dl>=0?'za '+dl+' dni':Math.abs(dl)+' dni temu'):'—'}</span></div>`}).join('')}
   <div class="note">Radar zasilam ja: przy każdej naszej sesji i porannej rutynie synchronizuję otwarte wątki, decyzje i deadline'y z pamięci projektu.</div></div>
-  <div class="card"><h2>Świeżość danych</h2>${(D.refresh_log||[]).slice(0,10).map(r=>`<div class="thread"><span>${r.source}</span><span class="dl">${new Date(r.refreshed_at).toLocaleString('pl-PL',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}</span></div>`).join('')}<div class="note">Pełne odświeżenie rano 6:45; dzisiejsze GMV doładowywane w ciągu dnia (13:00, 18:00). Lejek GA4 ma ~1 dzień opóźnienia.</div></div>`;
+  <div class="card"><h2>Świeżość danych${inf('swiezosc')}</h2>${(D.refresh_log||[]).slice(0,10).map(r=>`<div class="thread"><span>${r.source}</span><span class="dl">${new Date(r.refreshed_at).toLocaleString('pl-PL',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}</span></div>`).join('')}<div class="note">Pełne odświeżenie rano 6:45; dzisiejsze GMV doładowywane w ciągu dnia (13:00, 18:00). Lejek GA4 ma ~1 dzień opóźnienia.</div></div>`;
 };
 INIT.cockpit=function(){
   const mr=D.monthly_results;
@@ -367,7 +459,7 @@ RENDER.puls=function(){
   const br=D.briefs||[];
   const unread=br.filter(b=>!b.read_at),read=br.filter(b=>b.read_at);
   document.getElementById('tab-puls').innerHTML=`
-  <div class="card full"><h2>Do przeczytania <span class="pill">${unread.length}</span></h2>
+  <div class="card full"><h2>Do przeczytania <span class="pill">${unread.length}</span>${inf('puls')}</h2>
   ${unread.length?unread.map(b=>`<div class="brief"><div class="meta">${b.type==='weekly'?'Tydzień':b.type==='daily'?'Dzień':'Raport'} · ${dlab(b.brief_date)}${b.severity==='warn'?' · <span class="neg">uwaga</span>':''}</div><h3>${esc(b.title)}</h3><div class="body">${mdl(b.body)}</div><button onclick="markRead(${b.id})">Przeczytane ✓</button></div>`).join(''):'<div class="note">Wszystko przeczytane. Nowy brief dnia pojawia się rano po odświeżeniu danych, brief tygodnia — w poniedziałki.</div>'}
   <details><summary>Archiwum (${read.length})</summary>${read.map(b=>`<div class="brief" style="opacity:.65"><div class="meta">${b.type} · ${dlab(b.brief_date)}</div><h3>${esc(b.title)}</h3><div class="body">${mdl(b.body)}</div></div>`).join('')}</details>
   <div class="note">Briefy piszę ja — codziennie rano podsumowanie wczorajszego dnia (tylko jeśli jest coś wartego uwagi: odchylenia, anomalie, rekordy), w poniedziałki podsumowanie tygodnia. Zasada: zero szumu — gdy dzień jest zwyczajny, brief ma jedno zdanie.</div></div>`;
@@ -383,19 +475,21 @@ RENDER.sales=function(){
   for(const r of dt.filter(x=>w4.includes(x.week))){if(!dtAgg.has(r.tag))dtAgg.set(r.tag,{gmv:0,orders:0});const o=dtAgg.get(r.tag);o.gmv+=+r.gmv;o.orders+=r.orders}
   const dtTop=[...dtAgg.entries()].sort((a,b)=>b[1].gmv-a[1].gmv).slice(0,10);
   const dtMax=dtTop[0]?.[1].gmv||1;
+  const w4set=new Set(w4.map(x=>String(x).slice(0,10)));
+  const totG=W.filter(x=>w4set.has(x.week.slice(0,10))).reduce((s,x)=>s+x.gmv,0);
   document.getElementById('tab-sales').innerHTML=`
   <div class="grid full g2" style="margin-bottom:12px">
-    <div class="kpi"><div class="l">Zamówienia ${MIES[P.mo]} MTD</div><div class="row"><div class="v">${nf.format(mtdOrders)}</div><canvas class="spark" id="spO"></canvas></div><div class="d">pace ${pc(P.bud?100*(mtdOrders/P.nd*P.dim)/P.bud.orders:null)} vs budżet ${nf.format(P.bud?.orders??0)}</div></div>
-    <div class="kpi"><div class="l">AOV (${LW?wlab(LW.week):'—'})</div><div class="row"><div class="v">${zl(LW?.aov)}</div><canvas class="spark" id="spAov"></canvas></div><div class="d">śr. dieta ${LW?.add.toFixed(1)} dnia</div></div>
+    <div class="kpi"><div class="l">Zamówienia ${MIES[P.mo]} MTD${inf('zam_mtd')}</div><div class="row"><div class="v">${nf.format(mtdOrders)}</div><canvas class="spark" id="spO"></canvas></div><div class="d">pace ${pc(P.bud?100*(mtdOrders/P.nd*P.dim)/P.bud.orders:null)} vs budżet ${nf.format(P.bud?.orders??0)}</div></div>
+    <div class="kpi"><div class="l">AOV (${LW?wlab(LW.week):'—'})${inf('aov_week')}</div><div class="row"><div class="v">${zl(LW?.aov)}</div><canvas class="spark" id="spAov"></canvas></div><div class="d">śr. dieta ${LW?.add.toFixed(1)} dnia</div></div>
   </div>
-  <div class="card"><h2>GMV tygodniowo (pon–ndz)</h2><div class="ch"><canvas id="sWeek"></canvas></div></div>
-  <div class="card"><h2>Zamówienia tygodniowo</h2><div class="ch"><canvas id="sOrd"></canvas></div></div>
-  <div class="card full"><h2>Ostatnie 8 pełnych tygodni</h2><div class="tbl"><table><tr><th>Tydzień</th><th>GMV</th><th>WoW</th><th>Zam.</th><th>AOV</th><th>Śr. dni</th><th>Tester</th><th>App</th></tr>
-  ${LF.slice(-8).map((x,i,arr)=>{const p=arr[i-1];const ww=p?100*(x.gmv-p.gmv)/p.gmv:null;return`<tr><td>${wlab(x.week)}</td><td><b>${kk(x.gmv)}</b></td><td class="${ww>0?'pos':'neg'}">${ww!=null?sgn(ww):'—'}</td><td>${nf.format(x.orders)}</td><td>${zl(x.aov)}</td><td>${x.add.toFixed(1)}</td><td>${pc(x.tr)}</td><td>${pc(x.as)}</td></tr>`}).join('')}</table></div></div>
-  <div class="card"><h2>Struktura długości diet <span class="pill">% zamówień</span></h2><div class="ch"><canvas id="sSeg"></canvas></div><div class="note">Strategia: ograniczać 1–5 dni (testerzy), stymulować dłuższe pierwsze zamówienia.</div></div>
-  <div class="card"><h2>AOV i długość diety</h2><div class="ch"><canvas id="sAov2"></canvas></div></div>
-  <div class="card full"><h2>Rodzaje diet — GMV 4 pełne tygodnie <span class="pill">kategorie platformy</span></h2>
-  ${dtTop.map(([tag,v])=>`<div class="brandrow"><span class="n">${tag}</span><span class="b"><i style="width:${100*v.gmv/dtMax}%;background:#4fbf8b"></i></span><span class="v">${kk(v.gmv)} · ${nf.format(v.orders)} zam.</span></div>`).join('')}
+  <div class="card"><h2>GMV tygodniowo (pon–ndz)${inf('sweek')}</h2><div class="ch"><canvas id="sWeek"></canvas></div></div>
+  <div class="card"><h2>Zamówienia tygodniowo${inf('sord')}</h2><div class="ch"><canvas id="sOrd"></canvas></div></div>
+  <div class="card full"><h2>Ostatnie 8 pełnych tygodni${inf('tab8w')}</h2><div class="tbl"><table><tr><th>Tydzień</th><th>GMV</th><th>WoW</th><th>Zam.</th><th>AOV</th><th>Śr. dni</th><th>Tester</th><th>App</th></tr>
+  ${LF.slice(-8).slice().reverse().map((x,i,arr)=>{const p=arr[i+1];const ww=p?100*(x.gmv-p.gmv)/p.gmv:null;return`<tr><td>${wlab(x.week)}</td><td><b>${kk(x.gmv)}</b></td><td class="${ww>0?'pos':'neg'}">${ww!=null?sgn(ww):'—'}</td><td>${nf.format(x.orders)}</td><td>${zl(x.aov)}</td><td>${x.add.toFixed(1)}</td><td>${pc(x.tr)}</td><td>${pc(x.as)}</td></tr>`}).join('')}</table></div></div>
+  <div class="card"><h2>Struktura długości diet <span class="pill">% zamówień</span>${inf('seg_len')}</h2><div class="ch"><canvas id="sSeg"></canvas></div><div class="note">Strategia: ograniczać 1–5 dni (testerzy), stymulować dłuższe pierwsze zamówienia.</div></div>
+  <div class="card"><h2>AOV i długość diety${inf('aov_dl')}</h2><div class="ch"><canvas id="sAov2"></canvas></div></div>
+  <div class="card full"><h2>Rodzaje diet — GMV 4 pełne tygodnie <span class="pill">kategorie platformy</span>${inf('diet_types')}</h2>
+  ${dtTop.map(([tag,v])=>`<div class="brandrow"><span class="n">${tag}</span><span class="b"><i style="width:${100*v.gmv/dtMax}%;background:#4fbf8b"></i></span><span class="v" style="flex:0 0 152px">${kk(v.gmv)} · ${pc(totG?100*v.gmv/totG:null,1)} · ${nf.format(v.orders)} zam.</span></div>`).join('')}
   <div class="note">Dieta może mieć kilka kategorii (np. Keto i Bezglutenowa) — udziały się nie sumują do 100% GMV.</div></div>`;
 };
 INIT.sales=function(){
@@ -423,14 +517,14 @@ RENDER.clients=function(){
   const paceRet=P.bud?100*(mtdRet/P.nd*P.dim)/P.bud.returning_orders:null;
   document.getElementById('tab-clients').innerHTML=`
   <div class="grid full g2" style="margin-bottom:12px">
-    <div class="kpi"><div class="l">Nowi klienci MTD</div><div class="row"><div class="v">${nf.format(mtdNew)}</div></div><div class="d">pace ${pc(paceNew)} · budżet ${nf.format(P.bud?.new_customers??0)}</div></div>
-    <div class="kpi"><div class="l">Powracające zamówienia MTD</div><div class="row"><div class="v">${nf.format(mtdRet)}</div></div><div class="d">pace ${pc(paceRet)} · budżet ${nf.format(P.bud?.returning_orders??0)}</div></div>
+    <div class="kpi"><div class="l">Nowi klienci MTD${inf('nowi_mtd')}</div><div class="row"><div class="v">${nf.format(mtdNew)}</div></div><div class="d">pace ${pc(paceNew)} · budżet ${nf.format(P.bud?.new_customers??0)}</div></div>
+    <div class="kpi"><div class="l">Powracające zamówienia MTD${inf('powr_mtd')}</div><div class="row"><div class="v">${nf.format(mtdRet)}</div></div><div class="d">pace ${pc(paceRet)} · budżet ${nf.format(P.bud?.returning_orders??0)}</div></div>
   </div>
-  <div class="card full"><h2>Akwizycja dziennie + CAC paid dnia <span class="pill">CAC = media ÷ nowi, śr. 7 dni</span></h2><div class="ch"><canvas id="kAcq"></canvas></div></div>
-  <div class="card"><h2>Zamówienia: nowe vs powracające</h2><div class="ch"><canvas id="kNvR"></canvas></div></div>
-  <div class="card"><h2>GMV: % od nowych klientów</h2><div class="ch"><canvas id="kNgp"></canvas></div></div>
-  <div class="card"><h2>Tester rate (1–5 dni)</h2><div class="ch"><canvas id="kTest"></canvas></div></div>
-  <div class="card"><h2>Udział aplikacji</h2><div class="ch"><canvas id="kApp"></canvas></div></div>`;
+  <div class="card full"><h2>Akwizycja dziennie + CAC paid dnia <span class="pill">CAC = media ÷ nowi, śr. 7 dni</span>${inf('kacq')}</h2><div class="ch"><canvas id="kAcq"></canvas></div></div>
+  <div class="card"><h2>Zamówienia: nowe vs powracające${inf('knvr')}</h2><div class="ch"><canvas id="kNvR"></canvas></div></div>
+  <div class="card"><h2>GMV: % od nowych klientów${inf('kngp')}</h2><div class="ch"><canvas id="kNgp"></canvas></div></div>
+  <div class="card"><h2>Tester rate (1–5 dni)${inf('ktest')}</h2><div class="ch"><canvas id="kTest"></canvas></div></div>
+  <div class="card"><h2>Udział aplikacji${inf('kapp')}</h2><div class="ch"><canvas id="kApp"></canvas></div></div>`;
 };
 INIT.clients=function(){
   const w26=LF.slice(-26);
@@ -440,11 +534,11 @@ INIT.clients=function(){
   mkChart('kAcq',{data:{labels:fd.map(r=>dlab(r.date)),datasets:[
     {type:'bar',label:'Nowi klienci',data:fd.map(r=>r.new_customers),backgroundColor:'#ff9b00',borderRadius:2,order:2,yAxisID:'y'},
     {type:'line',label:'CAC paid (MA7, zł)',data:ma(cacRaw,7).map(v=>v?Math.round(v):null),borderColor:'#ff5f5a',pointRadius:0,borderWidth:2,tension:.3,order:1,yAxisID:'y2'}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:leg},scales:{x:{ticks:{maxTicksLimit:10},grid:{display:false}},y:{position:'left'},y2:{position:'right',grid:{display:false}}}}});
-  mkChart('kNvR',{type:'bar',data:{labels:w26.map(x=>wlab(x.week)),datasets:[
+    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:leg,tooltip:{callbacks:{label:ctx=>ctx.dataset.yAxisID==='y2'?ctx.formattedValue+' zł':ctx.formattedValue}}},scales:{x:{ticks:{maxTicksLimit:10},grid:{display:false}},y:{position:'left'},y2:{position:'right',grid:{display:false}}}}});
+  mkChart('kNvR',{type:'bar',plugins:[pctStack],data:{labels:w26.map(x=>wlab(x.week)),datasets:[
     {label:'Powracające',data:w26.map(x=>x.returning_orders),backgroundColor:'#4fbf8b',borderRadius:2},
     {label:'Nowe',data:w26.map(x=>x.new_orders),backgroundColor:'#ff9b00',borderRadius:2}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:leg},scales:{x:{stacked:true,ticks:{maxTicksLimit:7},grid:{display:false}},y:{stacked:true}}}});
+    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:leg,tooltip:{callbacks:{label:ctx=>ctx.formattedValue,footer:items=>{const ds=items[0].chart.data.datasets,i=items[0].dataIndex,a=+ds[0].data[i]||0,b=+ds[1].data[i]||0,t=a+b;return t?'powracający '+Math.round(100*a/t)+'% · nowi '+Math.round(100*b/t)+'%':''}}}},scales:{x:{stacked:true,ticks:{maxTicksLimit:7},grid:{display:false}},y:{stacked:true}}}});
   mkChart('kNgp',{type:'line',data:{labels:w26.map(x=>wlab(x.week)),datasets:[{label:'% GMV od nowych',data:w26.map(x=>+(x.ngp||0).toFixed(1)),borderColor:'#ff9b00',fill:true,backgroundColor:'#ff9b0022',pointRadius:0,borderWidth:2,tension:.3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{maxTicksLimit:7},grid:{display:false}},y:{ticks:{callback:v=>v+'%'}}}}});
   mkChart('kTest',{type:'line',data:{labels:w26.map(x=>wlab(x.week)),datasets:[
     {label:'Tester rate',data:w26.map(x=>+(x.tr||0).toFixed(1)),borderColor:'#ff9b00',pointRadius:0,borderWidth:2,tension:.3},
@@ -481,16 +575,16 @@ RENDER.ret=function(){
     return{cm,size,pts,avgOrd:orders/size};
   });
   document.getElementById('tab-ret').innerHTML=`
-  <div class="card full"><h2>Retencja kohort <span class="pill">% kohorty aktywny w m+N</span></h2><div class="tbl"><table class="heat"><tr><th>Kohorta</th><th>Rozmiar</th>${[1,2,3,4,5,6].map(i=>`<th>m+${i}</th>`).join('')}</tr>
+  <div class="card full"><h2>Retencja kohort <span class="pill">% kohorty aktywny w m+N</span>${inf('koh_ret')}</h2><div class="tbl"><table class="heat"><tr><th>Kohorta</th><th>Rozmiar</th>${[1,2,3,4,5,6].map(i=>`<th>m+${i}</th>`).join('')}</tr>
   ${heat.map(h=>`<tr><td style="text-align:left">${mlab(h.cm)}</td><td>${nf.format(h.size)}</td>${h.cells.map(v=>{const bg=v==null?'transparent':`rgba(79,191,139,${Math.min(.85,v/40)})`;return`<td style="background:${bg}">${v==null?'·':v.toFixed(0)+'%'}</td>`}).join('')}</tr>`).join('')}</table></div></div>
-  <div class="card"><h2>Powroty wg długości 1. zamówienia <span class="pill">% z kolejnym zakupem w 90 dni</span></h2><div class="tbl"><table><tr><th>Segment</th>${qs.map(q=>`<th>${q.replace('20','')}</th>`).join('')}</tr>
+  <div class="card"><h2>Powroty wg długości 1. zamówienia <span class="pill">% z kolejnym zakupem w 90 dni</span>${inf('seg_ret')}</h2><div class="tbl"><table><tr><th>Segment</th>${qs.map(q=>`<th>${q.replace('20','')}</th>`).join('')}</tr>
   ${segOrder.map(sg=>`<tr><td>${sg}</td>${qs.map(q=>{const r=segs.find(x=>x.segment===sg&&x.cohort_q===q);return`<td class="${r&&+r.returned_pct<40?'neg':''}">${r?pc(+r.returned_pct,0):'—'}</td>`}).join('')}</tr>`).join('')}</table></div>
   <div class="note">Churn = 100% minus powyższe. Testerzy wracają najrzadziej — stąd strategia dłuższych pierwszych zamówień. Q1'26 ma jeszcze niepełne okno.</div></div>
-  <div class="card"><h2>Rozkład liczby zamówień na klienta <span class="pill">klienci od 2025</span></h2>
+  <div class="card"><h2>Rozkład liczby zamówień na klienta <span class="pill">klienci od 2025</span>${inf('ord_dist')}</h2>
   ${od.map(o=>`<div class="brandrow"><span class="n">${o.bucket}</span><span class="b"><i style="width:${100*o.customers/(od[0]?.customers||1)}%;background:#4fbf8b"></i></span><span class="v">${nf.format(o.customers)} · ${pc(100*o.customers/odTot,0)}</span></div>`).join('')}
   <div class="note">${pc(100-(100*(od[0]?.customers||0)/odTot),0)} klientów zrobiło więcej niż jedno zamówienie.</div></div>
-  <div class="card"><h2>LTV — skumulowane GMV na klienta <span class="pill">m0–m6 od pierwszego zakupu</span></h2><div class="ch"><canvas id="rLtv"></canvas></div></div>
-  <div class="card full"><h2>Retencja per catering <span class="pill">pierwsze zakupy 09.25–03.26, okno 90 dni</span></h2><div class="tbl"><table><tr><th>Catering</th><th>Kohorta</th><th>Wraca do brandu</th><th>Wraca gdziekolwiek</th><th>AOV 1. zam.</th></tr>
+  <div class="card"><h2>LTV — skumulowane GMV na klienta <span class="pill">m0–m6 od pierwszego zakupu</span>${inf('ltv')}</h2><div class="ch"><canvas id="rLtv"></canvas></div></div>
+  <div class="card full"><h2>Retencja per catering <span class="pill">pierwsze zakupy 09.25–03.26, okno 90 dni</span>${inf('brand_ret')}</h2><div class="tbl"><table><tr><th>Catering</th><th>Kohorta</th><th>Wraca do brandu</th><th>Wraca gdziekolwiek</th><th>AOV 1. zam.</th></tr>
   ${br.map(b=>`<tr><td>${b.brand}</td><td>${nf.format(b.cohort_buyers)}</td><td class="${+b.ret90_same>=40?'pos':+b.ret90_same<25?'neg':''}"><b>${pc(+b.ret90_same)}</b></td><td>${pc(+b.ret90_any)}</td><td>${zl(+b.first_aov)}</td></tr>`).join('')}</table></div>
   <div class="note">"Wraca do brandu" = kolejne zamówienie u tego samego cateringu w 90 dni; "gdziekolwiek" = u dowolnego na Foodango. Różnica = klienci przejęci przez inne brandy platformy.</div></div>`;
 };
@@ -514,7 +608,7 @@ RENDER.brands=function(){
   document.getElementById('tab-brands').innerHTML=`
   <div class="seg full"><button id="bm-mtd" class="${window.brandMode==='mtd'?'on':''}" onclick="brandTab('mtd')">${MIES[P.mo]} MTD</button><button id="bm-prev" class="${window.brandMode==='prev'?'on':''}" onclick="brandTab('prev')">${mlab(prevM)} (pełny)</button><button id="bm-4w" class="${window.brandMode==='4w'?'on':''}" onclick="brandTab('4w')">4 tygodnie</button></div>
   <div class="card full"><h2 id="bTitle"></h2><div id="bList"></div><div class="note">Δ = zmiana vs analogiczny okres poprzedni. GMV item-level; Multidieta osobno jako Foodango.</div></div>
-  <div class="card full"><h2>Koncentracja — udział TOP3 i TOP5 w GMV</h2><div class="ch"><canvas id="bConc"></canvas></div></div>`;
+  <div class="card full"><h2>Koncentracja — udział TOP3 i TOP5 w GMV${inf('concentration')}</h2><div class="ch"><canvas id="bConc"></canvas></div></div>`;
   renderBrands();
 };
 INIT.brands=function(){
@@ -538,10 +632,10 @@ function renderBrands(){
   else{cur=brandAgg(D.brand_monthly.filter(r=>r.month.slice(0,10)===curM));ref=brandAgg(D.brand_monthly.filter(r=>r.month.slice(0,10)===prevM)).map(x=>({...x,gmv:x.gmv*P.nd/30}));title='Brandy — '+MIES[P.mo]+' MTD (1–'+P.nd+') vs proporcjonalny '+mlab(prevM)}
   const tot=cur.reduce((s,x)=>s+x.gmv,0);
   const top=cur.slice(0,14);const max=top[0]?.gmv||1;
-  document.getElementById('bTitle').textContent=title;
-  document.getElementById('bList').innerHTML=top.map(x=>{
+  document.getElementById('bTitle').innerHTML=esc(title)+inf('brand_rank');
+  document.getElementById('bList').innerHTML=top.map((x,i)=>{
     const r=ref.find(y=>y.brand===x.brand);const d=r&&r.gmv>0?100*(x.gmv-r.gmv)/r.gmv:null;
-    return`<div class="brandrow"><span class="n">${x.brand.replace(' (Multidieta)','')}</span><span class="b"><i style="width:${100*x.gmv/max}%"></i></span><span class="v">${kk(x.gmv)} · ${pc(100*x.gmv/tot,0)}</span><span class="d ${d>0?'pos':'neg'}">${d!=null?sgn(d):''}</span></div>`}).join('');
+    return`<div class="brandrow"><span class="rk">${i+1}</span><span class="n">${x.brand.replace(' (Multidieta)','')}</span><span class="b"><i style="width:${100*x.gmv/max}%"></i></span><span class="v">${kk(x.gmv)} · ${pc(100*x.gmv/tot,0)}</span><span class="d ${d>0?'pos':'neg'}">${d!=null?sgn(d):''}</span></div>`}).join('');
 }
 
 // ===== MULTIDIETA =====
@@ -554,12 +648,12 @@ RENDER.multi=function(){
   const mbMax=mbL[0]?.items||1;
   document.getElementById('tab-multi').innerHTML=`
   <div class="grid full" style="margin-bottom:12px">
-    <div class="kpi"><div class="l">Zamówienia Multidiety MTD</div><div class="row"><div class="v">${nf.format(mtdM)}</div></div><div class="d">${pc(100*mtdM/Math.max(1,P.mtdRows.reduce((s,r)=>s+r.orders,0)),1)} wszystkich zamówień</div></div>
-    <div class="kpi"><div class="l">GMV Multidiety MTD</div><div class="row"><div class="v">${k(mtdMG)}</div></div><div class="d">AOV ${zl(mtdM?mtdMG/mtdM:null)}</div></div>
-    <div class="kpi"><div class="l">Status produktu</div><div class="row"><div class="v amb">niszowy</div></div><div class="d">unikalna propozycja wartości — adopcja do zbudowania (redesign konfiguratora w toku)</div></div>
+    <div class="kpi"><div class="l">Zamówienia Multidiety MTD${inf('multi_orders')}</div><div class="row"><div class="v">${nf.format(mtdM)}</div></div><div class="d">${pc(100*mtdM/Math.max(1,P.mtdRows.reduce((s,r)=>s+r.orders,0)),1)} wszystkich zamówień</div></div>
+    <div class="kpi"><div class="l">GMV Multidiety MTD${inf('multi_gmv')}</div><div class="row"><div class="v">${k(mtdMG)}</div></div><div class="d">AOV ${zl(mtdM?mtdMG/mtdM:null)}</div></div>
+    <div class="kpi"><div class="l">Status produktu${inf('multi_status')}</div><div class="row"><div class="v amb">niszowy</div></div><div class="d">unikalna propozycja wartości — adopcja do zbudowania (redesign konfiguratora w toku)</div></div>
   </div>
-  <div class="card"><h2>Multidieta — zamówienia i GMV tygodniowo</h2><div class="ch"><canvas id="mMulti"></canvas></div></div>
-  <div class="card"><h2>Skład Multidiety — brandy <span class="pill">${lastM?mlab(lastM):''}, pozycje dzienne</span></h2>
+  <div class="card"><h2>Multidieta — zamówienia i GMV tygodniowo${inf('multi_week')}</h2><div class="ch"><canvas id="mMulti"></canvas></div></div>
+  <div class="card"><h2>Skład Multidiety — brandy <span class="pill">${lastM?mlab(lastM):''}, pozycje dzienne</span>${inf('multi_brands')}</h2>
   ${mbL.map(x=>`<div class="brandrow"><span class="n">${x.brand}</span><span class="b"><i style="width:${100*x.items/mbMax}%"></i></span><span class="v">${nf.format(x.items)} dni</span></div>`).join('')}
   <div class="note">Które cateringi klienci wybierają wewnątrz Multidiety (liczba dni dostaw w zamówieniach Multidiety).</div></div>`;
 };
@@ -587,39 +681,40 @@ RENDER.mkt=function(){
   const pco=D.przesiadka_cohorts||[];
   document.getElementById('tab-mkt').innerHTML=`
   <div class="card full">
-    <h2>Wydatki performance — ${MIES[P.mo]} MTD <span class="pill">Meta FDG + Google</span></h2>
+    <h2>Wydatki performance — ${MIES[P.mo]} MTD <span class="pill">Meta FDG + Google</span>${inf('perf_mtd')}</h2>
     <div class="big">${k(perfMtd)} <small>PLN</small></div>
     ${limit?`<div class="bar"><i style="width:${Math.min(100,100*perfMtd/limit)}%"></i><s style="left:${100*P.nd/P.dim}%"></s></div>
     <div class="proj"><span>projekcja <b>${k(perfProj)}</b></span><span>limit <b>${k(limit)}</b> <span class="${perfProj>limit?'neg':'pos'}">(${pc(100*perfProj/limit,0)})</span></span></div>`:''}
     <div class="note">CAC łączny (księgowy) = cały marketing ÷ nowi klienci, raz na miesiąc. CAC paid (tu i w Cockpicie) = media Meta FDG + Google ÷ nowi, liczony na bieżąco — te dwie liczby celowo się różnią.</div>
   </div>
-  <div class="grid full">
-    <div class="kpi"><div class="l">Meta ROAS MTD (pixel)</div><div class="row"><div class="v ${metaV/metaS>=4?'pos':''}">${(metaV/metaS).toLocaleString('pl-PL',{maximumFractionDigits:2})}</div></div><div class="d">maj: 5,2 · trend ważniejszy niż poziom</div></div>
-    <div class="kpi"><div class="l">Meta koszt/zakup MTD</div><div class="row"><div class="v">${zl(metaS/Math.max(1,metaP))}</div></div><div class="d">${nf.format(metaP)} zakupów · maj: 139 zł</div></div>
-    <div class="kpi"><div class="l">Google ROAS MTD (panel)</div><div class="row"><div class="v">${(gV/Math.max(1,gS)).toLocaleString('pl-PL',{maximumFractionDigits:2})}</div></div><div class="d">wartość konwersji ÷ koszt</div></div>
-    <div class="kpi"><div class="l">Google koszt/konwersję MTD</div><div class="row"><div class="v">${zl(gS/Math.max(1,gC))}</div></div><div class="d">${nf.format(gC)} konwersji (atrybucja Google)</div></div>
-    <div class="kpi"><div class="l">Spend Meta MTD</div><div class="row"><div class="v">${k(metaS)}</div></div><div class="d">w tym cateringi ${k(mtd.reduce((s,r)=>s+ +(r.meta_catering_spend||0),0))}</div></div>
-    <div class="kpi"><div class="l">Spend Google MTD</div><div class="row"><div class="v">${k(gS)}</div></div><div class="d">search + PMax + brand</div></div>
+  <div class="grid full g2">
+    <div class="kpi"><div class="l">Meta ROAS MTD (pixel)${inf('meta_roas')}</div><div class="row"><div class="v ${metaV/metaS>=4?'pos':''}">${(metaV/metaS).toLocaleString('pl-PL',{maximumFractionDigits:2})}</div></div><div class="d">maj: 5,2 · trend ważniejszy niż poziom</div></div>
+    <div class="kpi"><div class="l">Google ROAS MTD (panel)${inf('google_roas')}</div><div class="row"><div class="v">${(gV/Math.max(1,gS)).toLocaleString('pl-PL',{maximumFractionDigits:2})}</div></div><div class="d">wartość konwersji ÷ koszt</div></div>
+    <div class="kpi"><div class="l">Meta koszt/zakup MTD${inf('meta_cpp')}</div><div class="row"><div class="v">${zl(metaS/Math.max(1,metaP))}</div></div><div class="d">${nf.format(metaP)} zakupów · maj: 139 zł</div></div>
+    <div class="kpi"><div class="l">Google koszt/konwersję MTD${inf('google_cpa')}</div><div class="row"><div class="v">${zl(gS/Math.max(1,gC))}</div></div><div class="d">${nf.format(gC)} konwersji (atrybucja Google)</div></div>
+    <div class="kpi"><div class="l">Spend Meta MTD${inf('spend_meta')}</div><div class="row"><div class="v">${k(metaS)}</div></div><div class="d">w tym cateringi ${k(mtd.reduce((s,r)=>s+ +(r.meta_catering_spend||0),0))}</div></div>
+    <div class="kpi"><div class="l">Spend Google MTD${inf('spend_google')}</div><div class="row"><div class="v">${k(gS)}</div></div><div class="d">search + PMax + brand</div></div>
   </div>
-  <div class="card full"><h2>Wydatki DZIENNIE od 1 stycznia <span class="pill">przewijaj w bok</span></h2><div class="scrollx"><div class="inner" id="mSpendWrap"><canvas id="mSpendD"></canvas></div></div></div>
-  <div class="card"><h2>ROAS tygodniowo — Meta vs Google</h2><div class="ch"><canvas id="mRoas"></canvas></div></div>
-  <div class="card"><h2>CAC paid i CPA — dziennie (MA7)</h2><div class="ch"><canvas id="mCacD"></canvas></div><div class="note">CAC paid = media ÷ nowi klienci dnia. CPA = media ÷ wszystkie zamówienia dnia.</div></div>
-  <div class="card full"><h2>CAC miesięcznie — łączny vs realny vs budżet</h2><div class="ch"><canvas id="mCac"></canvas></div></div>
+  <div class="card full"><h2>Wydatki DZIENNIE od 1 stycznia <span class="pill">przewijaj w bok</span>${inf('spend_daily')}</h2><div class="scrollx"><div class="inner" id="mSpendWrap"><canvas id="mSpendD"></canvas></div></div></div>
+  <div class="card"><h2>ROAS tygodniowo — Meta vs Google${inf('roas_week')}</h2><div class="ch"><canvas id="mRoas"></canvas></div></div>
+  <div class="card"><h2>CAC paid i CPA — dziennie (MA7)${inf('cacd')}</h2><div class="ch"><canvas id="mCacD"></canvas></div><div class="note">CAC paid = media ÷ nowi klienci dnia. CPA = media ÷ wszystkie zamówienia dnia.</div></div>
+  <div class="card full"><h2>CAC miesięcznie — łączny vs realny vs budżet${inf('cac_month')}</h2><div class="ch"><canvas id="mCac"></canvas></div></div>
   <h3 class="gsec full">Kampania Przesiadka (SD 150)</h3>
   <div class="card full" style="border-color:#ff9b0066">
     <div class="flag warn" style="margin-bottom:10px">Decyzja 6.07 (za ${sdD} dni). Skumulowana retencja kohort kwi+maj: <b>${(()=>{const a=pco.filter(c=>c.cohort_month<'2026-06');const b=a.reduce((s,c)=>s+c.buyers,0),r=a.reduce((s,c)=>s+c.returned,0);return b?pc(100*r/b,1):'—'})()}</b> — próg: powyżej 30–35% zostaje, poniżej 25% zamykamy. Okno majowej kohorty jeszcze niepełne (diety ~17–20 dni).</div>
     <div class="grid" style="margin-bottom:0">
-      <div class="kpi"><div class="l">Leady ${MIES[P.mo]} MTD</div><div class="row"><div class="v">${nf.format(pzL)}</div></div><div class="d">kody SD (bez batchy)</div></div>
-      <div class="kpi"><div class="l">Zamówienia SD MTD</div><div class="row"><div class="v">${nf.format(pzO)}</div></div><div class="d">konwersja ${pc(pzL?100*pzO/pzL:null)}</div></div>
-      <div class="kpi"><div class="l">GMV Przesiadki MTD</div><div class="row"><div class="v">${k(pzG)}</div></div><div class="d">AOV ${zl(pzO?pzG/pzO:null)}</div></div>
+      <div class="kpi"><div class="l">Leady ${MIES[P.mo]} MTD${inf('pz_leads')}</div><div class="row"><div class="v">${nf.format(pzL)}</div></div><div class="d">kody SD (bez batchy)</div></div>
+      <div class="kpi"><div class="l">Zamówienia SD MTD${inf('pz_orders')}</div><div class="row"><div class="v">${nf.format(pzO)}</div></div><div class="d">konwersja ${pc(pzL?100*pzO/pzL:null)}</div></div>
+      <div class="kpi"><div class="l">GMV Przesiadki MTD${inf('pz_gmv')}</div><div class="row"><div class="v">${k(pzG)}</div></div><div class="d">AOV ${zl(pzO?pzG/pzO:null)}</div></div>
     </div>
   </div>
-  <div class="card"><h2>Przesiadka — zamówienia (słupki) i leady</h2><div class="ch"><canvas id="mPz"></canvas></div></div>
-  <div class="card"><h2>Przesiadka — GMV tygodniowo i retencja kohort</h2><div class="ch"><canvas id="mPzG"></canvas></div><div class="note">Retencja: % klientów z 1. zakupem SD, którzy zrobili kolejne zamówienie (jakiekolwiek). Czerwcowa kohorta — okno dopiero startuje. Pełny rachunek CAC z alokacją PMax liczy poniedziałkowy raport leadowy.</div></div>`;
+  <div class="card"><h2>Przesiadka — zamówienia (słupki) i leady${inf('pz_chart1')}</h2><div class="ch"><canvas id="mPz"></canvas></div></div>
+  <div class="card"><h2>Przesiadka — GMV tygodniowo i retencja kohort${inf('pz_chart2')}</h2><div class="ch"><canvas id="mPzG"></canvas></div><div class="note">Retencja: % klientów z 1. zakupem SD, którzy zrobili kolejne zamówienie (jakiekolwiek). Czerwcowa kohorta — okno dopiero startuje. Pełny rachunek CAC z alokacją PMax liczy poniedziałkowy raport leadowy.</div></div>`;
 };
 INIT.mkt=function(){
   const mk=D.marketing_daily||[];
   const wrap=document.getElementById('mSpendWrap');if(wrap){wrap.style.width=Math.max(700,mk.length*11)+'px'}
+  const sx=document.querySelector('#tab-mkt .scrollx');if(sx)setTimeout(function(){sx.scrollLeft=sx.scrollWidth},220);
   mkChart('mSpendD',{type:'bar',data:{labels:mk.map(r=>dlab(r.date)),datasets:[
     {label:'Meta FDG',data:mk.map(r=>Math.round((+(r.meta_spend||0)- +(r.meta_catering_spend||0))/100)/10),backgroundColor:'#ff9b00',borderRadius:1},
     {label:'Meta cateringi',data:mk.map(r=>Math.round(+(r.meta_catering_spend||0)/100)/10),backgroundColor:'#a98fc9',borderRadius:1},
@@ -658,9 +753,9 @@ INIT.mkt=function(){
 
 // ===== RUCH =====
 RENDER.traffic=function(){
-  const fw=fullWeeks(wkAgg(D.funnel_daily||[],['sessions','s_atc','s_checkout','s_purchase','purchases','purchase_revenue']));
+  const fw=fullWeeks(wkAgg(D.funnel_daily||[],['sessions','s_atc','s_checkout','s_purchase','purchases','purchase_revenue','eng_sessions']));
   const lw=fw[fw.length-1],pw2=fw[fw.length-2];
-  const cr=w=>w?100*w.s_purchase/w.sessions:null;
+  const cr=w=>w?100*w.s_purchase/(w.eng_sessions||w.sessions):null;
   const steps=[['Sesje','sessions'],['Koszyk','s_atc'],['Checkout','s_checkout'],['Zakup','s_purchase']];
   const funHtml=steps.map(([nm,key],i)=>{
     const v=lw?lw[key]:0;const base=lw?lw.sessions:1;
@@ -681,20 +776,20 @@ RENDER.traffic=function(){
   const lndP=new Map(lnd.filter(r=>r.week===lndW[lndW.length-2]).map(r=>[r.landing,r]));
   window.sesMode=window.sesMode||'w';
   document.getElementById('tab-traffic').innerHTML=`
-  <div class="card"><h2>Lejek — tydzień ${lw?wlab(lw.week):'—'} <span class="pill">sesje GA4, last-click</span></h2><div class="fun">${funHtml}</div>
+  <div class="card"><h2>Lejek — tydzień ${lw?wlab(lw.week):'—'} <span class="pill">sesje GA4, last-click</span>${inf('lejek')}</h2><div class="fun">${funHtml}</div>
   <div class="grid g2" style="margin:12px 0 0">
-    <div class="kpi"><div class="l">CR sesja→zakup</div><div class="row"><div class="v ${cr(lw)>=3.5?'pos':''}">${pc(cr(lw),2)}</div></div><div class="d">${pw2?'poprzedni: '+pc(cr(pw2),2):''}</div></div>
-    <div class="kpi"><div class="l">Sesje (tydzień)</div><div class="row"><div class="v">${nf.format(lw?.sessions)}</div></div><div class="d">${pw2?sgn(100*(lw.sessions-pw2.sessions)/pw2.sessions)+' WoW':''}</div></div>
+    <div class="kpi"><div class="l">CR sesja→zakup${inf('cr')}</div><div class="row"><div class="v ${cr(lw)>=3.5?'pos':''}">${pc(cr(lw),2)}</div></div><div class="d">${pw2?'poprzedni: '+pc(cr(pw2),2):''}</div></div>
+    <div class="kpi"><div class="l">Sesje (tydzień)${inf('sesje_week')}</div><div class="row"><div class="v">${nf.format(lw?.sessions)}</div></div><div class="d">${pw2?sgn(100*(lw.sessions-pw2.sessions)/pw2.sessions)+' WoW':''}</div></div>
   </div></div>
-  <div class="card"><h2>Sesje w czasie</h2>
+  <div class="card"><h2>Sesje w czasie${inf('sesje_chart')}</h2>
   <div class="seg"><button id="sm-d" class="${window.sesMode==='d'?'on':''}" onclick="sesTab('d')">Dni</button><button id="sm-w" class="${window.sesMode==='w'?'on':''}" onclick="sesTab('w')">Tygodnie</button><button id="sm-m" class="${window.sesMode==='m'?'on':''}" onclick="sesTab('m')">Miesiące</button></div>
   <div class="ch"><canvas id="tSes"></canvas></div></div>
-  <div class="card full"><h2>CR i sesje — tygodniowo</h2><div class="ch"><canvas id="tCr"></canvas></div></div>
-  <div class="card"><h2>Kanały — tydzień ${lw?wlab(lw.week):'—'}</h2><div class="tbl"><table><tr><th>Kanał</th><th>Sesje</th><th>CR</th><th>Revenue</th><th>zł/sesję</th><th>Rev WoW</th></tr>
+  <div class="card full"><h2>CR i sesje — tygodniowo${inf('cr_chart')}</h2><div class="ch"><canvas id="tCr"></canvas></div></div>
+  <div class="card"><h2>Kanały — tydzień ${lw?wlab(lw.week):'—'}${inf('kanaly')}</h2><div class="tbl"><table><tr><th>Kanał</th><th>Sesje</th><th>CR</th><th>Revenue</th><th>zł/sesję</th><th>Rev WoW</th></tr>
   ${chRows.map(r=>{const wow=r.prev&&r.prev.revenue>0?100*(r.revenue-r.prev.revenue)/r.prev.revenue:null;return`<tr><td>${r.c}</td><td>${nf.format(r.sessions)}</td><td>${pc(100*r.purchases/r.sessions,2)}</td><td><b>${kk(r.revenue)}</b></td><td>${(r.revenue/r.sessions).toLocaleString('pl-PL',{maximumFractionDigits:1})}</td><td class="${wow>0?'pos':'neg'}">${wow!=null?sgn(wow):'—'}</td></tr>`}).join('')}</table></div>
   <div class="note">„Inne" = ruch nieoznaczony (m.in. aplikacja i self-referral) — jak Unassigned w raportach.</div></div>
-  <div class="card"><h2>Kanały — sesje w czasie (top 5)</h2><div class="ch"><canvas id="tChT"></canvas></div></div>
-  <div class="card full"><h2>Strony wejścia — tydzień ${lndW.length?wlab(lndW[lndW.length-1]):'—'} <span class="pill">top 12</span></h2><div class="tbl"><table><tr><th>Strona</th><th>Sesje</th><th>WoW</th><th>Zakupy</th><th>CR</th></tr>
+  <div class="card"><h2>Kanały — sesje w czasie (top 5)${inf('kanaly_chart')}</h2><div class="ch"><canvas id="tChT"></canvas></div></div>
+  <div class="card full"><h2>Strony wejścia — tydzień ${lndW.length?wlab(lndW[lndW.length-1]):'—'} <span class="pill">top 12</span>${inf('landing')}</h2><div class="tbl"><table><tr><th>Strona</th><th>Sesje</th><th>WoW</th><th>Zakupy</th><th>CR</th></tr>
   ${lndL.map(r=>{const p=lndP.get(r.landing);const wow=p?100*(r.sessions-p.sessions)/p.sessions:null;return`<tr><td style="max-width:280px;overflow:hidden;text-overflow:ellipsis">${esc(r.landing)}</td><td>${nf.format(r.sessions)}</td><td class="${wow>0?'pos':'neg'}">${wow!=null?sgn(wow):'—'}</td><td>${r.purchases}</td><td>${pc(100*r.purchases/r.sessions,2)}</td></tr>`}).join('')}</table></div></div>`;
 };
 function sesTab(m){window.sesMode=m;document.querySelectorAll('#tab-traffic .seg button').forEach(b=>b.classList.toggle('on',b.id==='sm-'+m));drawSes()}
@@ -708,9 +803,9 @@ function drawSes(){
 }
 INIT.traffic=function(){
   drawSes();
-  const fw=fullWeeks(wkAgg(D.funnel_daily||[],['sessions','s_purchase'])).slice(-26);
+  const fw=fullWeeks(wkAgg(D.funnel_daily||[],['sessions','s_purchase','eng_sessions'])).slice(-26);
   mkChart('tCr',{data:{labels:fw.map(x=>wlab(x.week)),datasets:[
-    {type:'line',label:'CR %',data:fw.map(x=>+(100*x.s_purchase/x.sessions).toFixed(2)),borderColor:'#ff9b00',pointRadius:0,borderWidth:2.5,tension:.3,yAxisID:'y2',order:1},
+    {type:'line',label:'CR %',data:fw.map(x=>+(100*x.s_purchase/(x.eng_sessions||x.sessions)).toFixed(2)),borderColor:'#ff9b00',pointRadius:0,borderWidth:2.5,tension:.3,yAxisID:'y2',order:1},
     {type:'bar',label:'Sesje',data:fw.map(x=>x.sessions),backgroundColor:'#33524a',borderRadius:2,yAxisID:'y',order:2}]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:leg},scales:{x:{ticks:{maxTicksLimit:7},grid:{display:false}},y:{position:'left'},y2:{position:'right',grid:{display:false},ticks:{callback:v=>v+'%'}}}}});
   const ch=D.channel_daily||[];
@@ -737,13 +832,13 @@ RENDER.seo=function(){
   const orgL=orgW[orgW.length-1];
   document.getElementById('tab-seo').innerHTML=`
   <div class="grid full">
-    <div class="kpi"><div class="l">Kliknięcia (28 dni)</div><div class="row"><div class="v">${nf.format(cl)}</div></div><div class="d ${cl>=cp?'pos':'neg'}">${cp?sgn(100*(cl-cp)/cp)+' vs poprzednie 28 dni':''}</div></div>
-    <div class="kpi"><div class="l">Wyświetlenia (28 dni)</div><div class="row"><div class="v">${k(im)}</div></div><div class="d ${im>=ip?'pos':'neg'}">${ip?sgn(100*(im-ip)/ip):''}</div></div>
-    <div class="kpi"><div class="l">Średnia pozycja</div><div class="row"><div class="v">${posL?posL.toFixed(1):'—'}</div></div><div class="d">${posP?'poprzednio '+posP.toFixed(1)+(posL<posP?' — poprawa':''):''}</div></div>
-    <div class="kpi"><div class="l">Sesje organiczne (tydzień)</div><div class="row"><div class="v">${orgL?nf.format(orgL.sessions):'—'}</div></div><div class="d">revenue ${orgL?kk(orgL.revenue):'—'}</div></div>
+    <div class="kpi"><div class="l">Kliknięcia (28 dni)${inf('seo_clicks')}</div><div class="row"><div class="v">${nf.format(cl)}</div></div><div class="d ${cl>=cp?'pos':'neg'}">${cp?sgn(100*(cl-cp)/cp)+' vs poprzednie 28 dni':''}</div></div>
+    <div class="kpi"><div class="l">Wyświetlenia (28 dni)${inf('seo_impr')}</div><div class="row"><div class="v">${k(im)}</div></div><div class="d ${im>=ip?'pos':'neg'}">${ip?sgn(100*(im-ip)/ip):''}</div></div>
+    <div class="kpi"><div class="l">Średnia pozycja${inf('seo_pos')}</div><div class="row"><div class="v">${posL?posL.toFixed(1):'—'}</div></div><div class="d">${posP?'poprzednio '+posP.toFixed(1)+(posL<posP?' — poprawa':''):''}</div></div>
+    <div class="kpi"><div class="l">Sesje organiczne (tydzień)${inf('seo_org')}</div><div class="row"><div class="v">${orgL?nf.format(orgL.sessions):'—'}</div></div><div class="d">revenue ${orgL?kk(orgL.revenue):'—'}</div></div>
   </div>
-  <div class="card full"><h2>Kliknięcia i pozycja — dziennie <span class="pill">Search Console</span></h2><div class="ch"><canvas id="seoD"></canvas></div><div class="note">Dane GSC w hurtowni od 13.04.2026. Pozycja: niżej = lepiej (oś odwrócona).</div></div>
-  <div class="card full"><h2>Top frazy — ostatnie 28 dni</h2><div class="tbl"><table><tr><th>Fraza</th><th>Kliknięcia</th><th>Δ</th><th>Wyświetlenia</th><th>Pozycja</th></tr>
+  <div class="card full"><h2>Kliknięcia i pozycja — dziennie <span class="pill">Search Console</span>${inf('seo_chart')}</h2><div class="ch"><canvas id="seoD"></canvas></div><div class="note">Dane GSC w hurtowni od 13.04.2026. Pozycja: niżej = lepiej (oś odwrócona).</div></div>
+  <div class="card full"><h2>Top frazy — ostatnie 28 dni${inf('seo_queries')}</h2><div class="tbl"><table><tr><th>Fraza</th><th>Kliknięcia</th><th>Δ</th><th>Wyświetlenia</th><th>Pozycja</th></tr>
   ${qL.map(r=>{const p=qP.get(r.query);const d=p?r.clicks-p.clicks:null;return`<tr><td>${esc(r.query)}</td><td><b>${r.clicks}</b></td><td class="${d>0?'pos':d<0?'neg':'mut'}">${d!=null?(d>0?'+':'')+d:'—'}</td><td>${nf.format(r.impressions)}</td><td>${(+r.position).toFixed(1)}</td></tr>`}).join('')}</table></div>
   <div class="note">Pełniejsza zakładka SEO (strony, kanibalizacja fraz, content) — do rozbudowy w kolejnej iteracji.</div></div>`;
 };
@@ -789,21 +884,21 @@ RENDER.b2b=function(){
   }
   document.getElementById('tab-b2b').innerHTML=`
   <div class="card">
-    <h2>B2B ${st?mlab(st.month):''} — zafakturowane <span class="pill green">w celu</span></h2>
+    <h2>B2B ${st?mlab(st.month):''} — zafakturowane <span class="pill green">w celu</span>${inf('b2b_invoiced')}</h2>
     <div class="big">${k(+st?.invoiced)} <small>PLN</small></div>
     <div class="proj"><span>cel <b>${k(+st?.target_low)}–${k(+st?.target_high)}</b></span><span>pitche <b>+${k(+st?.pitches)}</b></span></div>
   </div>
   <div class="card">
-    <h2>B2B w przychodzie <span class="pill">${mlab(lastMr.month)}</span></h2>
+    <h2>B2B w przychodzie <span class="pill">${mlab(lastMr.month)}</span>${inf('b2b_share')}</h2>
     <div class="big">${pc(100*+lastMr.b2b/+lastMr.revenue_total,0)}</div>
     <div class="proj"><span>${k(+lastMr.b2b)} z ${k(+lastMr.revenue_total)} przychodu razem</span><span>trajektoria <b>${mr.map(m=>Math.round(+m.b2b/1000)).join(' → ')}</b> tys.</span></div>
     <div class="note">Twarda reguła: B2B = upside, nie wchodzi do prognoz.</div>
   </div>
-  <div class="card full"><h2>Cateringi zarządczo — ${mlab(mC)} <span class="pill">trend vs ${mlab(mA)} · retencja 90 dni · pakiety czerwiec</span></h2>
+  <div class="card full"><h2>Cateringi zarządczo — ${mlab(mC)} <span class="pill">trend vs ${mlab(mA)} · retencja 90 dni · pakiety czerwiec</span>${inf('b2b_table')}</h2>
   <div class="tbl"><table><tr><th>Catering</th><th>GMV</th><th>Trend 3 mc</th><th>Prowizja FDG</th><th>Nowi</th><th>Retencja</th><th>Pakiet B2B</th><th>Sugestia</th></tr>
   ${rows.map(b=>{const s=suggest(b);return`<tr><td>${b.brand.replace(' (Multidieta)','')}</td><td><b>${kk(b.gmv)}</b></td><td class="${b.trend>0?'pos':'neg'}">${b.trend!=null?sgn(b.trend):'—'}</td><td>${kk(b.commission)}</td><td>${b.nc}</td><td class="${b.ret>=40?'pos':b.ret!=null&&b.ret<25?'neg':''}">${b.ret!=null?pc(b.ret,0):'—'}</td><td>${b.pkg?kk(b.pkg):'<span class="mut">brak</span>'}</td><td style="text-align:left" class="${s[1]}">${s[0]}</td></tr>`}).join('')}</table></div>
   <div class="note">Prowizja wg realnych stawek (${mlab(mC)}). Retencja = % klientów wracających do tego samego brandu w 90 dni (kohorty 09.25–03.26). Sugestie generowane regułami — traktuj jako podpowiedź do rozmów, nie wyrok.</div></div>
-  <div class="card full"><h2>Przychody — prowizja vs B2B miesięcznie <span class="pill">tys. PLN</span></h2><div class="ch"><canvas id="bRev"></canvas></div></div>
+  <div class="card full"><h2>Przychody — prowizja vs B2B miesięcznie <span class="pill">tys. PLN</span>${inf('b2b_rev')}</h2><div class="ch"><canvas id="bRev"></canvas></div></div>
   <div class="card full"><details><summary>Pakiety ${st?mlab(st.month):''} — szczegóły slotów (${pk.length})</summary>
   <div class="tbl" style="margin-top:8px"><table>${pk.map(r=>`<tr><td>${r.category}</td><td>${r.brand}</td><td style="text-align:left;color:var(--mut)">${r.package||''}</td><td><b>${kk(+r.amount)}</b></td><td style="color:${r.status&&r.status.includes('pitch')?'var(--amber)':'var(--mint)'};font-size:11px">${r.status}</td></tr>`).join('')}</table></div></details>
   <details><summary>Mini P&L 2026 (tys. PLN, EBITDA bez aktywacji)</summary>
@@ -818,10 +913,10 @@ RENDER.b2b=function(){
 };
 INIT.b2b=function(){
   const mr=D.monthly_results;
-  mkChart('bRev',{type:'bar',data:{labels:mr.map(m=>mlab(m.month)),datasets:[
+  mkChart('bRev',{type:'bar',plugins:[b2bPct],data:{labels:mr.map(m=>mlab(m.month)),datasets:[
     {label:'Prowizja',data:mr.map(m=>Math.round(+m.commission/1000)),backgroundColor:'#ff9b00',borderRadius:3},
     {label:'B2B',data:mr.map(m=>Math.round(+m.b2b/1000)),backgroundColor:'#4fbf8b',borderRadius:3}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:leg},scales:{x:{stacked:true,grid:{display:false}},y:{stacked:true}}}});
+    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:leg,tooltip:{callbacks:{footer:items=>{const ds=items[0].chart.data.datasets,i=items[0].dataIndex,a=+ds[0].data[i]||0,b=+ds[1].data[i]||0,t=a+b;return t?'B2B '+Math.round(100*b/t)+'% przychodu':''}}}},scales:{x:{stacked:true,grid:{display:false}},y:{stacked:true}}}});
 };
 
 document.getElementById('gate').classList.toggle('hide',!!getTok());
