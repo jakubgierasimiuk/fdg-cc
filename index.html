@@ -136,6 +136,7 @@ h3.gsec{font-size:11.5px;font-weight:800;color:var(--amber);text-transform:upper
 <div id="staleBanner"></div>
 <div id="skel"><div class="skel"></div><div class="skel" style="height:180px"></div><div class="skel" style="height:90px"></div></div>
 <section id="tab-cockpit" class="hide"></section>
+<section id="tab-yest" class="hide"></section>
 <section id="tab-puls" class="hide"></section>
 <section id="tab-sales" class="hide"></section>
 <section id="tab-clients" class="hide"></section>
@@ -150,6 +151,7 @@ h3.gsec{font-size:11.5px;font-weight:800;color:var(--amber);text-transform:upper
 
 <nav><div class="wrap">
   <button data-t="cockpit" class="on" onclick="tab('cockpit')">Cockpit</button>
+  <button data-t="yest" onclick="tab('yest')">Wczoraj</button>
   <button data-t="puls" onclick="tab('puls')">Puls <span id="pulsBadge"></span></button>
   <button data-t="sales" onclick="tab('sales')">Sprzedaż</button>
   <button data-t="clients" onclick="tab('clients')">Klienci</button>
@@ -256,6 +258,18 @@ const esc=s=>String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;');
 const mdl=s=>esc(s).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/\n/g,'<br>');
 function updateBadge(){const n=(D.briefs||[]).filter(b=>!b.read_at).length;document.getElementById('pulsBadge').textContent=n?'●':''}
 const DEFS={
+"yest_hero":"Bohater dnia = przychód PROWIZYJNY Foodango za ostatni zamknięty dzień (GMV każdego cateringu × jego realna stawka: 10% domyślnie, Paczka Smaku 8%), nie GMV. Pod spodem: ile prowizji zabrakło/ponad vs typowy taki sam dzień tygodnia (mediana z maks. 8 ostatnich) oraz udział powracających w GMV = (GMV − GMV nowych klientów) / GMV. Baza ZAWSZE ten sam dzień tygodnia — sezonowość fałszuje porównanie do średniej 7 dni.",
+"yest_core":"Cztery liczby dnia, każda z odchyleniem vs ten sam dzień tygodnia (mediana z maks. 8 takich dni). KOLOR i flaga zapalają się TYLKO gdy baza jest stabilna (mała zmienność) i odchylenie istotne — przy rozchwianej bazie pokazuję liczbę, ale bez koloru i z dopiskiem „baza zmienna\". To celowe: zero fałszywych alarmów na szumie tygodniowym.",
+"yest_movers":"Kto się wybił: TOP3 w górę i TOP3 w dół wg odchylenia wczorajszego GMV cateringu od JEGO normy w ten sam dzień tygodnia (nie od ogólnej średniej). Próg GMV >1000 PLN (żeby mikrobrand nie robił „+100%\" z szumu). Obok jawnie średnia, z której liczę. Przy niestabilnej historii brandu znacznik „baza zmienna\". Multidieta liczona osobno.",
+"yest_conc":"Udział TOP3 i TOP5 cateringów w GMV dnia vs typowy taki sam dzień tygodnia. Niski = dzień rozłożony na wiele źródeł; wysoki = zależność od kilku brandów. Skład TOP zależy od dnia, więc baza to ten sam dzień tygodnia.",
+"yest_commmix":"Z czego powstał wczorajszy przychód prowizyjny: top cateringi z udziałem % i efektywna stawka dnia (prowizja/GMV). Dzień napędzony brandem 8% (Paczka Smaku) daje mniej przychodu niż taki sam GMV na 10%. Flaga gdy jeden brand > 40% prowizji dnia (sygnał zależności).",
+"yest_quality":"Jakość akwizycji wczoraj: tester rate (pierwsze zamówienie 1–5 dni diety ÷ wszystkie pierwsze zamówienia) i rozkład długości diet. UWAGA: przy ~30–40 nowych dziennie tester rate dnia jest statystycznie chwiejny (jeden tester to kilka punktów proc.) — traktuj jako sygnał tygodniowy, nie wyrok dnia.",
+"yest_media":"Akwizycja płatna. KRYTYCZNE: dane mediowe (zwł. Google) lagują ~1 dzień za transakcjami, więc kafel kotwiczy na OSTATNIM dniu z kompletnym spendem i pokazuje jego datę jawnie. Spend performance = Meta FDG (spend Meta − kampanie cateringów) + Google, vs typowy ten sam dzień tygodnia. CAC paid (spend ÷ nowi tego dnia) tylko orientacyjnie — GMV z dzisiejszego wydatku dojrzewa przez cały cykl diety, więc dzienny zwrot nie istnieje.",
+"yest_channels":"Skąd przyszli kupujący wczoraj wg kanału (last-click GA4): sesje, zakupy, CR = zakupy ÷ sesje zaangażowane. Dane GA4 lagują ~1 dzień — pokazuję ostatni dostępny dzień z jawną datą. Spadek CR przy stałym ruchu (kreacja/koszyk) to inny problem niż spadek liczby sesji (budżet/zasięg).",
+"yest_funnel":"Lejek dnia: sesja → koszyk → checkout → zakup (unikalne sesje na każdym etapie) — pokazuje GDZIE klient odpadł. To jedyny element łapiący problemy techniczne (błąd płatności, awaria koszyka). GA4 laguje ~1–2 dni; kafel pokazuje datę faktycznego wiersza, nie rysuje zer gdy dane jeszcze nie dotarły.",
+"yest_sd":"Kampania Przesiadka SD 150 za dzień: leady (wystawione kody SD), zamówienia SD, GMV SD i konwersja lead→zamówienie. Świadomie deficytowa w 1. roku akwizycja premium pod decyzję 6.07.",
+"yest_b2b":"Status pakietu B2B (TOP5/TOP10/TOP3 kategorii) cateringów, które się wczoraj wybiły. POKAZUJE tylko status (ma pakiet / brak), bez podpowiadania akcji — decyzje handlowe są po stronie Head of Foodango.",
+"yest_context":"Cichy pasek kontekstu (bez progów alertu): udział aplikacji/web/nieoznaczone w zamówieniach (liczone od wszystkich zamówień — app+web nie sumują się do 100%, jest trzeci kubełek), średnia długość diety, Multidieta. Mały wolumen — pojedynczy dzień to nie wniosek.",
 "gmv_mtd":"GMV od 1. dnia miesiąca do dziś (MTD) z BigQuery (logika Card 296): tylko status CONFIRMED, bez admin_payment; wartość = before + dostawa − rabaty na poziomie zamówienia. Pasek = realizacja vs budżet. Trzy projekcje końca mc: liniowa (MTD/dni × dni), sezonowa (mnożniki dzień miesiąca × dzień tygodnia na pozostałe dni) i tempo z 7 dni (MTD + śr. 7 dni × pozostałe).",
 "prowizja_mtd":"Prowizja Foodango od GMV item-level realnymi stawkami per catering (od czerwca 2026: 10%, Paczka Smaku 8%) — nie płaskie 8% z Card 296. Suma za miesiąc do dziś; projekcja końca mc skalowana proporcją sezonowej projekcji GMV. Multidieta liczona jako osobna pozycja brandu.",
 "cday":"Dzienne GMV (CONFIRMED bez admin_payment) za ostatnie ~8 tygodni z BigQuery. Jaśniejszy słupek = dziś (dane częściowe, doładowywane w ciągu dnia), weekend jaśniejszy. Linia = średnia krocząca z 7 pełnych dni (dzisiejszy słupek wykluczony ze średniej).",
@@ -453,6 +467,139 @@ INIT.cockpit=function(){
     {type:'bar',label:'GMV',data:d60.map(r=>Math.round(+r.gmv/1000)),backgroundColor:d60.map(r=>r.is_partial?'#ffb52e88':([0,6].includes(pd(r.date).getDay())?'#4fbf8b59':'#4fbf8b')),borderRadius:2,order:2},
     {type:'line',label:'Średnia 7 dni',data:ma7.map(v=>Math.round(v/1000)),borderColor:'#ff9b00',pointRadius:0,borderWidth:2,tension:.3,order:1}]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:leg},scales:{x:{ticks:{maxTicksLimit:9},grid:{display:false}},y:{title:{display:true,text:'tys. PLN'}}}}});
+};
+
+// ===== WCZORAJ =====
+const DOWPL=['niedziela','poniedziałek','wtorek','środa','czwartek','piątek','sobota'];
+const cap=s=>s?s[0].toUpperCase()+s.slice(1):s;
+const nrm=s=>String(s||'').toLowerCase().replace(/\s+/g,'');
+function dowStats(map,targetStr,maxN){
+  var t=pd(targetStr),vals=[];
+  for(var i=1;i<=14&&vals.length<(maxN||8);i++){var d=new Date(t);d.setDate(t.getDate()-7*i);var v=map.get(iso(d));if(v!=null&&!isNaN(v))vals.push(v)}
+  if(!vals.length)return{n:0,mean:null,sd:null,cv:null,vals:[]};
+  var m=vals.reduce(function(s,v){return s+v},0)/vals.length;
+  var sd=Math.sqrt(vals.reduce(function(s,v){return s+(v-m)*(v-m)},0)/vals.length);
+  return{n:vals.length,mean:m,sd:sd,cv:m?sd/Math.abs(m):null,vals:vals};
+}
+function dowDelta(cur,st,cvMax){if(cur==null||st.mean==null||!st.mean)return{dev:null,stable:false,sig:false,mean:st.mean,n:st.n};var dev=(cur-st.mean)/st.mean;var stable=st.n>=4&&st.cv!=null&&st.cv<=(cvMax||0.35);return{dev:dev,stable:stable,sig:stable&&Math.abs(dev)>=0.25,mean:st.mean,n:st.n,cv:st.cv};}
+function devHtml(d){if(d.dev==null)return'<span class="mut">— brak bazy</span>';if(!d.stable)return'<span class="mut">'+sgn(100*d.dev)+' · baza zmienna</span>';return'<span class="'+(d.dev>0?'pos':'neg')+'">'+sgn(100*d.dev)+'</span>';}
+RENDER.yest=function(){
+  var fd=fullDaily();
+  if(!fd.length){document.getElementById('tab-yest').innerHTML='<div class="card"><div class="note">Brak danych dziennych.</div></div>';return;}
+  var yd=fd[fd.length-1], ds=yd.date.slice(0,10), dow=pd(ds).getDay(), mKey=ds.slice(0,7);
+  var bAll=D.brand_daily||[], bDay=bAll.filter(r=>r.date.slice(0,10)===ds);
+  // prowizja dnia i mapa prowizji per dzien (z brand_daily)
+  var commByDate={};bAll.forEach(function(r){var k2=r.date.slice(0,10);commByDate[k2]=(commByDate[k2]||0)+(+r.gmv||0)*(rate(k2.slice(0,7),r.brand)||0.10)});
+  var commMap=new Map(Object.entries(commByDate)), commD=commByDate[ds]||0;
+  var gmvMap=new Map(fd.map(r=>[r.date.slice(0,10),+r.gmv]));
+  var newMap=new Map(fd.map(r=>[r.date.slice(0,10),r.new_customers]));
+  var retMap=new Map(fd.map(r=>[r.date.slice(0,10),r.gmv?100*(r.gmv-(+r.new_gmv||0))/r.gmv:null]));
+  var aovMap=new Map(fd.map(r=>[r.date.slice(0,10),r.orders?r.gmv/r.orders:null]));
+  var trMap=new Map(fd.map(r=>[r.date.slice(0,10),r.new_orders?100*r.tester_new_orders/r.new_orders:null]));
+  var sComm=dowStats(commMap,ds),sGmv=dowStats(gmvMap,ds),sNew=dowStats(newMap,ds),sRet=dowStats(retMap,ds),sAov=dowStats(aovMap,ds),sTr=dowStats(trMap,ds);
+  var dComm=dowDelta(commD,sComm),dGmv=dowDelta(+yd.gmv,sGmv),dNew=dowDelta(yd.new_customers,sNew),dRet=dowDelta(retMap.get(ds),sRet),dAov=dowDelta(aovMap.get(ds),sAov);
+  var retShare=retMap.get(ds), commGap=sComm.mean!=null?commD-sComm.mean:null;
+  // rekord same-DOW
+  var isRec=function(cur,st,hi){if(!st.vals.length)return false;var ext=hi?Math.max.apply(null,st.vals):Math.min.apply(null,st.vals);return hi?cur>ext:cur<ext;};
+  var rekord = (isRec(commD,sComm,true)||isRec(+yd.gmv,sGmv,true)) ? 'gora' : ((isRec(commD,sComm,false)||isRec(+yd.gmv,sGmv,false))?'dol':null);
+  // werdykt
+  var bits=[];if(dGmv.sig)bits.push('GMV '+sgn(100*dGmv.dev));if(dComm.sig)bits.push('prowizja '+sgn(100*dComm.dev));if(dNew.sig)bits.push('nowi '+sgn(100*dNew.dev));
+  // ruchy brandow
+  var brStat=function(br){return dowStats(new Map(bAll.filter(r=>r.brand===br).map(r=>[r.date.slice(0,10),+r.gmv])),ds);};
+  var movers=bDay.filter(r=>+r.gmv>=1000).map(function(r){var st=brStat(r.brand);var d=st.mean?(+r.gmv-st.mean)/st.mean:null;return{brand:r.brand,gmv:+r.gmv,nc:r.new_customers,mean:st.mean,n:st.n,cv:st.cv,dev:d,stable:st.n>=4&&st.cv!=null&&st.cv<=0.5};}).filter(x=>x.dev!=null&&x.mean>=1000);
+  var up=movers.filter(x=>x.dev>0).sort((a,b)=>b.dev-a.dev).slice(0,3), down=movers.filter(x=>x.dev<0).sort((a,b)=>a.dev-b.dev).slice(0,3);
+  var topMover=up[0]&&(!down[0]||up[0].dev>=-down[0].dev)?up[0]:down[0];
+  if(topMover)bits.push((topMover.dev>0?'wystrzelił ':'zjechał ')+topMover.brand.replace(' (Multidieta)','')+' '+sgn(100*topMover.dev));
+  var verdict, vcls;
+  if(rekord==='gora'){verdict='Rekord '+DOWPL[dow]+'! '+cap(DOWPL[dow])+' najmocniejszy z ostatnich tygodni'+(bits.length?' — '+bits.join(', '):'')+'.';vcls='ok';}
+  else if(rekord==='dol'){verdict=cap(DOWPL[dow])+' najsłabszy z ostatnich tygodni'+(bits.length?' — '+bits.join(', '):'')+'.';vcls='warn';}
+  else if(bits.length){verdict=cap(DOWPL[dow])+' z odchyleniem: '+bits.join(', ')+'.';vcls='warn';}
+  else{verdict=cap(DOWPL[dow])+' w normie dnia tygodnia — GMV, prowizja i nowi w paśmie typowego '+DOWPL[dow]+', bez odchyleń wymagających uwagi.';vcls='ok';}
+  // koncentracja
+  var bSort=bDay.slice().sort((a,b)=>b.gmv-a.gmv),totB=bSort.reduce((s,r)=>s+ +r.gmv,0);
+  var t3=totB?100*bSort.slice(0,3).reduce((s,r)=>s+ +r.gmv,0)/totB:null;
+  var t3for=function(dd){var rows=bAll.filter(r=>r.date.slice(0,10)===dd);if(!rows.length)return null;var s=rows.slice().sort((a,b)=>b.gmv-a.gmv),tt=s.reduce((x,r)=>x+ +r.gmv,0);return tt?100*s.slice(0,3).reduce((x,r)=>x+ +r.gmv,0)/tt:null;};
+  var t3hist=[];for(var i=1;i<=8;i++){var dd=new Date(pd(ds));dd.setDate(dd.getDate()-7*i);var v=t3for(iso(dd));if(v!=null)t3hist.push(v);}
+  var t3mean=t3hist.length?t3hist.reduce((s,v)=>s+v,0)/t3hist.length:null;
+  // mix prowizji
+  var commBrand=bDay.map(r=>({brand:r.brand,comm:(+r.gmv||0)*(rate(mKey,r.brand)||0.10)})).sort((a,b)=>b.comm-a.comm);
+  var effRate=totB?100*commD/totB:null, topCommShare=commD?100*commBrand[0].comm/commD:null;
+  // pakiety B2B
+  var pk=D.b2b_packages||[],pkgBy={};pk.forEach(function(p){if(p.status&&String(p.status).indexOf('pitch')>=0)return;pkgBy[nrm(p.brand)]=(pkgBy[nrm(p.brand)]||0)+ +p.amount});
+  // media (lag-aware)
+  var mk=D.marketing_daily||[],mLast=mk.length?mk[mk.length-1]:null,mDate=mLast?mLast.date.slice(0,10):null;
+  var spendOf=r=>+(r.meta_spend||0)- +(r.meta_catering_spend||0)+ +(r.google_spend||0);
+  var spendMap=new Map(mk.map(r=>[r.date.slice(0,10),spendOf(r)])),spendD=mLast?spendOf(mLast):null;
+  var dSpend=dowDelta(spendD,mDate?dowStats(spendMap,mDate):{n:0,mean:null},0.4);
+  var ncM=mDate?((fd.find(r=>r.date.slice(0,10)===mDate)||{}).new_customers):null,cacD=(spendD!=null&&ncM)?spendD/ncM:null;
+  // kanaly
+  var ch=D.channel_daily||[],chD=[...new Set(ch.map(r=>r.date.slice(0,10)))].sort(),chLast=chD[chD.length-1];
+  var chDay=ch.filter(r=>r.date.slice(0,10)===chLast).sort((a,b)=>b.purchases-a.purchases);
+  // lejek
+  var fn=D.funnel_daily||[],fL=fn.length?fn[fn.length-1]:null,fDate=fL?fL.date.slice(0,10):null;
+  var fSteps=fL?[['Sesje',fL.sessions],['Koszyk',fL.s_atc],['Checkout',fL.s_checkout],['Zakup',fL.s_purchase]]:[];
+  var fCR=fL&&fL.eng_sessions?100*fL.s_purchase/fL.eng_sessions:null;
+  // przesiadka
+  var pz=D.przesiadka_daily||[],pzR=pz.filter(r=>r.date.slice(0,10)===ds)[0]||(pz.length?pz[pz.length-1]:null);
+  // kontekst
+  var appS=yd.orders?100*yd.app_orders/yd.orders:null,webS=yd.orders?100*yd.web_orders/yd.orders:null,unkS=yd.orders?100*(yd.unknown_platform_orders||0)/yd.orders:null;
+  var freshTag=d2=>d2&&d2!==ds?'<span class="pill red">dane za '+dlab(d2)+'</span>':'';
+  var moverTable=function(arr){return arr.length?('<div class="tbl"><table><tr><th>Catering</th><th>GMV wczoraj</th><th>śr. '+DOWPL[dow].slice(0,3)+'.</th><th>zmiana</th><th>nowi</th><th>pakiet</th></tr>'+arr.map(function(x){var pkg=pkgBy[nrm(x.brand)]||0;return'<tr><td>'+x.brand.replace(' (Multidieta)','')+'</td><td><b>'+kk(x.gmv)+'</b></td><td class="mut">'+kk(x.mean)+'</td><td>'+(x.stable?'<span class="'+(x.dev>0?'pos':'neg')+'">'+sgn(100*x.dev)+'</span>':'<span class="mut">'+sgn(100*x.dev)+' · zmienna</span>')+'</td><td>'+x.nc+'</td><td>'+(pkg?kk(pkg):'<span class="mut">—</span>')+'</td></tr>';}).join('')+'</table></div>'):'<div class="note">Brak ruchów powyżej progu.</div>';};
+
+  document.getElementById('tab-yest').innerHTML=`
+  <div class="card full">
+    <h2>Wczoraj — ${dlab(ds)}, ${DOWPL[dow]} ${ds!==iso(new Date(new Date().setDate(new Date().getDate()-1)))?'<span class="pill">ostatni zamknięty dzień</span>':''}${inf('yest_hero')}</h2>
+    <div class="big">${nf.format(Math.round(commD))} <small>PLN prowizji</small></div>
+    <div class="proj">
+      <span>vs typowy ${DOWPL[dow]} ${devHtml(dComm)}</span>
+      <span>${commGap!=null?(commGap>=0?'ponad normę':'poniżej normy')+' o <b>'+zl(Math.abs(commGap))+'</b>':''}</span>
+      <span>powracający dowieźli <b>${pc(retShare,0)}</b> GMV</span>
+    </div>
+    <div class="flag ${vcls}" style="margin-top:12px">${verdict}</div>
+  </div>
+  <div class="grid full">
+    <div class="kpi"><div class="l">GMV dnia${inf('yest_core')}</div><div class="row"><div class="v">${k(+yd.gmv)}</div></div><div class="d">${devHtml(dGmv)} vs typowy ${DOWPL[dow]} (śr. ${k(sGmv.mean)})</div></div>
+    <div class="kpi"><div class="l">Nowi klienci</div><div class="row"><div class="v">${nf.format(yd.new_customers)}</div></div><div class="d">${devHtml(dNew)} vs typowy ${DOWPL[dow]} (śr. ${sNew.mean?Math.round(sNew.mean):'—'})</div></div>
+    <div class="kpi"><div class="l">Udział powracających w GMV</div><div class="row"><div class="v">${pc(retShare,0)}</div></div><div class="d">${devHtml(dRet)} vs typowy ${DOWPL[dow]} · ${k(yd.gmv-(+yd.new_gmv||0))} PLN</div></div>
+    <div class="kpi"><div class="l">AOV dnia</div><div class="row"><div class="v">${zl(aovMap.get(ds))}</div></div><div class="d">${devHtml(dAov)} · ${nf.format(yd.orders)} zam. · dieta ${(+yd.avg_diet_days||0).toFixed(1)} dni</div></div>
+  </div>
+  <div class="card"><h2>Kto się wybił — w górę${inf('yest_movers')}</h2>${moverTable(up)}</div>
+  <div class="card"><h2>Kto się wybił — w dół</h2>${moverTable(down)}</div>
+  <div class="card full"><h2>Koncentracja i mix prowizji${inf('yest_conc')}</h2>
+    <div class="grid g2" style="margin-bottom:0">
+      <div class="kpi"><div class="l">Udział TOP3 w GMV dnia</div><div class="row"><div class="v">${pc(t3,0)}</div></div><div class="d">${t3mean!=null?'typowy '+DOWPL[dow]+' ~'+pc(t3mean,0):''}</div></div>
+      <div class="kpi"><div class="l">Efektywna stawka prowizji${inf('yest_commmix')}</div><div class="row"><div class="v">${pc(effRate,2)}</div></div><div class="d">${commBrand[0]?commBrand[0].brand.replace(' (Multidieta)','')+' = '+pc(topCommShare,0)+' prowizji dnia':''}${topCommShare>40?' <span class="neg">· zależność</span>':''}</div></div>
+    </div>
+    <div class="note">Prowizja per catering realnymi stawkami (10% / Paczka Smaku 8%). Dzień na brandach 8% daje mniej przychodu niż taki sam GMV na 10%.</div></div>
+  <div class="card full"><h2>Akwizycja płatna ${freshTag(mDate)}${inf('yest_media')}</h2>
+    <div class="grid g2" style="margin-bottom:0">
+      <div class="kpi"><div class="l">Spend performance${mDate&&mDate!==ds?' ('+dlab(mDate)+')':''}</div><div class="row"><div class="v">${k(spendD)}</div></div><div class="d">${devHtml(dSpend)} vs typowy ${DOWPL[dow]} · Meta FDG + Google</div></div>
+      <div class="kpi"><div class="l">CAC paid (orientacyjnie)</div><div class="row"><div class="v">${zl(cacD)}</div></div><div class="d">spend ÷ ${ncM!=null?nf.format(ncM)+' nowych':'—'} dnia ${mDate?dlab(mDate):''}</div></div>
+    </div>
+    ${mDate&&mDate!==ds?`<div class="note">Dane mediowe lagują — kotwiczone na ${dlab(mDate)}, nie na ${dlab(ds)}. CAC dzienny tylko orientacyjnie: GMV z wydatku dojrzewa przez cały cykl diety.</div>`:''}</div>
+  <div class="card full"><h2>Kanały — kto dowiózł sprzedaż ${freshTag(chLast)}${inf('yest_channels')}</h2>
+    <div class="tbl"><table><tr><th>Kanał</th><th>Sesje</th><th>Zakupy</th><th>CR</th></tr>
+    ${chDay.map(r=>`<tr><td>${r.c||r.channel}</td><td>${nf.format(r.sessions)}</td><td>${r.purchases}</td><td>${pc(r.eng_sessions?100*r.purchases/r.eng_sessions:(r.sessions?100*r.purchases/r.sessions:null),2)}</td></tr>`).join('')}</table></div></div>
+  <div class="card"><h2>Lejek dnia ${freshTag(fDate)}${inf('yest_funnel')}</h2>
+    ${fL?`<div class="fun">${fSteps.map((s,i)=>{var base=fL.sessions||1,prev=i?fSteps[i-1][1]:null,pass=prev?100*s[1]/prev:null;return`<div class="step"><span class="nm">${s[0]}</span><span class="trk"><i style="width:${Math.max(7,100*s[1]/base)}%"></i><span>${nf.format(s[1])}</span></span><span class="pct">${pass!=null?'→ '+pc(pass,0):''}</span></div>`}).join('')}</div><div class="note">CR sesja→zakup ${pc(fCR,2)} (od sesji zaangażowanych).${fDate&&fDate!==ds?' Dane GA4 za '+dlab(fDate)+', nie '+dlab(ds)+'.':''}</div>`:'<div class="note">Czeka na dane GA4 dla tego dnia.</div>'}</div>
+  <div class="card"><h2>Przesiadka SD 150${inf('yest_sd')}</h2>
+    ${pzR?`<div class="grid" style="margin-bottom:0"><div class="kpi"><div class="l">Leady${pzR.date.slice(0,10)!==ds?' ('+dlab(pzR.date)+')':''}</div><div class="row"><div class="v">${nf.format(pzR.leads||0)}</div></div></div><div class="kpi"><div class="l">Zamówienia SD</div><div class="row"><div class="v">${nf.format(pzR.sd_orders||0)}</div></div><div class="d">konw. ${pc(pzR.leads?100*pzR.sd_orders/pzR.leads:null,0)}</div></div><div class="kpi"><div class="l">GMV SD</div><div class="row"><div class="v">${k(+pzR.sd_gmv||0)}</div></div></div></div>`:'<div class="note">Brak danych.</div>'}</div>
+  <div class="card full"><h2>Kontekst dnia${inf('yest_context')}</h2>
+    <div class="proj" style="font-size:13px">
+      <span>Aplikacja <b>${pc(appS,0)}</b> · web <b>${pc(webS,0)}</b>${unkS>0.5?' · nieozn. <b>'+pc(unkS,0)+'</b>':''} (zamówień)</span>
+      <span>Śr. długość diety <b>${(+yd.avg_diet_days||0).toFixed(1)} dni</b></span>
+      <span>Multidieta <b>${yd.multidiet_orders||0}</b> zam. · <b>${k(+yd.multidiet_gmv||0)} PLN</b></span>
+      <span>Tester rate <b>${pc(trMap.get(ds),0)}</b> <span class="mut">(dziennie chwiejny)</span></span>
+    </div>
+    <div class="card full" style="margin:12px 0 0;padding:0"><div class="ch" style="height:170px"><canvas id="ySpark"></canvas></div></div>
+    <div class="note">Słupki: prowizja w ${DOWPL[dow]} z ostatnich tygodni (ostatni = wczoraj). Pasek kontekstu bez progów alertu — pojedynczy dzień to obserwacja, nie wniosek.</div></div>`;
+};
+INIT.yest=function(){
+  var fd=fullDaily();if(!fd.length)return;var ds=fd[fd.length-1].date.slice(0,10),dow=pd(ds).getDay();
+  var bAll=D.brand_daily||[],cbd={};bAll.forEach(function(r){var k2=r.date.slice(0,10);cbd[k2]=(cbd[k2]||0)+(+r.gmv||0)*(rate(k2.slice(0,7),r.brand)||0.10)});
+  var pts=[];for(var i=8;i>=0;i--){var d=new Date(pd(ds));d.setDate(d.getDate()-7*i);var ks=iso(d);if(cbd[ks]!=null)pts.push({d:ks,v:cbd[ks]})}
+  mkChart('ySpark',{type:'bar',data:{labels:pts.map(p=>dlab(p.d)),datasets:[{label:'Prowizja '+DOWPL[dow]+' (PLN)',data:pts.map(p=>Math.round(p.v)),backgroundColor:pts.map(p=>p.d===ds?'#ff9b00':'#33524a'),borderRadius:3}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>ctx.formattedValue+' zł'}}},scales:{x:{grid:{display:false}},y:{}}}});
 };
 
 // ===== PULS =====
