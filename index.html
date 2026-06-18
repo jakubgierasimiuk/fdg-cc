@@ -289,7 +289,7 @@ const DEFS={
 "flagi":"Automatyczne reguły ostrzegawcze liczone na żywo z danych zakładki: tester rate ostatniego pełnego tygodnia powyżej 28%, spadek GMV WoW poniżej −25% (z rozróżnieniem normalizacji po peaku), pace sezonowy GMV poniżej 80% (przy min. 10 dniach), pace powracających poniżej 90%, projekcja Performance powyżej 105% limitu, spadek CR sesja→zakup WoW o ponad 0,5 pkt proc. Bez ręcznego wkładu.",
 "radar":"Otwarte wątki projektu z deadline'ami, sortowane rosnąco po dacie; pozycje do 7 dni oznaczone na czerwono. Zasilane ręcznie z pamięci projektu (otwarte wątki, decyzje) przy sesjach i porannej rutynie — nie liczone z transakcji.",
 "swiezosc":"Znaczniki czasu ostatniego odświeżenia każdego źródła z logu rutyny ETL. Pełne odświeżenie rano 6:45; dzisiejsze GMV doładowywane w ciągu dnia (13:00, 18:00). Lejek i dane GA4 mają ~1–2 dni opóźnienia względem transakcji.",
-"puls":"Lista briefów do przeczytania: krótkie notatki narracyjne (brief dnia rano po odświeżeniu danych, brief tygodnia w poniedziałki), nie metryka liczona z transakcji. Źródło: tabela briefs (foodango_cc) — pokazywane tylko nieprzeczytane; przeczytane lądują w Archiwum. Każdy brief ma typ, datę i opcjonalną flagę uwagi. Dzień zwyczajny też daje brief, tylko jednozdaniowy — zasada zero szumu.",
+"puls":"Jedna skrzynka „co znalazły moje automaty + co wymaga decyzji\". Wpadają tu: podsumowania (TLDR) wszystkich raportów cyklicznych po ich uruchomieniu (tygodniówka, Meta puls/strategia, Przesiadka SD, przychody i udział cateringów, test progów A/B, wyszukiwarka), brief dnia (rano) i tygodnia (poniedziałki), alerty i rekordy na bieżąco oraz przypomnienia o terminach decyzji z radaru wątków. Źródło: tabela briefs (foodango_cc), pole source grupuje pochodzenie. Pokazywane nieprzeczytane; przeczytane w Archiwum. Zasada zero szumu — dzień zwyczajny to jedno zdanie.",
 "zam_mtd":"Liczba zamówień narastająco od 1. dnia bieżącego miesiąca do OSTATNIEGO ZAKOŃCZONEGO dnia (bieżący, niepełny dzień jest wykluczony). Źródło: configuration_order (logika Card 296) — status CONFIRMED, bez admin_payment, data wg paid_at. Pace = projekcja liniowa (MTD/liczba_dni × dni_w_miesiącu) ÷ budżet zamówień z planu.",
 "aov_week":"Średnia wartość zamówienia za ostatni pełny tydzień (pon–ndz): GMV tygodnia ÷ liczba zamówień. GMV na poziomie zamówienia (wartość przed rabatem + dostawa − rabaty), tylko CONFIRMED bez admin_payment. Śr. dieta = średnia (ważona zamówieniami) liczba dni dostaw na zamówienie z dat configurationItem.",
 "sweek":"GMV per pełny tydzień (pon–ndz) za ostatnie 26 tygodni. Źródło: configuration_order, tylko CONFIRMED bez admin_payment. GMV na poziomie zamówienia = wartość przed rabatem + dostawa − suma rabatów. Słupki w tysiącach PLN; bieżący niepełny tydzień pomijany.",
@@ -610,14 +610,18 @@ INIT.yest=function(){
 };
 
 // ===== PULS =====
+const PULS_SRC={dzien:'Brief dnia',tydzien:'Brief tygodnia',tygodniowka:'Tygodniówka',"meta-pulse":'Meta Ads — puls',"meta-strategia":'Meta Ads — strategia',przesiadka:'Przesiadka SD',"rynek-cateringow":'Rynek cateringów',"udzial-fdg":'Udział Foodango',"test-progow":'Test progów A/B',wyszukiwarka:'Wyszukiwarka',alert:'Alert',rekord:'Rekord',deadline:'Termin decyzji',system:'System'};
 RENDER.puls=function(){
   const br=D.briefs||[];
   const unread=br.filter(b=>!b.read_at),read=br.filter(b=>b.read_at);
+  const lab=b=>PULS_SRC[b.source]||(b.type==='weekly'?'Tydzień':b.type==='daily'?'Dzień':b.type==='alert'?'Alert':'Raport');
+  const acc=b=>b.severity==='warn'?'border-left:3px solid var(--coral);padding-left:11px':((b.source==='deadline'||b.source==='rekord')?'border-left:3px solid var(--amber);padding-left:11px':'');
+  const card=(b,arch)=>`<div class="brief" style="${arch?'opacity:.6;':''}${acc(b)}"><div class="meta">${lab(b)} · ${dlab(b.brief_date)}${b.severity==='warn'?' · <span class="neg">uwaga</span>':''}</div><h3>${esc(b.title)}</h3><div class="body">${mdl(b.body)}</div>${arch?'':`<button onclick="markRead(${b.id})">Przeczytane ✓</button>`}</div>`;
   document.getElementById('tab-puls').innerHTML=`
   <div class="card full"><h2>Do przeczytania <span class="pill">${unread.length}</span>${inf('puls')}</h2>
-  ${unread.length?unread.map(b=>`<div class="brief"><div class="meta">${b.type==='weekly'?'Tydzień':b.type==='daily'?'Dzień':'Raport'} · ${dlab(b.brief_date)}${b.severity==='warn'?' · <span class="neg">uwaga</span>':''}</div><h3>${esc(b.title)}</h3><div class="body">${mdl(b.body)}</div><button onclick="markRead(${b.id})">Przeczytane ✓</button></div>`).join(''):'<div class="note">Wszystko przeczytane. Nowy brief dnia pojawia się rano po odświeżeniu danych, brief tygodnia — w poniedziałki.</div>'}
-  <details><summary>Archiwum (${read.length})</summary>${read.map(b=>`<div class="brief" style="opacity:.65"><div class="meta">${b.type} · ${dlab(b.brief_date)}</div><h3>${esc(b.title)}</h3><div class="body">${mdl(b.body)}</div></div>`).join('')}</details>
-  <div class="note">Briefy piszę ja — codziennie rano podsumowanie wczorajszego dnia (tylko jeśli jest coś wartego uwagi: odchylenia, anomalie, rekordy), w poniedziałki podsumowanie tygodnia. Zasada: zero szumu — gdy dzień jest zwyczajny, brief ma jedno zdanie.</div></div>`;
+  ${unread.length?unread.map(b=>card(b,false)).join(''):'<div class="note">Wszystko przeczytane. Tu wpadają podsumowania raportów (tygodniówka, Meta, Przesiadka, cateringi, test progów, wyszukiwarka), brief dnia/tygodnia, alerty i przypomnienia o terminach decyzji.</div>'}
+  <details><summary>Archiwum (${read.length})</summary>${read.map(b=>card(b,true)).join('')}</details>
+  <div class="note">Puls = jedna skrzynka: co znalazły rutyny raportowe + co wymaga decyzji. Każdy raport dopisuje tu TLDR po uruchomieniu; brief dnia rano, tygodnia w poniedziałki; alerty i terminy decyzji na bieżąco. Zasada: zero szumu.</div></div>`;
 };
 INIT.puls=function(){};
 
