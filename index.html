@@ -116,6 +116,10 @@ h3.gsec{font-size:11.5px;font-weight:800;color:var(--amber);text-transform:upper
 .brandrow .rk{flex:0 0 20px;text-align:right;color:var(--mut);font-weight:700;font-size:12px;font-variant-numeric:tabular-nums}
 #tip{position:fixed;z-index:60;max-width:300px;background:#0c1813;border:1px solid var(--amber);border-radius:11px;padding:11px 13px;font-size:12.5px;line-height:1.5;color:var(--txt);box-shadow:0 10px 32px #000b}
 #tip b{color:var(--amber)}
+.skrow{padding:9px 0;border-bottom:1px solid #2a473e}.skrow:last-child{border:none}
+.skh{display:flex;justify-content:space-between;gap:10px;align-items:baseline;font-size:13.5px;flex-wrap:wrap}
+.skh .dl{white-space:nowrap;font-size:12px}
+.skd{font-size:12.5px;color:var(--mut);line-height:1.5;margin-top:3px}
 </style>
 </head>
 <body>
@@ -147,6 +151,7 @@ h3.gsec{font-size:11.5px;font-weight:800;color:var(--amber);text-transform:upper
 <section id="tab-traffic" class="hide"></section>
 <section id="tab-seo" class="hide"></section>
 <section id="tab-b2b" class="hide"></section>
+<section id="tab-skills" class="hide"></section>
 </main>
 
 <nav><div class="wrap">
@@ -162,6 +167,7 @@ h3.gsec{font-size:11.5px;font-weight:800;color:var(--amber);text-transform:upper
   <button data-t="traffic" onclick="tab('traffic')">Ruch</button>
   <button data-t="seo" onclick="tab('seo')">SEO</button>
   <button data-t="b2b" onclick="tab('b2b')">B2B</button>
+  <button data-t="skills" onclick="tab('skills')">Skille</button>
 </div></nav>
 <div id="tip" class="hide"></div>
 
@@ -258,6 +264,7 @@ const esc=s=>String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;');
 const mdl=s=>esc(s).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/\n/g,'<br>');
 function updateBadge(){const n=(D.briefs||[]).filter(b=>!b.read_at).length;document.getElementById('pulsBadge').textContent=n?'●':''}
 const DEFS={
+"skills":"Lista wszystkich automatyzacji i narzędzi Foodango z opisem. „Auto\" = skille chodzące samodzielnie wg harmonogramu (raporty cykliczne, odświeżanie danych); „ręczne\" = uruchamiasz na żądanie. Katalog odświeża się co tydzień sam (rutyna foodango-skills-catalog skanuje dostępne skille), więc nowe automatyzacje pojawiają się tu automatycznie.",
 "yest_hero":"Bohater dnia = przychód PROWIZYJNY Foodango za ostatni zamknięty dzień (GMV każdego cateringu × jego realna stawka: 10% domyślnie, Paczka Smaku 8%), nie GMV. Pod spodem: ile prowizji zabrakło/ponad vs typowy taki sam dzień tygodnia (mediana z maks. 8 ostatnich) oraz udział powracających w GMV = (GMV − GMV nowych klientów) / GMV. Baza ZAWSZE ten sam dzień tygodnia — sezonowość fałszuje porównanie do średniej 7 dni.",
 "yest_core":"Cztery liczby dnia, każda z odchyleniem vs ten sam dzień tygodnia (mediana z maks. 8 takich dni). KOLOR i flaga zapalają się TYLKO gdy baza jest stabilna (mała zmienność) i odchylenie istotne — przy rozchwianej bazie pokazuję liczbę, ale bez koloru i z dopiskiem „baza zmienna\". To celowe: zero fałszywych alarmów na szumie tygodniowym.",
 "yest_movers":"Kto się wybił: TOP3 w górę i TOP3 w dół wg odchylenia wczorajszego GMV cateringu od JEGO normy w ten sam dzień tygodnia (nie od ogólnej średniej). Próg GMV >1000 PLN (żeby mikrobrand nie robił „+100%\" z szumu). Obok jawnie średnia, z której liczę. Przy niestabilnej historii brandu znacznik „baza zmienna\". Multidieta liczona osobno.",
@@ -1072,6 +1079,22 @@ INIT.b2b=function(){
     options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:leg,tooltip:{callbacks:{footer:items=>{const ds=items[0].chart.data.datasets,i=items[0].dataIndex,a=+ds[0].data[i]||0,b=+ds[1].data[i]||0,t=a+b;return t?'B2B '+Math.round(100*b/t)+'% przychodu':''}}}},scales:{x:{stacked:true,grid:{display:false}},y:{stacked:true}}}});
 };
 
+let SK=null,skLoading=false;
+async function fetchSkills(){if(skLoading||SK)return;skLoading=true;try{const r=await fetch(SB+'/rest/v1/rpc/fdg_cc_skills',{method:'POST',headers:{'Content-Type':'application/json',apikey:ANON,Authorization:'Bearer '+ANON},body:JSON.stringify({p_token:getTok()})});if(r.ok){SK=await r.json();try{localStorage.setItem('cc_sk',JSON.stringify(SK))}catch(e){}renderSkills()}}catch(e){}finally{skLoading=false}}
+function renderSkills(){
+  const sec=document.getElementById('tab-skills');if(!sec)return;
+  if(!SK){try{const c=localStorage.getItem('cc_sk');if(c)SK=JSON.parse(c)}catch(e){}}
+  if(!SK){sec.innerHTML='<div class="card"><div class="note">Ładowanie katalogu skilli…</div></div>';return;}
+  const cats=[];SK.forEach(s=>{if(!cats.includes(s.category))cats.push(s.category)});
+  const kp=k=>k==='auto'?'<span class="pill green">auto</span>':(k==='doc'?'<span class="pill">dok.</span>':'<span class="pill">ręczne</span>');
+  let h=`<div class="card full"><h2>Skille Foodango ${inf('skills')}</h2><div class="note"><b>${SK.length}</b> automatyzacji i narzędzi. Katalog odświeżany co tydzień. <b>auto</b> = chodzi samo wg harmonogramu, <b>ręczne</b> = uruchamiasz na żądanie.</div></div>`;
+  cats.forEach(c=>{const it=SK.filter(s=>s.category===c);h+=`<div class="card full"><h2>${esc(c)} <span class="pill">${it.length}</span></h2>${it.map(s=>`<div class="skrow"><div class="skh"><b>${esc(s.name)}</b><span class="dl">${kp(s.kind)} <span class="mut">${esc(s.trigger_info||'')}</span></span></div><div class="skd">${esc(s.description)}</div></div>`).join('')}</div>`});
+  const u=SK[0]&&SK[0].updated_at?new Date(SK[0].updated_at):null;
+  if(u)h+=`<div class="note" style="text-align:center;opacity:.7">Katalog odświeżony: ${u.toLocaleDateString('pl-PL')}</div>`;
+  sec.innerHTML=h;
+}
+RENDER.skills=function(){renderSkills()};
+INIT.skills=function(){fetchSkills()};
 document.getElementById('gate').classList.toggle('hide',!!getTok());
 refresh();
 </script>
