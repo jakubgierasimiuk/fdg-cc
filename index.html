@@ -558,13 +558,13 @@ RENDER.yest=function(){
   document.getElementById('tab-yest').innerHTML=`
   <div class="card full">
     <h2>Wczoraj — ${dlab(ds)}, ${DOWPL[dow]} ${ds!==iso(new Date(new Date().setDate(new Date().getDate()-1)))?'<span class="pill">ostatni zamknięty dzień</span>':''}${inf('yest_hero')}</h2>
-    <div class="big">${nf.format(Math.round(commD))} <small>PLN prowizji</small></div>
-    <div class="d" style="font-size:14px;margin-top:6px">GMV dnia <b class="amb">${k(+yd.gmv)}</b> PLN · ${devHtml(dGmv)} vs typowy ${DOWPL[dow]}</div>
+    <div class="big">${nf.format(Math.round(+yd.gmv))} <small>PLN GMV</small></div>
     <div class="proj">
-      <span>vs typowy ${DOWPL[dow]} ${devHtml(dComm)}</span>
-      <span>${commGap!=null?(commGap>=0?'ponad normę':'poniżej normy')+' o <b>'+zl(Math.abs(commGap))+'</b>':''}</span>
+      <span>vs typowy ${DOWPL[dow]} ${devHtml(dGmv)}</span>
+      <span>${sGmv.mean!=null?((+yd.gmv-sGmv.mean)>=0?'ponad normę':'poniżej normy')+' o <b>'+k(Math.abs(+yd.gmv-sGmv.mean))+'</b> PLN':''}</span>
       <span>powracający dowieźli <b>${pc(retShare,0)}</b> GMV</span>
     </div>
+    <div class="d" style="font-size:13.5px;margin-top:7px">Prowizja <b class="amb">${nf.format(Math.round(commD))}</b> PLN · ${devHtml(dComm)} vs typowy ${DOWPL[dow]}</div>
     <div class="flag ${vcls}" style="margin-top:12px">${verdict}</div>
   </div>
   <div class="grid full">
