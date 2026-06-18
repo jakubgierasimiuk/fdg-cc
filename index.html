@@ -306,6 +306,7 @@ const DEFS={
 "spend_daily":"Dzienne wydatki (od 1 stycznia) w trzech warstwach: Meta FDG (spend Meta minus cateringi), Meta cateringi (kampanie 'promo catering') i Google. Źródło: marketing_daily. Słupek dnia to faktyczny spend, bez wygładzania; warstwy skumulowane.",
 "roas_week":"ROAS tydzień do tygodnia (ostatnie ~12 pełnych tygodni pon–ndz): Meta z piksela (purchase_value ÷ cały spend Meta) oraz Google z panelu (wartość konwersji ÷ koszt). Źródło: marketing_daily agregowane tygodniowo. Niepełny bieżący tydzień pominięty; inna atrybucja — porównuj trendy.",
 "cacd":"Dwie krzywe dzienne wygładzone średnią z 7 dni (MA7). CAC paid = media (Meta FDG + Google) ÷ nowi klienci dnia. CPA = te same media ÷ wszystkie zamówienia dnia. Media z marketing_daily, nowi/zamówienia z dziennych transakcji (CONFIRMED bez admin_payment). To CAC bieżący, nie księgowy.",
+"cacd30":"Surowy (niewygładzony) CAC paid każdego dnia z ostatnich 30 dni: media (Meta FDG = spend Meta − kampanie cateringów, + Google) ÷ nowi klienci tego dnia. Źródło: marketing_daily + dzienne transakcje (CONFIRMED bez admin_payment). Zawsze do wczoraj; dni bez akwizycji lub bez danych spendu są puste.",
 "cac_month":"Miesięczny CAC łączny (cały budżet marketingowy ÷ nowi klienci) i CAC realny (wariant skorygowany) zestawione z budżetem CAC z planu. Źródło: monthly_results — dane wprowadzane ręcznie po zamknięciu księgowym miesiąca, nie liczone na żywo. Budżet z tabeli budgets.",
 "pz_leads":"Liczba leadów Przesiadki w MTD: kody rabatowe SD wystawione w promotion_coupon (UPPER(phrase) LIKE 'SD%'). Źródło: foodango_raw.promotion_coupon. Stary batch z 22.04 jest poza 14-dniowym oknem zapytania, więc nie zawyża liczby.",
 "pz_orders":"Zamówienia na kodzie SD w MTD: CONFIRMED, bez admin_payment, kod SD w configuration.discount_code (UPPER LIKE 'SD%'), liczone po dniu opłacenia (paid_at). Źródło: configuration_order. Konwersja = zamówienia SD ÷ leady SD.",
@@ -697,6 +698,7 @@ RENDER.mkt=function(){
   </div>
   <div class="card full"><h2>Wydatki DZIENNIE od 1 stycznia <span class="pill">przewijaj w bok</span>${inf('spend_daily')}</h2><div class="scrollx"><div class="inner" id="mSpendWrap"><canvas id="mSpendD"></canvas></div></div></div>
   <div class="card"><h2>ROAS tygodniowo — Meta vs Google${inf('roas_week')}</h2><div class="ch"><canvas id="mRoas"></canvas></div></div>
+  <div class="card full"><h2>CAC paid dziennie — 30 dni${inf('cacd30')}</h2><div class="ch"><canvas id="mCacD30"></canvas></div><div class="note">Surowy CAC paid każdego dnia (media Meta FDG + Google ÷ nowi klienci dnia), bez wygładzania. Ostatnie 30 dni, do wczoraj.</div></div>
   <div class="card"><h2>CAC paid i CPA — dziennie (MA7)${inf('cacd')}</h2><div class="ch"><canvas id="mCacD"></canvas></div><div class="note">CAC paid = media ÷ nowi klienci dnia. CPA = media ÷ wszystkie zamówienia dnia.</div></div>
   <div class="card full"><h2>CAC miesięcznie — łączny vs realny vs budżet${inf('cac_month')}</h2><div class="ch"><canvas id="mCac"></canvas></div></div>
   <h3 class="gsec full">Kampania Przesiadka (SD 150)</h3>
@@ -733,6 +735,10 @@ INIT.mkt=function(){
     {label:'CAC paid (MA7)',data:ma(cacRaw,7).map(v=>v?Math.round(v):null),borderColor:'#ff5f5a',pointRadius:0,borderWidth:2,tension:.3},
     {label:'CPA (MA7)',data:ma(cpaRaw,7).map(v=>v?Math.round(v):null),borderColor:'#ff9b00',borderDash:[5,4],pointRadius:0,borderWidth:2,tension:.3}]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:leg},scales:{x:{ticks:{maxTicksLimit:8},grid:{display:false}},y:{title:{display:true,text:'zł'}}}}});
+  const mk30=mk.slice(-30);
+  const cac30=mk30.map(r=>{const d=fdm.get(r.date.slice(0,10));const sp=+(r.meta_spend||0)- +(r.meta_catering_spend||0)+ +(r.google_spend||0);return d&&d.new_customers?Math.round(sp/d.new_customers):null});
+  mkChart('mCacD30',{type:'bar',data:{labels:mk30.map(r=>dlab(r.date)),datasets:[{label:'CAC paid (zł)',data:cac30,backgroundColor:'#ff5f5a',borderRadius:2}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>ctx.formattedValue+' zł'}}},scales:{x:{ticks:{maxTicksLimit:10},grid:{display:false}},y:{title:{display:true,text:'zł'}}}}});
   const mr=D.monthly_results;
   mkChart('mCac',{data:{labels:mr.map(m=>mlab(m.month)),datasets:[
     {type:'bar',label:'CAC łączny',data:mr.map(m=>+m.cac),backgroundColor:'#ff9b00',borderRadius:4},
