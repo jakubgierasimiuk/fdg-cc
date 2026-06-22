@@ -227,6 +227,7 @@ function projections(){
   const naive=mtd/nd*dim;
   let fPast=0,fFut=0;
   for(let dd=1;dd<=dim;dd++){const dt=new Date(y,mo,dd);const f=DOM_F[dd]*DOW_F[dt.getDay()];if(dd<=last.getDate())fPast+=f;else fFut+=f}
+  const frac=fPast/(fPast+fFut);
   let factored=mtd+(mtd/fPast)*fFut;
   if(mo===11&&last.getDate()>=5)factored=naive*0.75;
   const avg7=fd.slice(-7).reduce((s,r)=>s+ +r.gmv,0)/Math.min(7,fd.slice(-7).length);
@@ -236,8 +237,11 @@ function projections(){
   const bm=D.brand_monthly.filter(r=>r.month.slice(0,7)===mKey);
   let comm=0;for(const r of bm){const rt=rate(mKey,r.brand);if(rt)comm+=r.gmv*rt}
   const commProj=mtd>0?comm*factored/mtd:null;
-  return{y,mo,dim,nd,mtd,naive,factored,runrate,bud,last,mtdRows,comm,commProj,mKey};
+  return{y,mo,dim,nd,mtd,frac,naive,factored,runrate,bud,last,mtdRows,comm,commProj,mKey};
 }
+// Spójny model sezonowy (DOM×DOW): dla metryki miesięcznej MTD vs cel z planu.
+// proj = prognoza końca mc (mtd/udział sezonowy), pace = proj/cel, ach = % planu osiągnięte do dziś, exp = % planu należne na dziś wg sezonu.
+function pacing(mtdVal,target){const proj=(P&&P.frac)?mtdVal/P.frac:null;return{proj:proj==null?null:Math.round(proj),pace:(target&&proj!=null)?100*proj/target:null,ach:target?100*mtdVal/target:null,exp:Math.round(100*((P&&P.frac)||0))};}
 async function refresh(force){
   const tok=getTok();
   if(!tok){document.getElementById('gate').classList.remove('hide');document.getElementById('skel').classList.add('hide');return}
@@ -284,8 +288,8 @@ const DEFS={
 "cac_laczny":"CAC księgowy z tabeli monthly_results za ostatni zamknięty miesiąc: cały budżet marketingowy ÷ nowi klienci. Dane wprowadzane ręcznie po zamknięciu księgowym, nie liczone na żywo z transakcji. Obok wariant realny (skorygowany) i budżet CAC z planu.",
 "gmv_split":"Podział GMV MTD między klientów powracających i nowych. Nowy = zamówienie w dniu pierwszego opłaconego zakupu danego buyera (is_first); reszta to powracający. Udział nowych = new_gmv ÷ całe GMV MTD, na danych CONFIRMED bez admin_payment.",
 "app_share_30":"Udział aplikacji mobilnej w zamówieniach z ostatnich 30 pełnych dni. Platforma z order_request_client: app = mobile-ios + mobile-android, web = web. Liczone jako zamówienia app ÷ (app + web); zamówienia bez oznaczonej platformy nie wchodzą do mianownika.",
-"pace_ret":"Tempo realizacji budżetu zamówień powracających w bieżącym miesiącu: projekcja liniowa (zamówienia powracających MTD / liczba dni × dni w miesiącu) ÷ cel z planu (tabela budgets). Powracający = zamówienie poza dniem pierwszego zakupu buyera. Najstabilniejszy filar, śledzony osobno.",
-"pace_new":"Tempo realizacji budżetu nowych klientów w bieżącym miesiącu: projekcja liniowa (nowi klienci MTD / liczba dni × dni w miesiącu) ÷ cel z planu (tabela budgets). Nowy klient = unikalny buyer, którego pierwszy opłacony zakup (is_first) wypadł w tym miesiącu.",
+"pace_ret":"Tempo realizacji budżetu zamówień powracających. Model SEZONOWY (DOM×DOW), ten sam co prognoza GMV: prognoza końca mc = MTD ÷ udział sezonowy dni 1..dziś; tempo = prognoza ÷ cel z planu (budgets). W detalu: % planu osiągnięte do dziś, ile powinno być na dziś wg sezonu (udział sezonowy) i prognoza końca miesiąca. Powracający = zamówienie poza dniem pierwszego zakupu buyera.",
+"pace_new":"Tempo realizacji budżetu nowych klientów. Model SEZONOWY (DOM×DOW), ten sam co prognoza GMV: prognoza końca mc = MTD ÷ udział sezonowy dni 1..dziś; tempo = prognoza ÷ cel z planu (budgets). W detalu: % planu do dziś, ile powinno być na dziś wg sezonu i prognoza końca miesiąca. Nowy klient = pierwszy opłacony zakup (is_first) w tym miesiącu.",
 "flagi":"Automatyczne reguły ostrzegawcze liczone na żywo z danych zakładki: tester rate ostatniego pełnego tygodnia powyżej 28%, spadek GMV WoW poniżej −25% (z rozróżnieniem normalizacji po peaku), pace sezonowy GMV poniżej 80% (przy min. 10 dniach), pace powracających poniżej 90%, projekcja Performance powyżej 105% limitu, spadek CR sesja→zakup WoW o ponad 0,5 pkt proc. Bez ręcznego wkładu.",
 "radar":"Otwarte wątki projektu z deadline'ami, sortowane rosnąco po dacie; pozycje do 7 dni oznaczone na czerwono. Zasilane ręcznie z pamięci projektu (otwarte wątki, decyzje) przy sesjach i porannej rutynie — nie liczone z transakcji.",
 "swiezosc":"Znaczniki czasu ostatniego odświeżenia każdego źródła z logu rutyny ETL. Pełne odświeżenie rano 6:45; dzisiejsze GMV doładowywane w ciągu dnia (13:00, 18:00). Lejek i dane GA4 mają ~1–2 dni opóźnienia względem transakcji.",
@@ -405,8 +409,8 @@ RENDER.cockpit=function(){
   const limit=PERF_LIMIT[P.mKey];
   const mtdNew=P.mtdRows.reduce((s,r)=>s+r.new_customers,0),mtdRet=P.mtdRows.reduce((s,r)=>s+r.returning_orders,0);
   const paceF=P.bud?100*P.factored/P.bud.gmv:null,paceN=P.bud?100*P.naive/P.bud.gmv:null,paceR=P.bud?100*P.runrate/P.bud.gmv:null;
-  const paceNew=P.bud?100*(mtdNew/P.nd*P.dim)/P.bud.new_customers:null;
-  const paceRet=P.bud?100*(mtdRet/P.nd*P.dim)/P.bud.returning_orders:null;
+  const pNew=pacing(mtdNew,P.bud?.new_customers),pRet=pacing(mtdRet,P.bud?.returning_orders);
+  const paceNew=pNew.pace,paceRet=pRet.pace,projNew=pNew.proj,projRet=pRet.proj,achNew=pNew.ach,achRet=pRet.ach,expToday=pNew.exp;
   const cacPaid=mtdNew?perfMtd/mtdNew:null;
   const mr=D.monthly_results,lastMr=mr[mr.length-1];
   const fd30=fullDaily().slice(-30);
@@ -438,7 +442,7 @@ RENDER.cockpit=function(){
     <h2>GMV ${MIES[P.mo]} ${P.y} <span class="pill">dni 1–${P.nd} z ${P.dim}</span>${inf('gmv_mtd')}</h2>
     <div class="big">${k(P.mtd)} <small>PLN</small></div>
     ${td?`<div class="d" style="font-size:13px;margin-top:6px">Dziś (częściowe): <b class="amb">${kk(+td.gmv)}</b> · ${td.orders} zam. · ${td.new_customers} nowych</div>`:''}
-    <div class="bar"><i style="width:${Math.min(100,P.bud?100*P.mtd/P.bud.gmv:0)}%"></i><s style="left:${100*P.nd/P.dim}%"></s></div>
+    <div class="bar"><i style="width:${Math.min(100,P.bud?100*P.mtd/P.bud.gmv:0)}%"></i><s style="left:${Math.min(100,100*P.frac).toFixed(0)}%"></s></div>
     <div class="proj"><span>prognoza końca mc <b class="amb">${k(P.factored)}</b> <span class="mut">sezonowa · ${pc(paceF)} budżetu</span></span><span>tempo 7 dni <b>${k(P.runrate)}</b></span><span>budżet <b>${k(P.bud?.gmv)}</b></span></div>
   </div>
   <div class="card">
@@ -450,11 +454,10 @@ RENDER.cockpit=function(){
   <div class="card full"><h2>GMV dziennie — 8 tygodni <span class="pill">jaśniejszy słupek = dziś, częściowe</span>${inf('cday')}</h2><div class="ch"><canvas id="cDay"></canvas></div></div>
   <div class="grid full">
     <div class="kpi"><div class="l">CAC paid MTD (media ÷ nowi)${inf('cac_paid_mtd')}</div><div class="row"><div class="v">${zl(cacPaid)}</div><canvas class="spark" id="spCP"></canvas></div><div class="d">spend Meta FDG+Google ${k(perfMtd)} ÷ ${nf.format(mtdNew)} nowych</div></div>
-    <div class="kpi"><div class="l">CAC łączny ${mlab(lastMr.month)} (księgowy)${inf('cac_laczny')}</div><div class="row"><div class="v">${zl(+lastMr.cac)}</div><canvas class="spark" id="spC"></canvas></div><div class="d">cały marketing ÷ nowi · realny ~${zl(+lastMr.cac_real)} · budżet ${zl(D.budgets.find(b=>b.month===lastMr.month)?.cac)}</div></div>
     <div class="kpi"><div class="l">GMV: powracający vs nowi MTD${inf('gmv_split')}</div><div class="row"><div class="v">${pc(100-ngpMtd,0)} / ${pc(ngpMtd,0)}</div></div><div class="d">${k(P.mtd*(100-ngpMtd)/100)} od powracających · ${k(P.mtd*ngpMtd/100)} od nowych</div></div>
     <div class="kpi"><div class="l">Udział aplikacji (30 dni)${inf('app_share_30')}</div><div class="row"><div class="v">${pc(as30)}</div><canvas class="spark" id="spA"></canvas></div><div class="d">zamówienia · cel 50% przekroczony</div></div>
-    <div class="kpi"><div class="l">Powracający — pace MTD${inf('pace_ret')}</div><div class="row"><div class="v ${paceRet>=95?'pos':paceRet<90?'neg':''}">${pc(paceRet)}</div></div><div class="d">${nf.format(mtdRet)} zam. vs budżet ${nf.format(P.bud?.returning_orders??0)}</div></div>
-    <div class="kpi"><div class="l">Nowi klienci — pace MTD${inf('pace_new')}</div><div class="row"><div class="v ${paceNew<75?'neg':''}">${pc(paceNew)}</div><canvas class="spark" id="spN"></canvas></div><div class="d">${nf.format(mtdNew)} vs budżet ${nf.format(P.bud?.new_customers??0)}</div></div>
+    <div class="kpi"><div class="l">Powracający — tempo MTD${inf('pace_ret')}</div><div class="row"><div class="v ${paceRet>=95?'pos':paceRet<90?'neg':''}">${pc(paceRet)}</div></div><div class="d">${nf.format(mtdRet)} zam. = ${pc(achRet,0)} planu · wg sezonu na dziś ${pc(expToday,0)} · prognoza ${nf.format(projRet??0)} z ${nf.format(P.bud?.returning_orders??0)}</div></div>
+    <div class="kpi"><div class="l">Nowi klienci — tempo MTD${inf('pace_new')}</div><div class="row"><div class="v ${paceNew>=95?'pos':paceNew<85?'neg':''}">${pc(paceNew)}</div><canvas class="spark" id="spN"></canvas></div><div class="d">${nf.format(mtdNew)} = ${pc(achNew,0)} planu · wg sezonu na dziś ${pc(expToday,0)} · prognoza ${nf.format(projNew??0)} z ${nf.format(P.bud?.new_customers??0)}</div></div>
   </div>
   ${flags.length?`<div class="card full"><h2>Flagi${inf('flagi')}</h2>${flags.map(f=>`<div class="flag ${f.s}">${f.t}</div>`).join('')}</div>`:''}
   <div class="card"><h2>Radar wątków${inf('radar')}</h2>${thr.map(t=>{const dl=dleft(t);return`<div class="thread"><span>${t.title}</span><span class="dl ${dl!=null&&dl<=7?'neg':'amb'}">${t.deadline?dlab(t.deadline)+' · '+(dl>=0?'za '+dl+' dni':Math.abs(dl)+' dni temu'):'—'}</span></div>`}).join('')}
@@ -462,8 +465,6 @@ RENDER.cockpit=function(){
   <div class="card"><h2>Świeżość danych${inf('swiezosc')}</h2>${(D.refresh_log||[]).slice(0,10).map(r=>`<div class="thread"><span>${r.source}</span><span class="dl">${new Date(r.refreshed_at).toLocaleString('pl-PL',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}</span></div>`).join('')}<div class="note">Pełne odświeżenie rano 6:45; dzisiejsze GMV doładowywane w ciągu dnia (13:00, 18:00). Lejek GA4 ma ~1 dzień opóźnienia.</div></div>`;
 };
 INIT.cockpit=function(){
-  const mr=D.monthly_results;
-  spark('spC',mr.map(m=>+m.cac),'#ff9b00');
   spark('spA',LF.slice(-10).map(x=>x.as??0),'#ff9b00');
   spark('spN',LF.slice(-10).map(x=>x.new_customers),'#4fbf8b');
   const mk=D.marketing_daily||[];const fdm=new Map(fullDaily().map(r=>[r.date.slice(0,10),r]));
@@ -642,7 +643,7 @@ RENDER.sales=function(){
   const totG=W.filter(x=>w4set.has(x.week.slice(0,10))).reduce((s,x)=>s+x.gmv,0);
   document.getElementById('tab-sales').innerHTML=`
   <div class="grid full g2" style="margin-bottom:12px">
-    <div class="kpi"><div class="l">Zamówienia ${MIES[P.mo]} MTD${inf('zam_mtd')}</div><div class="row"><div class="v">${nf.format(mtdOrders)}</div><canvas class="spark" id="spO"></canvas></div><div class="d">pace ${pc(P.bud?100*(mtdOrders/P.nd*P.dim)/P.bud.orders:null)} vs budżet ${nf.format(P.bud?.orders??0)}</div></div>
+    <div class="kpi"><div class="l">Zamówienia ${MIES[P.mo]} MTD${inf('zam_mtd')}</div><div class="row"><div class="v">${nf.format(mtdOrders)}</div><canvas class="spark" id="spO"></canvas></div><div class="d">${pc(pacing(mtdOrders,P.bud?.orders).ach,0)} planu · wg sezonu na dziś ${pc(pacing(mtdOrders,P.bud?.orders).exp,0)} · tempo ${pc(pacing(mtdOrders,P.bud?.orders).pace)}</div></div>
     <div class="kpi"><div class="l">AOV (${LW?wlab(LW.week):'—'})${inf('aov_week')}</div><div class="row"><div class="v">${zl(LW?.aov)}</div><canvas class="spark" id="spAov"></canvas></div><div class="d">śr. dieta ${LW?.add.toFixed(1)} dnia</div></div>
   </div>
   <div class="card"><h2>GMV tygodniowo (pon–ndz)${inf('sweek')}</h2><div class="ch"><canvas id="sWeek"></canvas></div></div>
@@ -676,12 +677,12 @@ INIT.sales=function(){
 // ===== KLIENCI =====
 RENDER.clients=function(){
   const mtdNew=P.mtdRows.reduce((s,r)=>s+r.new_customers,0),mtdRet=P.mtdRows.reduce((s,r)=>s+r.returning_orders,0);
-  const paceNew=P.bud?100*(mtdNew/P.nd*P.dim)/P.bud.new_customers:null;
-  const paceRet=P.bud?100*(mtdRet/P.nd*P.dim)/P.bud.returning_orders:null;
+  const pNew=pacing(mtdNew,P.bud?.new_customers),pRet=pacing(mtdRet,P.bud?.returning_orders);
+  const paceNew=pNew.pace,paceRet=pRet.pace,projNew=pNew.proj,projRet=pRet.proj,achNew=pNew.ach,achRet=pRet.ach,expToday=pNew.exp;
   document.getElementById('tab-clients').innerHTML=`
   <div class="grid full g2" style="margin-bottom:12px">
-    <div class="kpi"><div class="l">Nowi klienci MTD${inf('nowi_mtd')}</div><div class="row"><div class="v">${nf.format(mtdNew)}</div></div><div class="d">pace ${pc(paceNew)} · budżet ${nf.format(P.bud?.new_customers??0)}</div></div>
-    <div class="kpi"><div class="l">Powracające zamówienia MTD${inf('powr_mtd')}</div><div class="row"><div class="v">${nf.format(mtdRet)}</div></div><div class="d">pace ${pc(paceRet)} · budżet ${nf.format(P.bud?.returning_orders??0)}</div></div>
+    <div class="kpi"><div class="l">Nowi klienci MTD${inf('nowi_mtd')}</div><div class="row"><div class="v">${nf.format(mtdNew)}</div></div><div class="d">${pc(achNew,0)} planu · wg sezonu na dziś ${pc(expToday,0)} · tempo ${pc(paceNew)} · prognoza ${nf.format(projNew??0)}</div></div>
+    <div class="kpi"><div class="l">Powracające zamówienia MTD${inf('powr_mtd')}</div><div class="row"><div class="v">${nf.format(mtdRet)}</div></div><div class="d">${pc(achRet,0)} planu · wg sezonu na dziś ${pc(expToday,0)} · tempo ${pc(paceRet)} · prognoza ${nf.format(projRet??0)}</div></div>
   </div>
   <div class="card full"><h2>Akwizycja dziennie + CAC paid dnia <span class="pill">CAC = media ÷ nowi, śr. 7 dni</span>${inf('kacq')}</h2><div class="ch"><canvas id="kAcq"></canvas></div></div>
   <div class="card"><h2>Zamówienia: nowe vs powracające${inf('knvr')}</h2><div class="ch"><canvas id="kNvR"></canvas></div></div>
@@ -874,7 +875,6 @@ RENDER.mkt=function(){
   <div class="card"><h2>ROAS tygodniowo — Meta vs Google${inf('roas_week')}</h2><div class="ch"><canvas id="mRoas"></canvas></div></div>
   <div class="card full"><h2>CAC paid dziennie — 30 dni${inf('cacd30')}</h2><div class="ch"><canvas id="mCacD30"></canvas></div><div class="note">Surowy CAC paid każdego dnia (media Meta FDG + Google ÷ nowi klienci dnia), bez wygładzania. Ostatnie 30 dni, do wczoraj.</div></div>
   <div class="card"><h2>CAC paid i CPA — dziennie (MA7)${inf('cacd')}</h2><div class="ch"><canvas id="mCacD"></canvas></div><div class="note">CAC paid = media ÷ nowi klienci dnia. CPA = media ÷ wszystkie zamówienia dnia.</div></div>
-  <div class="card full"><h2>CAC miesięcznie — łączny vs realny vs budżet${inf('cac_month')}</h2><div class="ch"><canvas id="mCac"></canvas></div></div>
   <h3 class="gsec full">Kampania Przesiadka (SD 150)</h3>
   <div class="card full" style="border-color:#ff9b0066">
     <div class="flag warn" style="margin-bottom:10px">Decyzja 6.07 (za ${sdD} dni). Skumulowana retencja kohort kwi+maj: <b>${(()=>{const a=pco.filter(c=>c.cohort_month<'2026-06');const b=a.reduce((s,c)=>s+c.buyers,0),r=a.reduce((s,c)=>s+c.returned,0);return b?pc(100*r/b,1):'—'})()}</b> — próg: powyżej 30–35% zostaje, poniżej 25% zamykamy. Okno majowej kohorty jeszcze niepełne (diety ~17–20 dni).</div>
@@ -913,12 +913,6 @@ INIT.mkt=function(){
   const cac30=mk30.map(r=>{const d=fdm.get(r.date.slice(0,10));const sp=+(r.meta_spend||0)- +(r.meta_catering_spend||0)+ +(r.google_spend||0);return d&&d.new_customers?Math.round(sp/d.new_customers):null});
   mkChart('mCacD30',{type:'bar',data:{labels:mk30.map(r=>dlab(r.date)),datasets:[{label:'CAC paid (zł)',data:cac30,backgroundColor:'#ff5f5a',borderRadius:2}]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>ctx.formattedValue+' zł'}}},scales:{x:{ticks:{maxTicksLimit:10},grid:{display:false}},y:{title:{display:true,text:'zł'}}}}});
-  const mr=D.monthly_results;
-  mkChart('mCac',{data:{labels:mr.map(m=>mlab(m.month)),datasets:[
-    {type:'bar',label:'CAC łączny',data:mr.map(m=>+m.cac),backgroundColor:'#ff9b00',borderRadius:4},
-    {type:'bar',label:'CAC realny',data:mr.map(m=>m.cac_real?+m.cac_real:null),backgroundColor:'#4fbf8b',borderRadius:4},
-    {type:'line',label:'Budżet',data:mr.map(m=>{const b=D.budgets.find(x=>x.month===m.month);return b?+b.cac:null}),borderColor:'#f2f5f3',borderDash:[4,4],pointRadius:3,borderWidth:1.5}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:leg},scales:{x:{grid:{display:false}},y:{title:{display:true,text:'zł'}}}}});
   const pw=fullWeeks(wkAgg(D.przesiadka_daily||[],['leads','sd_orders','sd_gmv'])).slice(-8);
   mkChart('mPz',{data:{labels:pw.map(x=>wlab(x.week)),datasets:[
     {type:'bar',label:'Zamówienia SD',data:pw.map(x=>x.sd_orders),backgroundColor:'#ff9b00',borderRadius:3,order:2,yAxisID:'y'},
