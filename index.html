@@ -334,6 +334,7 @@ const DEFS={
 "pz_gmv":"GMV z zamówień na kodzie SD w MTD: wartość przed rabatem + dostawa − rabaty, tylko CONFIRMED bez admin_payment. Źródło: configuration_order. AOV = to GMV ÷ liczba zamówień SD.",
 "pz_chart1":"Tygodniowo (ostatnie 8 pełnych tygodni pon–ndz): słupki = zamówienia na kodzie SD (CONFIRMED, bez admin_payment), linia = leady SD z promotion_coupon. Źródło: przesiadka_daily, agregat tygodniowy. Bieżący niepełny tydzień pominięty.",
 "pz_chart2":"Słupki = tygodniowe GMV na kodzie SD; linia = retencja kohorty miesiąca (% klientów z 1. zakupem SD, którzy zrobili kolejne jakiekolwiek zamówienie). Flaga decyzji 6.07 pokazuje skumulowaną retencję kohort kwiecień+maj (próg: powyżej 30–35% zostaje, poniżej 25% zamykamy). Haczyk: okno majowej kohorty niepełne, więc zaniża.",
+"pz_ret_compare":"Retencja kohort Przesiadki (SD 150): % klientów z pierwszym zakupem na kodzie SD aktywnych w kolejnym miesiącu kalendarzowym (m+N), zestawione 1:1 z ogółem nowych klientów liczonym tą samą metodą. Rozmiar = liczba klientów w kohorcie. Źródło SD: przesiadka_cohort_matrix; ogół: cohorts. Czerwcowa kohorta dopiero startuje, więc m+N jeszcze puste.",
 "lejek":"Lejek sesyjny GA4 za ostatni pełny tydzień (pon–ndz): Sesje → Koszyk (add_to_cart) → Checkout (begin_checkout) → Zakup (purchase), każdy etap to unikalne sesje z danym eventem. Pass-through = % sesji etapu vs poprzedni krok; WoW = zmiana liczby sesji etapu vs poprzedni pełny tydzień. Bez atrybucji kanałowej (wszystkie sesje).",
 "cr":"Współczynnik konwersji sesja→zakup za ostatni pełny tydzień: unikalne sesje z eventem purchase ÷ sesje zaangażowane (z co najmniej jednym zdarzeniem e-commerce). Mianownik zaangażowanych odsiewa ruch botowy/niezaangażowany, który zniekształcał wskaźnik (artefakt kwietnia). Dane GA4 z ~1–2 dni opóźnienia — tylko domknięte tygodnie.",
 "sesje_week":"Liczba unikalnych sesji GA4 w ostatnim pełnym tygodniu (pon–ndz). Sesja = user_pseudo_id + ga_session_id ze źródła analytics_439921618. WoW to zmiana vs poprzedni pełny tydzień. Dane GA4 z ~1–2 dniowym opóźnieniem, dlatego bieżący niedomknięty tydzień nie jest pokazywany.",
@@ -370,7 +371,7 @@ function renderStaleBanner(){
   var by={};log.forEach(function(r){if(!by[r.source]||new Date(r.refreshed_at)>new Date(by[r.source]))by[r.source]=r.refreshed_at;});
   var now=Date.now(),H=36e5;
   var DLY=['daily_metrics','daily_brand_metrics','marketing_daily','przesiadka_daily','funnel_daily','channel_daily','seo_daily','cohorts','diet_types_weekly','landing_weekly'];
-  var WK=['brand_retention','seg_retention','orders_dist','przesiadka_cohorts','multidiet_brands','seo_queries'];
+  var WK=['brand_retention','seg_retention','orders_dist','przesiadka_cohorts','przesiadka_cohort_matrix','multidiet_brands','seo_queries'];
   var stale=[];
   DLY.forEach(function(s){var t=by[s];var age=t?(now-new Date(t))/H:1e9;if(age>30)stale.push({s:s,age:age});});
   WK.forEach(function(s){var t=by[s];var age=t?(now-new Date(t))/H:1e9;if(age>216)stale.push({s:s,age:age});});
@@ -736,9 +737,21 @@ RENDER.ret=function(){
     const orders=rows.reduce((s,r)=>s+(r.orders||0),0);
     return{cm,size,pts,avgOrd:orders/size};
   });
+  // Przesiadka (SD 150) — retencja kohort vs ogół (ta sama metryka m+N)
+  const pcm=D.przesiadka_cohort_matrix||[];
+  const sdM=[...new Set(pcm.map(c=>c.cohort_month))].sort();
+  const szOf=(arr,cm)=>arr.find(c=>c.cohort_month===cm&&c.activity_month===cm)?.buyers||0;
+  const retOf=(arr,cm,off)=>{const am=new Date(pd(cm));am.setMonth(am.getMonth()+off);const mk=iso(am).slice(0,7);const sz=szOf(arr,cm);const row=arr.find(c=>c.cohort_month===cm&&c.activity_month.slice(0,7)===mk);return row&&sz?100*row.buyers/sz:null;};
+  let pzMaxOff=0;sdM.forEach(cm=>{for(let o=1;o<=6;o++)if(retOf(pcm,cm,o)!=null&&o>pzMaxOff)pzMaxOff=o;});
+  const pzOffs=[];for(let o=1;o<=Math.max(1,pzMaxOff);o++)pzOffs.push(o);
+  const pzGaps=sdM.filter(cm=>retOf(pcm,cm,1)!=null).map(cm=>{const s=retOf(pcm,cm,1),o=retOf(cohAll,cm,1);return mlab(cm)+' '+s.toFixed(0)+'% vs '+o.toFixed(0)+'% ('+(s-o>=0?'+':'')+(s-o).toFixed(0)+' pp)';});
+  const pzEver=(D.przesiadka_cohorts||[]).map(c=>mlab(c.cohort_month)+' '+pc(+c.ret_pct,1)).join(', ');
   document.getElementById('tab-ret').innerHTML=`
   <div class="card full"><h2>Retencja kohort <span class="pill">% kohorty aktywny w m+N</span>${inf('koh_ret')}</h2><div class="tbl"><table class="heat"><tr><th>Kohorta</th><th>Rozmiar</th>${[1,2,3,4,5,6].map(i=>`<th>m+${i}</th>`).join('')}</tr>
   ${heat.map(h=>`<tr><td style="text-align:left">${mlab(h.cm)}</td><td>${nf.format(h.size)}</td>${h.cells.map(v=>{const bg=v==null?'transparent':`rgba(79,191,139,${Math.min(.85,v/40)})`;return`<td style="background:${bg}">${v==null?'·':v.toFixed(0)+'%'}</td>`}).join('')}</tr>`).join('')}</table></div></div>
+  <div class="card full"><h2>Retencja Przesiadki (SD 150) vs ogół <span class="pill">% kohorty aktywny w m+N</span>${inf('pz_ret_compare')}</h2><div class="tbl"><table class="heat"><tr><th>Kohorta</th><th>Segment</th><th>Rozmiar</th>${pzOffs.map(o=>`<th>m+${o}</th>`).join('')}</tr>
+  ${sdM.map(cm=>{const rowOf=(arr,lab,sd)=>`<tr><td style="text-align:left">${sd?mlab(cm):''}</td><td style="text-align:left">${sd?'<b>'+lab+'</b>':lab}</td><td>${nf.format(szOf(arr,cm))}</td>${pzOffs.map(o=>{const v=retOf(arr,cm,o);const bg=v==null?'transparent':`rgba(79,191,139,${Math.min(.85,v/40)})`;return`<td style="background:${bg}">${v==null?'·':v.toFixed(0)+'%'}</td>`}).join('')}</tr>`;return rowOf(pcm,'Przesiadka SD',true)+rowOf(cohAll,'Ogół FDG',false);}).join('')}</table></div>
+  <div class="note">${pzGaps.length?'Przesiadka (SD 150) wraca w pierwszym miesiącu po akwizycji rzadziej niż ogół nowych klientów: '+pzGaps.join('; ')+'. Profil switchera — bardziej deal-driven, słabiej się utrzymuje.':'Okno kohort SD dopiero się buduje.'} Kumulacyjnie „czy kiedykolwiek wrócił" (przesiadka_cohorts): ${pzEver}. Czerwcowa kohorta — okno dopiero startuje.</div></div>
   <div class="card"><h2>Powroty wg długości 1. zamówienia <span class="pill">% z kolejnym zakupem w 90 dni</span>${inf('seg_ret')}</h2><div class="tbl"><table><tr><th>Segment</th>${qs.map(q=>`<th>${q.replace('20','')}</th>`).join('')}</tr>
   ${segOrder.map(sg=>`<tr><td>${sg}</td>${qs.map(q=>{const r=segs.find(x=>x.segment===sg&&x.cohort_q===q);return`<td class="${r&&+r.returned_pct<40?'neg':''}">${r?pc(+r.returned_pct,0):'—'}</td>`}).join('')}</tr>`).join('')}</table></div>
   <div class="note">Churn = 100% minus powyższe. Testerzy wracają najrzadziej — stąd strategia dłuższych pierwszych zamówień. Q1'26 ma jeszcze niepełne okno.</div></div>
