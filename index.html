@@ -536,7 +536,7 @@ RENDER.yest=function(){
   // pakiety B2B
   var pk=D.b2b_packages||[],pkgBy={};pk.forEach(function(p){if(p.status&&String(p.status).indexOf('pitch')>=0)return;pkgBy[nrm(p.brand)]=(pkgBy[nrm(p.brand)]||0)+ +p.amount});
   // media (lag-aware)
-  var mk=D.marketing_daily||[],mLast=mk.length?mk[mk.length-1]:null,mDate=mLast?mLast.date.slice(0,10):null;
+  var mk=D.marketing_daily||[],mCompl=mk.filter(r=>r.meta_spend!=null&&r.google_spend!=null),mLast=mCompl.length?mCompl[mCompl.length-1]:(mk.length?mk[mk.length-1]:null),mDate=mLast?mLast.date.slice(0,10):null;
   var spendOf=r=>+(r.meta_spend||0)- +(r.meta_catering_spend||0)+ +(r.google_spend||0);
   var spendMap=new Map(mk.map(r=>[r.date.slice(0,10),spendOf(r)])),spendD=mLast?spendOf(mLast):null;
   var dSpend=dowDelta(spendD,mDate?dowStats(spendMap,mDate):{n:0,mean:null},0.4);
@@ -585,7 +585,7 @@ RENDER.yest=function(){
     <div class="note">Prowizja per catering realnymi stawkami (10% / Paczka Smaku 8%). Dzień na brandach 8% daje mniej przychodu niż taki sam GMV na 10%.</div></div>
   <div class="card full"><h2>Akwizycja płatna ${freshTag(mDate)}${inf('yest_media')}</h2>
     <div class="grid g2" style="margin-bottom:0">
-      <div class="kpi"><div class="l">Spend performance${mDate&&mDate!==ds?' ('+dlab(mDate)+')':''}</div><div class="row"><div class="v">${k(spendD)}</div></div><div class="d">${devHtml(dSpend)} vs typowy ${DOWPL[dow]} · Meta FDG + Google</div></div>
+      <div class="kpi"><div class="l">Spend performance${mDate&&mDate!==ds?' ('+dlab(mDate)+')':''}</div><div class="row"><div class="v">${k(spendD)}</div></div><div class="d">${devHtml(dSpend)} vs typowy ${DOWPL[mDate?pd(mDate).getDay():dow]} · Meta FDG + Google</div></div>
       <div class="kpi"><div class="l">CAC paid (orientacyjnie)</div><div class="row"><div class="v">${zl(cacD)}</div></div><div class="d">spend ÷ ${ncM!=null?nf.format(ncM)+' nowych':'—'} dnia ${mDate?dlab(mDate):''}</div></div>
     </div>
     ${mDate&&mDate!==ds?`<div class="note">Dane mediowe lagują — kotwiczone na ${dlab(mDate)}, nie na ${dlab(ds)}. CAC dzienny tylko orientacyjnie: GMV z wydatku dojrzewa przez cały cykl diety.</div>`:''}</div>
