@@ -178,12 +178,12 @@ const ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI
 const DOM_F=[0,.853,1.209,.937,.901,.759,1.101,.944,1.451,1.652,1.316,1.041,1.054,.906,.830,.799,.747,.783,.728,.874,.736,.621,.750,.651,.830,1.158,1.121,1.056,1.148,1.252,1.465,.923];
 const DOW_F={1:1.169,2:.871,3:.849,4:.841,5:1.056,6:.694,0:1.029};
 const MIES=['sty','lut','mar','kwi','maj','cze','lip','sie','wrz','paź','lis','gru'];
-const PERF_LIMIT={'2026-06':250000};
-let D=null,charts={},chartsInit={},curTab='cockpit';
+const PERF_LIMIT={'2026-06':250000,'2026-07':125000}; // lipiec: budżet WŁASNY 125k (decyzja 29-30.06); do ~200k wyłącznie z budżetów cateringów
+let D=null,charts={},chartsInit={},renderInit={},curTab='cockpit';
 
 function getTok(){const h=new URLSearchParams(location.hash.slice(1)).get('t');const t=h||localStorage.getItem('cc_t');if(h)localStorage.setItem('cc_t',h);if(t){try{const man={name:'Foodango — mostek',short_name:'Foodango',start_url:location.pathname+'#t='+t,scope:location.pathname.replace(/[^/]*$/,''),display:'standalone',background_color:'#14241e',theme_color:'#14241e',icons:[{src:new URL('icon192.png',location.href).href,sizes:'192x192',type:'image/png',purpose:'any maskable'},{src:new URL('icon512.png',location.href).href,sizes:'512x512',type:'image/png'}]};document.querySelector('link[rel=manifest]').href=URL.createObjectURL(new Blob([JSON.stringify(man)],{type:'application/manifest+json'}))}catch(e){}}return t}
 function saveTok(){const v=document.getElementById('tok').value.trim();if(v){localStorage.setItem('cc_t',v);location.hash='t='+v;location.reload()}}
-function tab(t){curTab=t;document.querySelectorAll('main section').forEach(s=>s.classList.add('hide'));document.getElementById('tab-'+t).classList.remove('hide');document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));window.scrollTo(0,0);if(D&&!chartsInit[t]){chartsInit[t]=true;INIT[t]&&INIT[t]()}if(t==='mkt')setTimeout(function(){var s=document.querySelector('#tab-mkt .scrollx');if(s)s.scrollLeft=s.scrollWidth},160)}
+function tab(t){curTab=t;document.querySelectorAll('main section').forEach(s=>s.classList.add('hide'));document.getElementById('tab-'+t).classList.remove('hide');document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));window.scrollTo(0,0);if(D&&!renderInit[t]){renderInit[t]=true;RENDER[t]&&RENDER[t]()}if(D&&!chartsInit[t]){chartsInit[t]=true;INIT[t]&&INIT[t]()}if(t==='mkt')setTimeout(function(){var s=document.querySelector('#tab-mkt .scrollx');if(s)s.scrollLeft=s.scrollWidth},160)}
 
 const pd=s=>{const[a,b,c]=s.slice(0,10).split('-').map(Number);return new Date(a,b-1,c)};
 const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
@@ -262,7 +262,7 @@ async function markRead(id){
     localStorage.setItem('cc_d',JSON.stringify(D));RENDER.puls();updateBadge();
   }catch(e){}
 }
-function mkChart(id,cfg){if(charts[id]){charts[id].destroy()}const el=document.getElementById(id);if(!el)return;Chart.defaults.color='#9eb5ac';Chart.defaults.borderColor='#33524a55';Chart.defaults.font.family='Urbanist';Chart.defaults.plugins.tooltip.backgroundColor='#0e1b16';Chart.defaults.plugins.tooltip.borderColor='#33524a';Chart.defaults.plugins.tooltip.borderWidth=1;Chart.defaults.plugins.tooltip.padding=10;charts[id]=new Chart(el,cfg)}
+function mkChart(id,cfg){if(charts[id]){charts[id].destroy()}const el=document.getElementById(id);if(!el)return;Chart.defaults.animation=false;Chart.defaults.color='#9eb5ac';Chart.defaults.borderColor='#33524a55';Chart.defaults.font.family='Urbanist';Chart.defaults.plugins.tooltip.backgroundColor='#0e1b16';Chart.defaults.plugins.tooltip.borderColor='#33524a';Chart.defaults.plugins.tooltip.borderWidth=1;Chart.defaults.plugins.tooltip.padding=10;charts[id]=new Chart(el,cfg)}
 const leg={labels:{boxWidth:10,boxHeight:10,font:{size:11}}};
 const esc=s=>String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;');
 const mdl=s=>esc(s).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/\n/g,'<br>');
@@ -278,7 +278,7 @@ const DEFS={
 "yest_media":"Akwizycja płatna. KRYTYCZNE: dane mediowe (zwł. Google) lagują ~1 dzień za transakcjami, więc kafel kotwiczy na OSTATNIM dniu z kompletnym spendem i pokazuje jego datę jawnie. Spend performance = Meta FDG (spend Meta − kampanie cateringów) + Google, vs typowy ten sam dzień tygodnia. CAC paid (spend ÷ nowi tego dnia) tylko orientacyjnie — GMV z dzisiejszego wydatku dojrzewa przez cały cykl diety, więc dzienny zwrot nie istnieje.",
 "yest_channels":"Skąd przyszli kupujący wczoraj wg kanału (last-click GA4): sesje, zakupy, CR = zakupy ÷ sesje zaangażowane. Dane GA4 lagują ~1 dzień — pokazuję ostatni dostępny dzień z jawną datą. Spadek CR przy stałym ruchu (kreacja/koszyk) to inny problem niż spadek liczby sesji (budżet/zasięg).",
 "yest_funnel":"Lejek dnia: sesja → koszyk → checkout → zakup (unikalne sesje na każdym etapie) — pokazuje GDZIE klient odpadł. To jedyny element łapiący problemy techniczne (błąd płatności, awaria koszyka). GA4 laguje ~1–2 dni; kafel pokazuje datę faktycznego wiersza, nie rysuje zer gdy dane jeszcze nie dotarły.",
-"yest_sd":"Kampania Przesiadka SD 150 za dzień: leady (wystawione kody SD), zamówienia SD, GMV SD i konwersja lead→zamówienie. Świadomie deficytowa w 1. roku akwizycja premium pod decyzję 6.07.",
+"yest_sd":"Kampania Przesiadka SD 150 za dzień: leady (wystawione kody SD), zamówienia SD, GMV SD i konwersja lead→zamówienie. Świadomie deficytowa w 1. roku akwizycja premium — tryb testu warunkowego do decyzji 12.07 (kupony ≤15 tys. netto).",
 "yest_b2b":"Status pakietu B2B (TOP5/TOP10/TOP3 kategorii) cateringów, które się wczoraj wybiły. POKAZUJE tylko status (ma pakiet / brak), bez podpowiadania akcji — decyzje handlowe są po stronie Head of Foodango.",
 "yest_context":"Cichy pasek kontekstu (bez progów alertu): udział aplikacji/web/nieoznaczone w zamówieniach (liczone od wszystkich zamówień — app+web nie sumują się do 100%, jest trzeci kubełek), średnia długość diety, Multidieta. Mały wolumen — pojedynczy dzień to nie wniosek.",
 "gmv_mtd":"GMV od 1. dnia miesiąca do dziś (MTD) z BigQuery (logika Card 296): tylko status CONFIRMED, bez admin_payment; wartość = before + dostawa − rabaty na poziomie zamówienia. Pasek = realizacja vs budżet. Prognoza końca mc = SEZONOWA (mnożniki dzień miesiąca × dzień tygodnia na pozostałe dni) — uwzględnia, że końcówka miesiąca ma inny profil niż dni, które już minęły; to główna liczba. Obok tempo 7 dni (MTD + śr. 7 dni × pozostałe) jako sygnał bieżącego momentum. Liniową (MTD/dni × dni) świadomie pominięto — ignoruje sezonowość intra-month i myli.",
@@ -288,10 +288,11 @@ const DEFS={
 "cac_laczny":"CAC księgowy z tabeli monthly_results za ostatni zamknięty miesiąc: cały budżet marketingowy ÷ nowi klienci. Dane wprowadzane ręcznie po zamknięciu księgowym, nie liczone na żywo z transakcji. Obok wariant realny (skorygowany) i budżet CAC z planu.",
 "gmv_split":"Podział GMV MTD między klientów powracających i nowych. Nowy = zamówienie w dniu pierwszego opłaconego zakupu danego buyera (is_first); reszta to powracający. Udział nowych = new_gmv ÷ całe GMV MTD, na danych CONFIRMED bez admin_payment.",
 "app_share_30":"Udział aplikacji mobilnej w zamówieniach z ostatnich 30 pełnych dni. Platforma z order_request_client: app = mobile-ios + mobile-android, web = web. Liczone jako zamówienia app ÷ (app + web); zamówienia bez oznaczonej platformy nie wchodzą do mianownika.",
-"pace_ret":"Tempo realizacji budżetu zamówień powracających. Model SEZONOWY (DOM×DOW), ten sam co prognoza GMV: prognoza końca mc = MTD ÷ udział sezonowy dni 1..dziś; tempo = prognoza ÷ cel z planu (budgets). W detalu: % planu osiągnięte do dziś, ile powinno być na dziś wg sezonu (udział sezonowy) i prognoza końca miesiąca. Powracający = zamówienie poza dniem pierwszego zakupu buyera.",
-"pace_new":"Tempo realizacji budżetu nowych klientów. Model SEZONOWY (DOM×DOW), ten sam co prognoza GMV: prognoza końca mc = MTD ÷ udział sezonowy dni 1..dziś; tempo = prognoza ÷ cel z planu (budgets). W detalu: % planu do dziś, ile powinno być na dziś wg sezonu i prognoza końca miesiąca. Nowy klient = pierwszy opłacony zakup (is_first) w tym miesiącu.",
-"flagi":"Automatyczne reguły ostrzegawcze liczone na żywo z danych zakładki: tester rate ostatniego pełnego tygodnia powyżej 28%, spadek GMV WoW poniżej −25% (z rozróżnieniem normalizacji po peaku), pace sezonowy GMV poniżej 80% (przy min. 10 dniach), pace powracających poniżej 90%, projekcja Performance powyżej 105% limitu, spadek CR sesja→zakup WoW o ponad 0,5 pkt proc. Bez ręcznego wkładu.",
-"radar":"Otwarte wątki projektu z deadline'ami, sortowane rosnąco po dacie; pozycje do 7 dni oznaczone na czerwono. Zasilane ręcznie z pamięci projektu (otwarte wątki, decyzje) przy sesjach i porannej rutynie — nie liczone z transakcji.",
+"pace_ret":"Tempo realizacji budżetu zamówień powracających. Model SEZONOWY (DOM×DOW), ten sam co prognoza GMV: prognoza końca mc = MTD ÷ udział sezonowy dni 1..dziś; tempo = prognoza ÷ cel z planu (budgets). UWAGA: cel z budgets to plan FORMALNY sprzed zamknięcia Czech (~+30% nad realny pace) — czytaj trend liczby, nie absolut; dlatego kafel nie świeci na czerwono i nie generuje flagi. Powracający = zamówienie poza dniem pierwszego zakupu buyera.",
+"pace_new":"Tempo realizacji budżetu nowych klientów. Model SEZONOWY (DOM×DOW), ten sam co prognoza GMV: prognoza końca mc = MTD ÷ udział sezonowy dni 1..dziś; tempo = prognoza ÷ cel z planu (budgets). UWAGA: cel z budgets to plan FORMALNY sprzed zamknięcia Czech (~+30% nad realny pace) — czytaj trend, nie absolut; kafel celowo bez czerwieni i bez flagi. Nowy klient = pierwszy opłacony zakup (is_first) w tym miesiącu.",
+"flagi":"Automatyczne reguły ostrzegawcze liczone na żywo: tester rate ostatniego pełnego tygodnia powyżej 28%, spadek GMV WoW poniżej −25% (z rozróżnieniem normalizacji po peaku), prognoza sezonowa GMV poniżej 90% wyniku POPRZEDNIEGO MIESIĄCA (od 7. dnia; punkt odniesienia operacyjny — nie budżet formalny, który jest celem sprzed zamknięcia Czech i flagowałby permanentnie), projekcja Performance powyżej 105% limitu miesiąca, spadek CR sesja→zakup WoW o ponad 0,5 pkt proc. Bez ręcznego wkładu.",
+"radar":"Otwarte wątki projektu z deadline'ami, sortowane rosnąco po dacie; pozycje do 7 dni oznaczone na czerwono. Zasilane ręcznie z pamięci projektu (otwarte wątki, decyzje) przy sesjach roboczych — nie liczone z transakcji. Data ostatniej synchronizacji pod listą; czerwona pastylka przy tytule, gdy synchronizacja starsza niż 7 dni. Przypomnienia D-7/D-3/D-1 o deadline'ach generuje poranny przebieg chmurowy do Pulsu.",
+"pigulka":"Operacyjne domknięcie poprzedniego miesiąca liczone z transakcji, dostępne od 1. dnia nowego miesiąca (bez czekania na zamknięcie księgowe): GMV item-level (suma brandów), prowizja realnymi stawkami per catering, nowi klienci = rozmiar kohorty miesiąca, AOV = GMV ÷ zamówienia. Zmiany vs miesiąc wcześniej. To NIE jest wynik księgowy — EBITDA i pełne koszty trafiają do Mini P&L (zakładka B2B) po zamknięciu księgowym.",
 "swiezosc":"Znaczniki czasu ostatniego odświeżenia każdego źródła z logu rutyny ETL. Pełne odświeżenie rano 6:45; dzisiejsze GMV doładowywane w ciągu dnia (13:00, 18:00). Lejek i dane GA4 mają ~1–2 dni opóźnienia względem transakcji.",
 "puls":"Jedna skrzynka „co znalazły moje automaty + co wymaga decyzji\". Wpadają tu: podsumowania (TLDR) wszystkich raportów cyklicznych po ich uruchomieniu (tygodniówka, Meta puls/strategia, Przesiadka SD, przychody i udział cateringów, test progów A/B, wyszukiwarka), brief dnia (rano) i tygodnia (poniedziałki), alerty i rekordy na bieżąco oraz przypomnienia o terminach decyzji z radaru wątków. Źródło: tabela briefs (foodango_cc), pole source grupuje pochodzenie. Pokazywane nieprzeczytane; przeczytane w Archiwum. Zasada zero szumu — dzień zwyczajny to jedno zdanie.",
 "zam_mtd":"Liczba zamówień narastająco od 1. dnia bieżącego miesiąca do OSTATNIEGO ZAKOŃCZONEGO dnia (bieżący, niepełny dzień jest wykluczony). Źródło: configuration_order (logika Card 296) — status CONFIRMED, bez admin_payment, data wg paid_at. Pace = projekcja liniowa (MTD/liczba_dni × dni_w_miesiącu) ÷ budżet zamówień z planu.",
@@ -310,7 +311,7 @@ const DEFS={
 "ktest":"Tester rate = odsetek pierwszych zamówień o długości diety 1–5 dni wśród wszystkich pierwszych zamówień tygodnia. Długość liczona z dni dostaw w configurationItem.dates. Czerwona linia = próg 28% (powyżej = zbyt dużo płytkiej akwizycji). Tygodniowo, pełne tygodnie.",
 "kapp":"Dwie linie tygodniowo: udział aplikacji w zamówieniach (app ÷ app+web) i w GMV (GMV app ÷ GMV app+web). App = mobile-ios + mobile-android, web = web, wg client_type z order_request_client. Zamówienia bez rozpoznanej platformy wykluczone z mianownika.",
 "koh_ret":"Procent klientów z danej kohorty (miesiąc pierwszego opłaconego zakupu) aktywnych w m+N. Źródło: configuration_order + payment, CONFIRMED bez admin_payment. Mianownik = rozmiar kohorty w m0 (unikalni kupujący w miesiącu startu); licznik = unikalni kupujący kohorty w m+N. Kohorty od 2025-01, m+1..m+6.",
-"seg_ret":"Procent klientów, którzy w ciągu 90 dni od pierwszego zamówienia zrobili kolejny zakup, w podziale na długość 1. zamówienia (1-5 testerzy / 6-10 / 11-20 / 21+). Kohorty kwartalne, CONFIRMED bez admin_payment. Churn = 100% minus ta wartość. Każda pokazana kohorta ma pełne okno 90 dni.",
+"seg_ret":"Procent klientów, którzy w ciągu 90 dni od pierwszego zamówienia zrobili kolejny zakup, w podziale na długość 1. zamówienia (1-5 testerzy / 6-10 / 11-20 / 21+). Kohorty kwartalne, CONFIRMED bez admin_payment. Churn = 100% minus ta wartość. UWAGA (korekta 23.06): to pula zbiorcza — różnice między koszykami w dużej mierze robi KANAŁ akwizycji, nie długość (paradoks Simpsona): SD/przesiadka lapsuje 66–74% na każdej długości, organiczne ~51%. Nie czytać jako „wydłużanie pierwszych zamówień podnosi retencję\".",
 "ord_dist":"Rozkład klientów wg łącznej liczby zamówień (1, 2, 3-5, 6-10, 11+), tylko klienci z pierwszym zakupem od 2025-01-01. Źródło: configuration_order + payment, CONFIRMED bez admin_payment. Procenty liczone od sumy wszystkich klientów w tym oknie.",
 "ltv":"Skumulowane GMV na klienta kohorty, narastająco m0..m+6. GMV poziomu zamówienia (przed rabatem + dostawa − rabaty, CONFIRMED bez admin_payment) sumowane po miesiącach aktywności kohorty i dzielone przez jej rozmiar w m0. Każda linia to inny miesiąc pierwszego zakupu.",
 "brand_ret":"Dla klientów z pierwszym zakupem u danego cateringu: % wracających w 90 dni do tego samego brandu oraz gdziekolwiek na Foodango (różnica = przejęci przez inne brandy). Plus AOV 1. zamówienia. Kohorta krocząca: pierwsze zakupy od 9 mc do 90 dni wstecz, min. 30 klientów; Multidieta osobno.",
@@ -321,7 +322,7 @@ const DEFS={
 "multi_status":"Ręczna etykieta jakościowa pozycjonująca Multidietę jako produkt niszowy — unikalna propozycja wartości (codziennie inny catering), której adopcję dopiero budujemy (redesign konfiguratora w toku). Tekst wpisany na stałe, nie wartość liczona z danych.",
 "multi_week":"Tygodniowo (pon–ndz, tylko pełne tygodnie): słupki to liczba zamówień Multidiety, linia to ich GMV w tysiącach PLN. Te same definicje co KPI — zamówienie wg tabeli multidiet_item, GMV na poziomie zamówienia (CONFIRMED, bez admin_payment). Ostatnie 26 pełnych tygodni.",
 "multi_brands":"Które cateringi klienci wybierają wewnątrz zamówień Multidiety, mierzone liczbą pozycji (dni dostaw) per catering w NAJNOWSZYM miesiącu w danych — bieżący miesiąc bywa częściowy. Źródło: multidiet_item złączone z catering po merchant_id (CONFIRMED, bez admin_payment, wg paid_at). To udział dni, nie GMV.",
-"perf_mtd":"Wydatki performance od 1. dnia miesiąca do wczoraj (MTD): Meta FDG (spend Meta minus kampanie cateringów) plus Google. Źródło: marketing_daily (Meta z airbyte insights, Google z CampaignStats). Projekcja liniowa = MTD ÷ dni z danymi × dni w miesiącu. Limit to próg zarządczy (czerwiec: 250 tys.), nie budżet księgowy.",
+"perf_mtd":"Wydatki performance od 1. dnia miesiąca do wczoraj (MTD): Meta FDG (spend Meta minus kampanie cateringów) plus Google. Źródło: marketing_daily (Meta z airbyte insights, Google z CampaignStats). Projekcja liniowa = MTD ÷ dni z danymi × dni w miesiącu. Limit to próg zarządczy per miesiąc (czerwiec: 250 tys.; lipiec: 125 tys. = budżet WŁASNY z decyzji 29–30.06, droga do ~200 tys. wyłącznie z budżetów cateringów), nie budżet księgowy.",
 "meta_roas":"Zwrot z wydatków Meta z piksela (MTD): purchase_value ÷ CAŁY spend Meta (łącznie z kampaniami cateringów, nie Meta FDG). Źródło: airbyte raw facebook ads insights (dedup ad_id+date). Haczyk: ROAS pixelowy zawyża (atrybucja Meta click+view) — czytaj trend, nie poziom.",
 "meta_cpp":"Średni koszt zakupu z piksela Meta w MTD: CAŁY spend Meta (z cateringami) ÷ liczba zakupów (purchases z piksela). Źródło: airbyte raw facebook ads insights. Zakupy wg atrybucji Meta, nie tożsame z zamówieniami w systemie Foodango.",
 "google_roas":"Zwrot z wydatków Google wg panelu Google Ads (MTD): wartość konwersji ÷ koszt. Źródło: google_ads_raw CampaignStats. Atrybucja Google, więc poziom nieporównywalny wprost z ROAS Meta (inny model przypisania).",
@@ -337,7 +338,9 @@ const DEFS={
 "pz_orders":"Zamówienia na kodzie SD w MTD: CONFIRMED, bez admin_payment, kod SD w configuration.discount_code (UPPER LIKE 'SD%'), liczone po dniu opłacenia (paid_at). Źródło: configuration_order. Konwersja = zamówienia SD ÷ leady SD.",
 "pz_gmv":"GMV z zamówień na kodzie SD w MTD: wartość przed rabatem + dostawa − rabaty, tylko CONFIRMED bez admin_payment. Źródło: configuration_order. AOV = to GMV ÷ liczba zamówień SD.",
 "pz_chart1":"Tygodniowo (ostatnie 8 pełnych tygodni pon–ndz): słupki = zamówienia na kodzie SD (CONFIRMED, bez admin_payment), linia = leady SD z promotion_coupon. Źródło: przesiadka_daily, agregat tygodniowy. Bieżący niepełny tydzień pominięty.",
-"pz_chart2":"Słupki = tygodniowe GMV na kodzie SD; linia = retencja kohorty miesiąca (% klientów z 1. zakupem SD, którzy zrobili kolejne jakiekolwiek zamówienie). Flaga decyzji 6.07 pokazuje skumulowaną retencję kohort kwiecień+maj (próg: powyżej 30–35% zostaje, poniżej 25% zamykamy). Haczyk: okno majowej kohorty niepełne, więc zaniża.",
+"pz_chart2":"Słupki = tygodniowe GMV na kodzie SD; linia = retencja kohorty miesiąca (% klientów z 1. zakupem SD, którzy zrobili kolejne jakiekolwiek zamówienie). Blok decyzji (12.07) pokazuje skumulowaną retencję kohort kwiecień+maj jako KONTEKST — decyzja 29.06 to tryb testu warunkowego (kupony ≤15 tys. netto, punkty kontrolne 10.07 i 12.07 razem z winbackiem Persony), nie automat progowy. Haczyk: okno majowej kohorty niepełne, więc zaniża.",
+"pz_coupon_cost":"Szacunkowy koszt kuponów SD w bieżącym miesiącu: zamówienia SD MTD × ~80 zł. 80 zł = realny koszt Foodango po dopłacie cateringu (rama z analizy kosztu SD; weryfikacja z rozliczeń ~10.07 — jeśli wyjdzie bliżej nominału 150 zł, licznik pokazuje też wariant nominalny). Limit 15 tys. PLN netto na lipiec (decyzja 29.06, korekta z 20 tys.). MTD wg ostatniego dnia danych przesiadka_daily.",
+"plan_lipca":"Ręcznie wpisane kluczowe ustalenia planu wydatków lipca z decyzji 29–30.06 (kontrpropozycja dla Agencji) — nie liczone z danych, służą do konfrontacji z faktycznymi wydatkami MTD wyżej. To nie jest pełna alokacja 125 tys., tylko pozycje decyzyjne. Karta znika po lipcu.",
 "pz_ret_compare":"Retencja kohort Przesiadki (SD 150): % klientów z pierwszym zakupem na kodzie SD aktywnych w kolejnym miesiącu kalendarzowym (m+N), zestawione 1:1 z ogółem nowych klientów liczonym tą samą metodą. Rozmiar = liczba klientów w kohorcie. Źródło SD: przesiadka_cohort_matrix; ogół: cohorts. Czerwcowa kohorta dopiero startuje, więc m+N jeszcze puste.",
 "lejek":"Lejek sesyjny GA4 za ostatni pełny tydzień (pon–ndz): Sesje → Koszyk (add_to_cart) → Checkout (begin_checkout) → Zakup (purchase), każdy etap to unikalne sesje z danym eventem. Pass-through = % sesji etapu vs poprzedni krok; WoW = zmiana liczby sesji etapu vs poprzedni pełny tydzień. Bez atrybucji kanałowej (wszystkie sesje).",
 "cr":"Współczynnik konwersji sesja→zakup za ostatni pełny tydzień: unikalne sesje z eventem purchase ÷ sesje zaangażowane (z co najmniej jednym zdarzeniem e-commerce). Mianownik zaangażowanych odsiewa ruch botowy/niezaangażowany, który zniekształcał wskaźnik (artefakt kwietnia). Dane GA4 z ~1–2 dni opóźnienia — tylko domknięte tygodnie.",
@@ -353,7 +356,7 @@ const DEFS={
 "seo_org":"Liczba sesji z kanału Organic Search w ostatnim pełnym tygodniu (pon–ndz). Źródło: GA4 (analytics_439921618), kanał przypisany regułą last-click po source/medium (medium=organic). Pod spodem przychód z tych sesji. To dane GA4, nie Search Console — opóźnienie ~1–2 dni.",
 "seo_chart":"Dzienny przebieg kliknięć (słupki) i średniej pozycji (linia) z Google Search Console. Oś pozycji odwrócona, bo niżej = lepiej, więc rosnąca linia to poprawa rankingu. Historia w hurtowni zaczyna się 13.04.2026.",
 "seo_queries":"Top 25 fraz wyszukiwań z największą liczbą kliknięć w ostatnich 28 dniach, z Google Search Console. Kolumna Δ to zmiana kliknięć danej frazy względem poprzednich 28 dni (te same frazy). Pozycja: niżej = lepiej. Frazy bez nazwy pominięte.",
-"b2b_invoiced":"Przychód B2B zafakturowany od cateringów w danym miesiącu (listingi TOP5/10/3, jednodniówki, Oferta Dnia, kampanie Meta) plus cel niski–wysoki i wartość otwartych pitchy. Dane ręczne ze STAN_*.md (tabela b2b_status), nie liczone z transakcji. B2B to upside — nie wchodzi do prognoz EBITDA.",
+"b2b_invoiced":"Przychód B2B zafakturowany od cateringów w danym miesiącu (listingi TOP5/10/3, jednodniówki, Oferta Dnia, kampanie Meta) plus cel niski–wysoki i wartość otwartych pitchy. Dane ręczne ze STAN_*.md (tabela b2b_status), nie liczone z transakcji — pastylka „stan na\" przy karcie pokazuje datę snapshotu; przy starym snapshocie liczby NIE odzwierciedlają bieżącego stanu sprzedaży pakietów. B2B to upside — nie wchodzi do prognoz EBITDA.",
 "b2b_share":"Udział B2B w przychodzie razem: B2B ÷ (prowizja + B2B) za ostatni miesiąc w monthly_results. Trajektoria to wartości B2B w tys. PLN kolejno wszystkimi miesiącami. Źródło: monthly_results — dane wprowadzane ręcznie po zamknięciu księgowym, nie z transakcji na żywo.",
 "b2b_table":"Tylko ostatni pełny miesiąc (bez bieżącego MTD), cateringi z GMV > 10 tys., top 18. GMV item-level (CONFIRMED bez admin_payment); Multidieta osobno. Trend = zmiana GMV vs miesiąc 2 wcześniej (gdy tamten > 3 tys.). Prowizja = GMV × realna stawka (10%, Paczka Smaku 8%). Retencja = % klientów wracających do tego samego brandu w 90 dni (kohorty 9–3 mc wstecz, min. 30 osób).",
 "b2b_rev":"Miesięczne zestawienie dwóch źródeł przychodu: prowizja od GMV (wg realnych stawek per catering) i przychód B2B, w tys. PLN. Nad słupkiem udział B2B w przychodzie. Mini P&L dokłada przychód razem, marketing i EBITDA (bez aktywacji kosztów). Źródło: monthly_results — dane ręczne po zamknięciu księgowym."
@@ -390,10 +393,11 @@ function render(){
   P=projections();W=weekly(fullDaily());LF=fullWeeks(W);LW=LF[LF.length-1];PW=LF[LF.length-2];
   const td=todayRow();
   const lastD=fullDaily()[fullDaily().length-1];
-  document.getElementById('st').textContent=`do ${dlab(lastD.date)}${td?' · dziś '+kk(+td.gmv):''} · ${new Date().toLocaleTimeString('pl-PL',{hour:'2-digit',minute:'2-digit'})}`;
+  const rlDaily=((D.refresh_log||[]).find(r=>r.source==='daily_metrics')||{}).refreshed_at;
+  document.getElementById('st').textContent=`do ${dlab(lastD.date)}${td?' · dziś '+kk(+td.gmv):''}${rlDaily?' · odśw. '+new Date(rlDaily).toLocaleTimeString('pl-PL',{hour:'2-digit',minute:'2-digit'}):''}`;
   renderStaleBanner();
-  chartsInit={};
-  Object.keys(RENDER).forEach(t=>RENDER[t]());
+  chartsInit={};renderInit={};
+  renderInit[curTab]=true;RENDER[curTab]&&RENDER[curTab]();
   updateBadge();
   document.getElementById('tab-'+curTab).classList.remove('hide');
   chartsInit[curTab]=true;INIT[curTab]&&INIT[curTab]();
@@ -424,26 +428,35 @@ RENDER.cockpit=function(){
   const crW=fw.length?100*fw[fw.length-1].s_purchase/(fw[fw.length-1].eng_sessions||fw[fw.length-1].sessions):null;
   const crP=fw.length>1?100*fw[fw.length-2].s_purchase/(fw[fw.length-2].eng_sessions||fw[fw.length-2].sessions):null;
 
+  // punkt odniesienia operacyjny = poprzednie miesiące; budżet z planu (budgets) to cel formalny sprzed zamknięcia Czech (~+30% nad realny pace) — informacyjnie, bez flag
+  const closed=P.nd===P.dim;
+  const prevMKey=iso(new Date(P.y,P.mo-1,1)).slice(0,7),prev2MKey=iso(new Date(P.y,P.mo-2,1)).slice(0,7);
+  const pigOf=mk2=>{const rows=(D.brand_monthly||[]).filter(r=>r.month.slice(0,7)===mk2);const g=rows.reduce((s,r)=>s+ +r.gmv,0);let c=0,o=0;for(const r of rows){o+=r.orders||0;const rt=rate(mk2,r.brand);if(rt)c+=r.gmv*rt}const nc=(D.cohorts||[]).find(x=>x.cohort_month.slice(0,7)===mk2&&x.activity_month.slice(0,7)===mk2);return{g,c,o,n:nc?nc.buyers:null}};
+  const pm1=pigOf(prevMKey),pm2=pigOf(prev2MKey);
+  const momG=closed&&pm1.g?100*(P.mtd-pm1.g)/pm1.g:null;
+  const momProj=!closed&&pm1.g?100*P.factored/pm1.g:null;
+
   const flags=[];
   if(LW&&LW.tr>28)flags.push({s:'warn',t:`Tester rate ${pc(LW.tr)} (${wlab(LW.week)}) — powyżej progu 28%.`});
   if(wow!=null&&wow<-25)flags.push(peakPrev?{s:'info',t:`GMV ${sgn(wow)} WoW — normalizacja po peaku z poprzedniego tygodnia, nie alarm.`}:{s:'warn',t:`GMV ${sgn(wow)} WoW (${wlab(LW.week)}) — bez peaku w tle, do wyjaśnienia.`});
-  if(paceF!=null&&paceF<80&&P.nd>=10)flags.push({s:'warn',t:`Pace GMV ${pc(paceF)} (sezonowy) przy ${P.nd} dniach — poniżej 80%.`});
-  if(paceRet!=null&&paceRet<90)flags.push({s:'warn',t:`Powracający na ${pc(paceRet)} budżetu — odchylenie od najstabilniejszego filaru.`});
-  if(paceRet!=null&&paceRet>=98)flags.push({s:'ok',t:`Powracający ${pc(paceRet)} budżetu — filar trzyma.`});
-  if(paceNew!=null&&paceNew<75)flags.push({s:'info',t:`Nowi klienci na ${pc(paceNew)} budżetu.`});
+  if(momProj!=null&&P.nd>=7&&momProj<90)flags.push({s:'warn',t:`Prognoza GMV ${k(P.factored)} = ${pc(momProj,0)} wyniku ${mlab(prevMKey+'-01')} (${k(pm1.g)}) — spadek miesiąc do miesiąca ponad 10%.`});
+  if(momProj!=null&&P.nd>=7&&momProj>=105)flags.push({s:'ok',t:`Prognoza GMV ${k(P.factored)} = ${pc(momProj,0)} wyniku ${mlab(prevMKey+'-01')} — miesiąc rośnie MoM.`});
+  if(closed&&momG!=null&&momG<-10)flags.push({s:'warn',t:`Miesiąc zamknięty ${sgn(momG)} GMV vs ${mlab(prevMKey+'-01')} (${k(pm1.g)}).`});
   if(limit&&perfProj&&perfProj>1.05*limit)flags.push({s:'warn',t:`Performance: projekcja ${k(perfProj)} vs limit ${k(limit)} (${pc(100*perfProj/limit,0)}).`});
   if(crW!=null&&crP!=null&&crP-crW>0.5)flags.push({s:'info',t:`CR sesja→zakup spadł do ${pc(crW,2)} (z ${pc(crP,2)}) WoW.`});
 
-  const thr=[...D.threads].sort((a,b)=>(a.deadline||'9')<(b.deadline||'9')?-1:1);
+  const thr=[...D.threads].filter(t=>!t.status||t.status==='open').sort((a,b)=>(a.deadline||'9')<(b.deadline||'9')?-1:1);
+  const thrTs=(D.threads||[]).map(t=>t.updated_at||'').sort().slice(-1)[0]||null;
+  const thrAgeD=thrTs?Math.floor((Date.now()-new Date(thrTs))/864e5):null;
   const today=new Date();const dleft=t=>t.deadline?Math.ceil((pd(t.deadline)-today)/86400000):null;
 
   document.getElementById('tab-cockpit').innerHTML=`
   <div class="card">
-    <h2>GMV ${MIES[P.mo]} ${P.y} <span class="pill">dni 1–${P.nd} z ${P.dim}</span>${inf('gmv_mtd')}</h2>
+    <h2>GMV ${MIES[P.mo]} ${P.y} <span class="pill">${closed?'miesiąc zamknięty':`dni 1–${P.nd} z ${P.dim}`}</span>${inf('gmv_mtd')}</h2>
     <div class="big">${k(P.mtd)} <small>PLN</small></div>
     ${td?`<div class="d" style="font-size:13px;margin-top:6px">Dziś (częściowe): <b class="amb">${kk(+td.gmv)}</b> · ${td.orders} zam. · ${td.new_customers} nowych</div>`:''}
     <div class="bar"><i style="width:${Math.min(100,P.bud?100*P.mtd/P.bud.gmv:0)}%"></i><s style="left:${Math.min(100,100*P.frac).toFixed(0)}%"></s></div>
-    <div class="proj"><span>prognoza końca mc <b class="amb">${k(P.factored)}</b> <span class="mut">sezonowa · ${pc(paceF)} budżetu</span></span><span>tempo 7 dni <b>${k(P.runrate)}</b></span><span>budżet <b>${k(P.bud?.gmv)}</b></span></div>
+    <div class="proj">${closed?`<span>wynik <b class="amb">${k(P.mtd)}</b> <span class="${momG>=0?'pos':'neg'}">${momG!=null?sgn(momG)+' vs '+mlab(prevMKey+'-01'):''}</span></span>`:`<span>prognoza końca mc <b class="amb">${k(P.factored)}</b> <span class="mut">sezonowa${momProj!=null?' · '+pc(momProj,0)+' wyniku '+mlab(prevMKey+'-01'):''}</span></span>`}<span>tempo 7 dni <b>${k(P.runrate)}</b></span><span>budżet <b>${k(P.bud?.gmv)}</b> <span class="mut">(${pc(paceF,0)} · plan formalny pre-Czechy)</span></span></div>
   </div>
   <div class="card">
     <h2>Prowizja ${MIES[P.mo]} <span class="pill">wg stawek per catering</span>${inf('prowizja_mtd')}</h2>
@@ -451,18 +464,28 @@ RENDER.cockpit=function(){
     <div class="proj"><span>projekcja końca mc <b>${k(P.commProj)}</b></span><span>stawki <b>10% / Paczka Smaku 8%</b></span></div>
     <div class="note">Prowizja naliczona od GMV item-level realnymi stawkami (nie płaskie 8% z Card 296).</div>
   </div>
+  <div class="card full">
+    <h2>${mlab(prevMKey+'-01')} — miesiąc w pigułce <span class="pill">domknięty operacyjnie</span>${inf('pigulka')}</h2>
+    <div class="proj" style="font-size:13.5px;line-height:2">
+      <span>GMV <b>${k(pm1.g)}</b> <span class="${pm2.g&&pm1.g>=pm2.g?'pos':'neg'}">${pm2.g?sgn(100*(pm1.g-pm2.g)/pm2.g):''}</span></span>
+      <span>prowizja <b>${k(pm1.c)}</b> <span class="${pm2.c&&pm1.c>=pm2.c?'pos':'neg'}">${pm2.c?sgn(100*(pm1.c-pm2.c)/pm2.c):''}</span></span>
+      <span>nowi klienci <b>${pm1.n!=null?nf.format(pm1.n):'—'}</b> <span class="${pm2.n&&pm1.n>=pm2.n?'pos':'neg'}">${pm1.n!=null&&pm2.n?sgn(100*(pm1.n-pm2.n)/pm2.n):''}</span></span>
+      <span>AOV <b>${zl(pm1.o?pm1.g/pm1.o:null)}</b></span>
+    </div>
+    <div class="note">Zmiany vs ${mlab(prev2MKey+'-01')}. Domknięcie operacyjne z transakcji (GMV item-level, prowizja realnymi stawkami, nowi = rozmiar kohorty miesiąca); wynik księgowy (EBITDA) trafia do Mini P&L w zakładce B2B po zamknięciu księgowym.</div>
+  </div>
   <div class="card full"><h2>GMV dziennie — 8 tygodni <span class="pill">jaśniejszy słupek = dziś, częściowe</span>${inf('cday')}</h2><div class="ch"><canvas id="cDay"></canvas></div></div>
   <div class="grid full">
     <div class="kpi"><div class="l">CAC paid MTD (media ÷ nowi)${inf('cac_paid_mtd')}</div><div class="row"><div class="v">${zl(cacPaid)}</div><canvas class="spark" id="spCP"></canvas></div><div class="d">spend Meta FDG+Google ${k(perfMtd)} ÷ ${nf.format(mtdNew)} nowych</div></div>
     <div class="kpi"><div class="l">GMV: powracający vs nowi MTD${inf('gmv_split')}</div><div class="row"><div class="v">${pc(100-ngpMtd,0)} / ${pc(ngpMtd,0)}</div></div><div class="d">${k(P.mtd*(100-ngpMtd)/100)} od powracających · ${k(P.mtd*ngpMtd/100)} od nowych</div></div>
     <div class="kpi"><div class="l">Udział aplikacji (30 dni)${inf('app_share_30')}</div><div class="row"><div class="v">${pc(as30)}</div><canvas class="spark" id="spA"></canvas></div><div class="d">zamówienia · cel 50% przekroczony</div></div>
-    <div class="kpi"><div class="l">Powracający — tempo MTD${inf('pace_ret')}</div><div class="row"><div class="v ${paceRet>=95?'pos':paceRet<90?'neg':''}">${pc(paceRet)}</div></div><div class="d">${nf.format(mtdRet)} zam. = ${pc(achRet,0)} planu · wg sezonu na dziś ${pc(expToday,0)} · prognoza ${nf.format(projRet??0)} z ${nf.format(P.bud?.returning_orders??0)}</div></div>
-    <div class="kpi"><div class="l">Nowi klienci — tempo MTD${inf('pace_new')}</div><div class="row"><div class="v ${paceNew>=95?'pos':paceNew<85?'neg':''}">${pc(paceNew)}</div><canvas class="spark" id="spN"></canvas></div><div class="d">${nf.format(mtdNew)} = ${pc(achNew,0)} planu · wg sezonu na dziś ${pc(expToday,0)} · prognoza ${nf.format(projNew??0)} z ${nf.format(P.bud?.new_customers??0)}</div></div>
+    <div class="kpi"><div class="l">Powracający — tempo MTD${inf('pace_ret')}</div><div class="row"><div class="v ${paceRet>=95?'pos':''}">${pc(paceRet)}</div></div><div class="d">${nf.format(mtdRet)} zam. = ${pc(achRet,0)} planu · wg sezonu na dziś ${pc(expToday,0)} · prognoza ${nf.format(projRet??0)} z ${nf.format(P.bud?.returning_orders??0)} <span class="mut">(plan formalny)</span></div></div>
+    <div class="kpi"><div class="l">Nowi klienci — tempo MTD${inf('pace_new')}</div><div class="row"><div class="v ${paceNew>=95?'pos':''}">${pc(paceNew)}</div><canvas class="spark" id="spN"></canvas></div><div class="d">${nf.format(mtdNew)} = ${pc(achNew,0)} planu · wg sezonu na dziś ${pc(expToday,0)} · prognoza ${nf.format(projNew??0)} z ${nf.format(P.bud?.new_customers??0)} <span class="mut">(plan formalny)</span></div></div>
   </div>
   ${flags.length?`<div class="card full"><h2>Flagi${inf('flagi')}</h2>${flags.map(f=>`<div class="flag ${f.s}">${f.t}</div>`).join('')}</div>`:''}
-  <div class="card"><h2>Radar wątków${inf('radar')}</h2>${thr.map(t=>{const dl=dleft(t);return`<div class="thread"><span>${t.title}</span><span class="dl ${dl!=null&&dl<=7?'neg':'amb'}">${t.deadline?dlab(t.deadline)+' · '+(dl>=0?'za '+dl+' dni':Math.abs(dl)+' dni temu'):'—'}</span></div>`}).join('')}
-  <div class="note">Radar zasilam ja: przy każdej naszej sesji i porannej rutynie synchronizuję otwarte wątki, decyzje i deadline'y z pamięci projektu.</div></div>
-  <div class="card"><h2>Świeżość danych${inf('swiezosc')}</h2>${(D.refresh_log||[]).slice(0,10).map(r=>`<div class="thread"><span>${r.source}</span><span class="dl">${new Date(r.refreshed_at).toLocaleString('pl-PL',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}</span></div>`).join('')}<div class="note">Pełne odświeżenie rano 6:45; dzisiejsze GMV doładowywane w ciągu dnia (13:00, 18:00). Lejek GA4 ma ~1 dzień opóźnienia.</div></div>`;
+  <div class="card"><h2>Radar wątków${thrAgeD!=null&&thrAgeD>7?` <span class="pill red">sync ${thrAgeD} dni temu</span>`:''}${inf('radar')}</h2>${thr.map(t=>{const dl=dleft(t);return`<div class="thread"><span>${t.title}</span><span class="dl ${dl!=null&&dl<=7?'neg':'amb'}">${t.deadline?dlab(t.deadline)+' · '+(dl>=0?'za '+dl+' dni':Math.abs(dl)+' dni temu'):'—'}</span></div>`}).join('')}
+  <div class="note">Zasilany z pamięci projektu przy sesjach roboczych${thrTs?` — ostatnia synchronizacja ${dlab(thrTs.slice(0,10))}`:''}. Przypomnienia o deadline'ach (D-7/D-3/D-1) wpadają do Pulsu z porannego przebiegu chmurowego.</div></div>
+  <div class="card"><h2>Świeżość danych${inf('swiezosc')}</h2>${(()=>{const DLY2=['daily_metrics','daily_brand_metrics','marketing_daily','przesiadka_daily','funnel_daily','channel_daily','seo_daily','cohorts','diet_types_weekly','landing_weekly'];const WK2=['brand_retention','seg_retention','orders_dist','przesiadka_cohorts','przesiadka_cohort_matrix','multidiet_brands','seo_queries'];const lim=s=>DLY2.includes(s)?30:WK2.includes(s)?216:336;const rl=(D.refresh_log||[]).filter(r=>r.source!=='dashboard_html').map(r=>({...r,age:(Date.now()-new Date(r.refreshed_at))/36e5})).map(r=>({...r,stale:r.age>lim(r.source)}));const st2=rl.filter(r=>r.stale).sort((a,b)=>b.age-a.age),fr2=rl.filter(r=>!r.stale).sort((a,b)=>a.age-b.age).slice(0,10);return st2.concat(fr2).map(r=>`<div class="thread"><span>${r.source}</span><span class="dl ${r.stale?'neg':''}">${new Date(r.refreshed_at).toLocaleString('pl-PL',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}${r.stale?' · stoi':''}</span></div>`).join('')})()}<div class="note">Pełne odświeżenie rano w chmurze (GitHub Actions ~5:00/6:30); dzisiejsze GMV doładowywane w ciągu dnia. Czerwone = źródło przekroczyło swój rytm (dzienne >30 h, tygodniowe >9 dni, ręczne >14 dni).</div></div>`;
 };
 INIT.cockpit=function(){
   spark('spA',LF.slice(-10).map(x=>x.as??0),'#ff9b00');
@@ -650,7 +673,7 @@ RENDER.sales=function(){
   <div class="card"><h2>Zamówienia tygodniowo${inf('sord')}</h2><div class="ch"><canvas id="sOrd"></canvas></div></div>
   <div class="card full"><h2>Ostatnie 8 pełnych tygodni${inf('tab8w')}</h2><div class="tbl"><table><tr><th>Tydzień</th><th>GMV</th><th>WoW</th><th>Zam.</th><th>AOV</th><th>Śr. dni</th><th>Tester</th><th>App</th></tr>
   ${LF.slice(-8).slice().reverse().map((x,i,arr)=>{const p=arr[i+1];const ww=p?100*(x.gmv-p.gmv)/p.gmv:null;return`<tr><td>${wlab(x.week)}</td><td><b>${kk(x.gmv)}</b></td><td class="${ww>0?'pos':'neg'}">${ww!=null?sgn(ww):'—'}</td><td>${nf.format(x.orders)}</td><td>${zl(x.aov)}</td><td>${x.add.toFixed(1)}</td><td>${pc(x.tr)}</td><td>${pc(x.as)}</td></tr>`}).join('')}</table></div></div>
-  <div class="card"><h2>Struktura długości diet <span class="pill">% zamówień</span>${inf('seg_len')}</h2><div class="ch"><canvas id="sSeg"></canvas></div><div class="note">Strategia: ograniczać 1–5 dni (testerzy), stymulować dłuższe pierwsze zamówienia.</div></div>
+  <div class="card"><h2>Struktura długości diet <span class="pill">% zamówień</span>${inf('seg_len')}</h2><div class="ch"><canvas id="sSeg"></canvas></div><div class="note">Strategia (korekta 23.06): ograniczać krótkie PIERWSZE zamówienia z kanałów płatnych (SD), nie krótkie w ogóle — u powracających krótkie to zdrowa eksploracja; sama długość jest słabym predyktorem churnu.</div></div>
   <div class="card"><h2>AOV i długość diety${inf('aov_dl')}</h2><div class="ch"><canvas id="sAov2"></canvas></div></div>
   <div class="card full"><h2>Rodzaje diet — GMV 4 pełne tygodnie <span class="pill">kategorie platformy</span>${inf('diet_types')}</h2>
   ${dtTop.map(([tag,v])=>`<div class="brandrow"><span class="n">${tag}</span><span class="b"><i style="width:${100*v.gmv/dtMax}%;background:#4fbf8b"></i></span><span class="v" style="flex:0 0 152px">${kk(v.gmv)} · ${pc(totG?100*v.gmv/totG:null,1)} · ${nf.format(v.orders)} zam.</span></div>`).join('')}
@@ -755,7 +778,7 @@ RENDER.ret=function(){
   <div class="note">${pzGaps.length?'Przesiadka (SD 150) wraca w pierwszym miesiącu po akwizycji rzadziej niż ogół nowych klientów: '+pzGaps.join('; ')+'. Profil switchera — bardziej deal-driven, słabiej się utrzymuje.':'Okno kohort SD dopiero się buduje.'} Kumulacyjnie „czy kiedykolwiek wrócił" (przesiadka_cohorts): ${pzEver}. Czerwcowa kohorta — okno dopiero startuje.</div></div>
   <div class="card"><h2>Powroty wg długości 1. zamówienia <span class="pill">% z kolejnym zakupem w 90 dni</span>${inf('seg_ret')}</h2><div class="tbl"><table><tr><th>Segment</th>${qs.map(q=>`<th>${q.replace('20','')}</th>`).join('')}</tr>
   ${segOrder.map(sg=>`<tr><td>${sg}</td>${qs.map(q=>{const r=segs.find(x=>x.segment===sg&&x.cohort_q===q);return`<td class="${r&&+r.returned_pct<40?'neg':''}">${r?pc(+r.returned_pct,0):'—'}</td>`}).join('')}</tr>`).join('')}</table></div>
-  <div class="note">Churn = 100% minus powyższe. Testerzy wracają najrzadziej — stąd strategia dłuższych pierwszych zamówień. Q1'26 ma jeszcze niepełne okno.</div></div>
+  <div class="note">Churn = 100% minus powyższe. <b>UWAGA (korekta 23.06):</b> pula zbiorcza — różnice między koszykami w dużej mierze robi kanał akwizycji, nie długość (paradoks Simpsona): SD/przesiadka lapsuje 66–74% na każdej długości, organiczne ~51%; u POWRACAJĄCYCH krótkie zamówienia wracają najlepiej. Nie czytać jako „wydłużać = wyższa retencja". Q1'26 ma jeszcze niepełne okno.</div></div>
   <div class="card"><h2>Rozkład liczby zamówień na klienta <span class="pill">klienci od 2025</span>${inf('ord_dist')}</h2>
   ${od.map(o=>`<div class="brandrow"><span class="n">${o.bucket}</span><span class="b"><i style="width:${100*o.customers/(od[0]?.customers||1)}%;background:#4fbf8b"></i></span><span class="v">${nf.format(o.customers)} · ${pc(100*o.customers/odTot,0)}</span></div>`).join('')}
   <div class="note">${pc(100-(100*(od[0]?.customers||0)/odTot),0)} klientów zrobiło więcej niż jedno zamówienie.</div></div>
@@ -853,7 +876,8 @@ RENDER.mkt=function(){
   const pz=D.przesiadka_daily||[];
   const pzMtd=mtdOf(pz);
   const pzL=pzMtd.reduce((s,r)=>s+(r.leads||0),0),pzO=pzMtd.reduce((s,r)=>s+(r.sd_orders||0),0),pzG=pzMtd.reduce((s,r)=>s+ +(r.sd_gmv||0),0);
-  const sdD=Math.ceil((pd('2026-07-06')-new Date())/86400000);
+  const sdD=Math.ceil((pd('2026-07-12')-new Date())/86400000); // decyzja SD przesunięta 29.06: 6.07 → 12.07 (tryb testu warunkowego)
+  const cuponNet=pzO*80,cuponNom=pzO*150,cuponLim=15000; // rama kosztu: ~80 zł netto/zam. po dopłacie cateringu (weryfikacja z rozliczeń ~10.07); nominał 150 zł = górna granica
   const pco=D.przesiadka_cohorts||[];
   document.getElementById('tab-mkt').innerHTML=`
   <div class="card full">
@@ -863,6 +887,18 @@ RENDER.mkt=function(){
     <div class="proj"><span>projekcja <b>${k(perfProj)}</b></span><span>limit <b>${k(limit)}</b> <span class="${perfProj>limit?'neg':'pos'}">(${pc(100*perfProj/limit,0)})</span></span></div>`:''}
     <div class="note">CAC łączny (księgowy) = cały marketing ÷ nowi klienci, raz na miesiąc. CAC paid (tu i w Cockpicie) = media Meta FDG + Google ÷ nowi, liczony na bieżąco — te dwie liczby celowo się różnią.</div>
   </div>
+  ${P.mKey==='2026-07'?`<div class="card full"><h2>Plan lipca — ustalenia 29–30.06 <span class="pill">rozpiska ręczna</span>${inf('plan_lipca')}</h2>
+    <div class="tbl"><table>
+    <tr><th style="text-align:left">Pozycja</th><th>Plan</th><th style="text-align:left">Warunek</th></tr>
+    <tr><td>Budżet własny performance</td><td><b>125 tys.</b></td><td style="text-align:left">twardy; droga do ~200 tys. wyłącznie z budżetów cateringów (neutralne dla EBITDA)</td></tr>
+    <tr><td>PMax OGÓLNA</td><td><b>0</b></td><td style="text-align:left">wygaszona — najsłabsza kampania konta; test inkrementalności → sierpień</td></tr>
+    <tr><td>PMax NOWI</td><td><b>15 tys.</b></td><td style="text-align:left">wyłącznie jako holdout pod pomiar inkrementalności</td></tr>
+    <tr><td>UAC (instalacje Android)</td><td><b>10 tys.</b></td><td style="text-align:left">z bramką First Open</td></tr>
+    <tr><td>Afiliacja</td><td><b>10 tys.</b></td><td style="text-align:left">prowizja przestawiana na new-only (albo 0)</td></tr>
+    <tr><td>Reaktywacja uśpionych</td><td><b>12 tys.</b></td><td style="text-align:left">oś lipca — listy są, przepiąć z wykluczeń</td></tr>
+    <tr><td>Kupony SD (Przesiadka)</td><td><b>≤15 tys.</b></td><td style="text-align:left">netto, poza pulą mediową; przełącznik „ubij" 12.07</td></tr>
+    </table></div>
+    <div class="note">Kluczowe ustalenia planu (nie pełna alokacja 125 tys.) — do konfrontacji z realnymi wydatkami wyżej. Automatyczne rozbicie wydatków per kampania — do dołożenia w ETL.</div></div>`:''}
   <div class="grid full g2">
     <div class="kpi"><div class="l">Meta ROAS MTD (pixel)${inf('meta_roas')}</div><div class="row"><div class="v ${metaV/metaS>=4?'pos':''}">${(metaV/metaS).toLocaleString('pl-PL',{maximumFractionDigits:2})}</div></div><div class="d">maj: 5,2 · trend ważniejszy niż poziom</div></div>
     <div class="kpi"><div class="l">Google ROAS MTD (panel)${inf('google_roas')}</div><div class="row"><div class="v">${(gV/Math.max(1,gS)).toLocaleString('pl-PL',{maximumFractionDigits:2})}</div></div><div class="d">wartość konwersji ÷ koszt</div></div>
@@ -877,11 +913,12 @@ RENDER.mkt=function(){
   <div class="card"><h2>CAC paid i CPA — dziennie (MA7)${inf('cacd')}</h2><div class="ch"><canvas id="mCacD"></canvas></div><div class="note">CAC paid = media ÷ nowi klienci dnia. CPA = media ÷ wszystkie zamówienia dnia.</div></div>
   <h3 class="gsec full">Kampania Przesiadka (SD 150)</h3>
   <div class="card full" style="border-color:#ff9b0066">
-    <div class="flag warn" style="margin-bottom:10px">Decyzja 6.07 (za ${sdD} dni). Skumulowana retencja kohort kwi+maj: <b>${(()=>{const a=pco.filter(c=>c.cohort_month<'2026-06');const b=a.reduce((s,c)=>s+c.buyers,0),r=a.reduce((s,c)=>s+c.returned,0);return b?pc(100*r/b,1):'—'})()}</b> — próg: powyżej 30–35% zostaje, poniżej 25% zamykamy. Okno majowej kohorty jeszcze niepełne (diety ~17–20 dni).</div>
+    <div class="flag warn" style="margin-bottom:10px">Tryb testu do <b>12.07</b> (za ${sdD} dni) — decyzja 29.06: trzymamy warunkowo, kupony ≤<b>15 tys. netto</b> w lipcu. Punkty kontrolne: <b>10.07</b> realny koszt kuponu z rozliczeń (~80 zł netto czy 150 zł nominału), <b>12.07</b> ocena łączna razem z winbackiem i konwersją SD→2. zamówienie przez Persona AI. Kontekst: skumulowana retencja kohort kwi+maj <b>${(()=>{const a=pco.filter(c=>c.cohort_month<'2026-06');const b=a.reduce((s,c)=>s+c.buyers,0),r=a.reduce((s,c)=>s+c.returned,0);return b?pc(100*r/b,1):'—'})()}</b> (informacyjny próg 25–35%; okno majowej kohorty niepełne, więc zaniża). Reshape nominału 70/50/30 — odrzucony.</div>
     <div class="grid" style="margin-bottom:0">
       <div class="kpi"><div class="l">Leady ${MIES[P.mo]} MTD${inf('pz_leads')}</div><div class="row"><div class="v">${nf.format(pzL)}</div></div><div class="d">kody SD (bez batchy)</div></div>
       <div class="kpi"><div class="l">Zamówienia SD MTD${inf('pz_orders')}</div><div class="row"><div class="v">${nf.format(pzO)}</div></div><div class="d">konwersja ${pc(pzL?100*pzO/pzL:null)}</div></div>
       <div class="kpi"><div class="l">GMV Przesiadki MTD${inf('pz_gmv')}</div><div class="row"><div class="v">${k(pzG)}</div></div><div class="d">AOV ${zl(pzO?pzG/pzO:null)}</div></div>
+      <div class="kpi"><div class="l">Koszt kuponów MTD (limit 15 tys.)${inf('pz_coupon_cost')}</div><div class="row"><div class="v ${cuponNet>cuponLim?'neg':''}">~${k(cuponNet)}</div></div><div class="d">${pc(100*cuponNet/cuponLim,0)} limitu netto · założenie ~80 zł/zam. po dopłacie cateringu (weryfikacja 10.07) · nominał 150 zł → ${k(cuponNom)}</div></div>
     </div>
   </div>
   <div class="card"><h2>Przesiadka — zamówienia (słupki) i leady${inf('pz_chart1')}</h2><div class="ch"><canvas id="mPz"></canvas></div></div>
@@ -1056,9 +1093,12 @@ RENDER.b2b=function(){
     if(b.trend!=null&&b.trend<-30)return['Wyraźny spadek — diagnoza przyczyn','neg'];
     return['Stabilny','mut'];
   }
+  const rlB=(D.refresh_log||[]).find(r=>r.source==='b2b_status');
+  const b2bAgeD=rlB?Math.floor((Date.now()-new Date(rlB.refreshed_at))/864e5):null;
+  const b2bStamp=rlB?`<span class="pill ${b2bAgeD>7?'red':''}">stan na ${dlab(rlB.refreshed_at.slice(0,10))}${b2bAgeD>7?' — nieaktualne':''}</span>`:'';
   document.getElementById('tab-b2b').innerHTML=`
   <div class="card">
-    <h2>B2B ${st?mlab(st.month):''} — zafakturowane <span class="pill green">w celu</span>${inf('b2b_invoiced')}</h2>
+    <h2>B2B ${st?mlab(st.month):''} — zafakturowane <span class="pill green">w celu</span>${b2bStamp}${inf('b2b_invoiced')}</h2>
     <div class="big">${k(+st?.invoiced)} <small>PLN</small></div>
     <div class="proj"><span>cel <b>${k(+st?.target_low)}–${k(+st?.target_high)}</b></span><span>pitche <b>+${k(+st?.pitches)}</b></span></div>
   </div>
@@ -1068,7 +1108,7 @@ RENDER.b2b=function(){
     <div class="proj"><span>${k(+lastMr.b2b)} z ${k(+lastMr.revenue_total)} przychodu razem</span><span>trajektoria <b>${mr.map(m=>Math.round(+m.b2b/1000)).join(' → ')}</b> tys.</span></div>
     <div class="note">Twarda reguła: B2B = upside, nie wchodzi do prognoz.</div>
   </div>
-  <div class="card full"><h2>Cateringi zarządczo — ${mlab(mC)} <span class="pill">trend vs ${mlab(mA)} · retencja 90 dni · pakiety czerwiec</span>${inf('b2b_table')}</h2>
+  <div class="card full"><h2>Cateringi zarządczo — ${mlab(mC)} <span class="pill">trend vs ${mlab(mA)} · retencja 90 dni · pakiety ${st?mlab(st.month):''}</span>${b2bStamp}${inf('b2b_table')}</h2>
   <div class="tbl"><table><tr><th>Catering</th><th>GMV</th><th>Trend 3 mc</th><th>Prowizja FDG</th><th>Nowi</th><th>Retencja</th><th>Pakiet B2B</th><th>Sugestia</th></tr>
   ${rows.map(b=>{const s=suggest(b);return`<tr><td>${b.brand.replace(' (Multidieta)','')}</td><td><b>${kk(b.gmv)}</b></td><td class="${b.trend>0?'pos':'neg'}">${b.trend!=null?sgn(b.trend):'—'}</td><td>${kk(b.commission)}</td><td>${b.nc}</td><td class="${b.ret>=40?'pos':b.ret!=null&&b.ret<25?'neg':''}">${b.ret!=null?pc(b.ret,0):'—'}</td><td>${b.pkg?kk(b.pkg):'<span class="mut">brak</span>'}</td><td style="text-align:left" class="${s[1]}">${s[0]}</td></tr>`}).join('')}</table></div>
   <div class="note">Prowizja wg realnych stawek (${mlab(mC)}). Retencja = % klientów wracających do tego samego brandu w 90 dni (kohorty 09.25–03.26). Sugestie generowane regułami — traktuj jako podpowiedź do rozmów, nie wyrok.</div></div>
@@ -1083,7 +1123,7 @@ RENDER.b2b=function(){
     <tr><td>— B2B</td>${mr.map(m=>`<td class="pos">${Math.round(+m.b2b/1000)}</td>`).join('')}</tr>
     <tr><td>Marketing</td>${mr.map(m=>`<td>${Math.round(+m.marketing_total/1000)}</td>`).join('')}</tr>
     <tr><td><b>EBITDA</b></td>${mr.map(m=>`<td class="${+m.ebitda<0?'neg':'pos'}"><b>${Math.round(+m.ebitda/1000)}</b></td>`).join('')}</tr>
-  </table></div></details></div>`;
+  </table></div><div class="note">Dane ręczne po zamknięciu księgowym — nowy miesiąc pojawia się z ~2-tygodniowym opóźnieniem (ostatni: ${mr.length?mlab(mr[mr.length-1].month):'—'}${mr.length&&mr[mr.length-1].is_final===false?', wstępny':''}). Operacyjne domknięcie miesiąca bez czekania → Cockpit, karta „miesiąc w pigułce".</div></details></div>`;
 };
 INIT.b2b=function(){
   const mr=D.monthly_results;
